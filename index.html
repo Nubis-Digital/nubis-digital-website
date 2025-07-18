@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUBIS DIGITAL - Coming Soon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* CSS variables for theming */
+        :root {
+            --bg-color: #111827; /* Darker Blue-Gray */
+            --text-color: #ffffff;
+            --text-muted-color: #9ca3af; /* Gray-400 */
+            --glass-bg: rgba(31, 41, 55, 0.5); /* Gray-800 with alpha */
+            --glass-border: rgba(107, 114, 128, 0.2); /* Gray-500 with alpha */
+            --glass-shadow: rgba(0,0,0,0.4);
+            --logo-color-1: #38bdf8; /* Sky-400 */
+            --logo-color-2: #818cf8; /* Indigo-400 */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f3f4f6; /* Gray-100 */
+            --text-color: #111827; /* Gray-900 */
+            --text-muted-color: #4b5563; /* Gray-600 */
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(34, 34, 34, 0.1);
+            --glass-shadow: rgba(0,0,0,0.1);
+            --logo-color-1: #0ea5e9; /* Sky-500 */
+            --logo-color-2: #6366f1; /* Indigo-500 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        /* Container for the 3D background canvas */
+        #three-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        /* Main content container */
+        .content-section {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Glassmorphism panel style */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem; /* 24px */
+            transition: background-color 0.3s, border-color 0.3s;
+            box-shadow: 0 20px 30px var(--glass-shadow);
+            padding: 3rem; /* 48px */
+            text-align: center;
+        }
+        
+        /* Theme switcher toggle */
+        .theme-switch {
+            width: 50px; height: 28px; background: rgba(0,0,0,0.2);
+            border-radius: 50px; padding: 4px; cursor: pointer;
+            transition: background-color 0.3s ease; border: 1px solid var(--glass-border);
+        }
+        .theme-switch-handle {
+            width: 20px; height: 20px; background: white;
+            border-radius: 50%; transition: transform 0.3s ease;
+        }
+        [data-theme="light"] .theme-switch { background: rgba(255,255,255,0.4); }
+        [data-theme="light"] .theme-switch-handle { transform: translateX(22px); background: var(--bg-color); }
+
+        h1 { font-weight: 900; letter-spacing: -0.05em; }
+    </style>
+</head>
+<body>
+
+    <!-- 3D Canvas Background -->
+    <div id="three-canvas-container"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-20 p-4 md:p-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h2 class="text-2xl font-bold tracking-tight">NUBIS DIGITAL</h2>
+            <div id="theme-toggle" class="theme-switch">
+                <div class="theme-switch-handle"></div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Centered Content -->
+    <main class="content-section">
+        <div class="glass-panel">
+            <h1 class="text-5xl md:text-7xl">Coming Soon</h1>
+            <p class="text-lg md:text-xl max-w-md mx-auto mt-4 text-muted-color">
+                Our new digital experience is under construction. We are preparing to launch something amazing.
+            </p>
+        </div>
+    </main>
+
+    <!-- Three.js for 3D animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // --- THEME MANAGEMENT ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        let headMaterial, nodeMaterial, lineMaterial;
+
+        // Function to apply a theme and update 3D object colors
+        function setTheme(theme) {
+            document.body.dataset.theme = theme;
+            // Wait for CSS variables to be applied, then update materials
+            requestAnimationFrame(() => {
+                if (headMaterial && nodeMaterial && lineMaterial) {
+                    const newColor1 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-1').trim());
+                    const newColor2 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-2').trim());
+                    
+                    headMaterial.color.set(newColor1);
+                    nodeMaterial.color.set(newColor1);
+                    nodeMaterial.emissive.set(newColor1);
+                    lineMaterial.color.set(newColor2);
+                }
+            });
+        }
+        
+        // Load saved theme or set based on user preference
+        const savedTheme = localStorage.getItem('theme');
+        setTheme(savedTheme || (userPrefersDark ? 'dark' : 'light'));
+
+        // Theme toggle event listener
+        themeToggle.addEventListener('click', () => {
+            const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            setTheme(newTheme);
+        });
+        
+        // --- 3D SCENE SETUP ---
+        let scene, camera, renderer, logoGroup;
+        const mouse = new THREE.Vector2();
+
+        function initThree() {
+            const container = document.getElementById('three-canvas-container');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            logoGroup = new THREE.Group();
+            
+            // Define materials for the logo components
+            headMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.2, roughness: 0.3, transparent: true, opacity: 0.15 });
+            nodeMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.4, roughness: 0.2, emissive: 0xffffff, emissiveIntensity: 0.2 });
+            lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 });
+
+            // Create the main head shape
+            const headShape = new THREE.Shape();
+            headShape.moveTo(-1.5, -2); headShape.bezierCurveTo(-1.5, -0.5, -2.5, 0.5, -2.5, 2); headShape.bezierCurveTo(-2.5, 3.5, -1, 4, 0, 4); headShape.bezierCurveTo(1, 4, 2.5, 3.5, 2.5, 2); headShape.bezierCurveTo(2.5, 0.5, 1.5, -0.5, 1.5, -2); headShape.lineTo(0.5, -2); headShape.lineTo(0.5, -2.5); headShape.lineTo(-0.5, -2.5); headShape.lineTo(-0.5, -2); headShape.lineTo(-1.5, -2);
+            const extrudeSettings = { depth: 0.3, bevelEnabled: true, bevelSegments: 3, steps: 2, bevelSize: 0.15, bevelThickness: 0.1 };
+            const headGeometry = new THREE.ExtrudeGeometry(headShape, extrudeSettings);
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.z = -0.1;
+            logoGroup.add(head);
+
+            // Create the nodes
+            const nodePositions = [
+                { x: 0, y: 2.5, z: 0 }, { x: -1.2, y: 1.5, z: 0 }, { x: 1.2, y: 1.5, z: 0 },
+                { x: -1.8, y: -0.5, z: 0 }, { x: 1.8, y: -0.5, z: 0 }, { x: -0.8, y: -1.5, z: 0 },
+                { x: 0, y: 0, z: 0 }
+            ];
+            const nodeGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+            const nodes = nodePositions.map(pos => {
+                const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+                node.position.set(pos.x, pos.y, pos.z);
+                logoGroup.add(node);
+                return node;
+            });
+            
+            // Create the connecting lines
+            const connections = [ [6,0], [6,1], [6,2], [1,3], [2,4], [3,5] ];
+            connections.forEach(conn => {
+                const points = [nodes[conn[0]].position, nodes[conn[1]].position];
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+                const line = new THREE.Line(lineGeometry, lineMaterial);
+                logoGroup.add(line);
+            });
+            
+            scene.add(logoGroup);
+
+            // Add lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            // Set initial camera position and apply theme colors
+            camera.position.set(0, 0, 8);
+            setTheme(document.body.dataset.theme);
+            
+            // Start the animation loop
+            animate();
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Gently rotate the logo based on mouse position for subtle interaction
+            logoGroup.rotation.y += (mouse.x * 0.5 - logoGroup.rotation.y) * 0.05;
+            logoGroup.rotation.x += (-mouse.y * 0.5 - logoGroup.rotation.x) * 0.05;
+            
+            // Add a slow, constant rotation
+            logoGroup.rotation.y += 0.0005;
+
+            renderer.render(scene, camera);
+        }
+
+        // --- EVENT LISTENERS ---
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onMouseMove(event) {
+            // Normalize mouse coordinates (-1 to +1)
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        window.addEventListener('resize', onWindowResize);
+        window.addEventListener('mousemove', onMouseMove);
+        
+        // Initialize the 3D scene if Three.js is loaded
+        if (typeof THREE !== 'undefined') {
+            initThree();
+        } else {
+            console.error("Three.js library not found.");
+        }
+    </script>
+</body>
+</html>
