@@ -31,9 +31,15 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
                 })}
                 key={index}
               >
-                {richText && <RichText data={richText} enableGutter={false} />}
+                <div className="glass-card">
+                  {richText && <RichText data={richText} enableGutter={false} />}
 
-                {enableLink && <CMSLink {...link} />}
+                  {enableLink && (
+                    <div className="mt-6">
+                      <CMSLink className="glass-button px-6 py-3 inline-block" {...link} />
+                    </div>
+                  )}
+                </div>
               </div>
             )
           })}

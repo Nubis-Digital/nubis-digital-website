@@ -35,6 +35,7 @@ export const Pages: CollectionConfig<'pages'> = {
   defaultPopulate: {
     title: true,
     slug: true,
+    settings: true,
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
@@ -109,6 +110,22 @@ export const Pages: CollectionConfig<'pages'> = {
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
             }),
+          ],
+        },
+        {
+          name: 'settings',
+          label: 'Page Settings',
+          fields: [
+            {
+              name: 'enable3DAnimation',
+              type: 'checkbox',
+              label: 'Enable 3D Background Animation',
+              defaultValue: false,
+              admin: {
+                description: 'Enable the 3D logo animation background for this page',
+                position: 'sidebar',
+              },
+            },
           ],
         },
       ],

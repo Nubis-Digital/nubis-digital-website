@@ -35,7 +35,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
   return (
     <div
       className={cn(
-        '',
+        'glass-panel my-16',
         {
           container: enableGutter,
         },
@@ -44,7 +44,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
     >
       {(media || staticImage) && (
         <Media
-          imgClassName={cn('border border-border rounded-[0.8rem]', imgClassName)}
+          imgClassName={cn('border border-glass-border rounded-[1.5rem] overflow-hidden', imgClassName)}
           resource={media}
           src={staticImage}
         />
@@ -52,7 +52,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
       {caption && (
         <div
           className={cn(
-            'mt-6',
+            'mt-6 text-muted-color',
             {
               container: !disableInnerContainer,
             },

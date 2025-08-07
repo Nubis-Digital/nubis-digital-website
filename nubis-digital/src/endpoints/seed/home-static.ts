@@ -83,6 +83,9 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
     description: 'An open-source website built with Payload and Next.js.',
     title: 'Payload Website Template',
   },
+  settings: {
+    enable3DAnimation: true,
+  },
   title: 'Home',
   layout: [],
 }

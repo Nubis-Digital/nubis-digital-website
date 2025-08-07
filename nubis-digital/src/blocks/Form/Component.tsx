@@ -114,17 +114,29 @@ export const FormBlock: React.FC<
   )
 
   return (
-    <div className="container lg:max-w-[48rem]">
+    <div className="container lg:max-w-[48rem] my-16">
       {enableIntro && introContent && !hasSubmitted && (
-        <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
+        <div className="glass-card mb-8 lg:mb-12">
+          <RichText className="mb-0" data={introContent} enableGutter={false} />
+        </div>
       )}
-      <div className="p-4 lg:p-6 border border-border rounded-[0.8rem]">
+      <div className="glass-panel">
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
-            <RichText data={confirmationMessage} />
+            <div className="glass-card bg-success/30 border-success">
+              <RichText data={confirmationMessage} />
+            </div>
           )}
-          {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
-          {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
+          {isLoading && !hasSubmitted && (
+            <div className="glass-card">
+              <p className="text-center">Loading, please wait...</p>
+            </div>
+          )}
+          {error && (
+            <div className="glass-card bg-error/30 border-error mb-6">
+              <p className="text-error">{`${error.status || '500'}: ${error.message || ''}`}</p>
+            </div>
+          )}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4 last:mb-0">
@@ -151,7 +163,12 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
+              <Button 
+                form={formID} 
+                type="submit" 
+                variant="default"
+                className="glass-button w-full"
+              >
                 {submitButtonLabel}
               </Button>
             </form>

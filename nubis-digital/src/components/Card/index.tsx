@@ -32,7 +32,7 @@ export const Card: React.FC<{
   return (
     <article
       className={cn(
-        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer',
+        'glass-card overflow-hidden hover:cursor-pointer transition-all duration-300 hover:scale-105',
         className,
       )}
       ref={card.ref}
@@ -43,7 +43,7 @@ export const Card: React.FC<{
       </div>
       <div className="p-4">
         {showCategories && hasCategories && (
-          <div className="uppercase text-sm mb-4">
+          <div className="uppercase text-sm mb-4 text-muted-color">
             {showCategories && hasCategories && (
               <div>
                 {categories?.map((category, index) => {
@@ -77,7 +77,7 @@ export const Card: React.FC<{
             </h3>
           </div>
         )}
-        {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}
+        {description && <div className="mt-2 text-muted-color">{description && <p>{sanitizedDescription}</p>}</div>}
       </div>
     </article>
   )

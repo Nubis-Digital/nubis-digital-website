@@ -200,6 +200,12 @@ export interface Page {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  settings?: {
+    /**
+     * Enable the 3D logo animation background for this page
+     */
+    enable3DAnimation?: boolean | null;
+  };
   publishedAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -1032,6 +1038,11 @@ export interface PagesSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+      };
+  settings?:
+    | T
+    | {
+        enable3DAnimation?: T;
       };
   publishedAt?: T;
   slug?: T;
