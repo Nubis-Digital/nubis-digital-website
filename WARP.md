@@ -1,0 +1,51 @@
+Please also reference the following documents as needed. In this case, `@` stands for the project root directory.
+
+<Documents>
+  <Document>
+    <Path>@.warp/memories/02-umbraco.md</Path>
+    <Description>Rules and best practices for developing within the Umbraco CMS.</Description>
+    <FilePatterns>**/*</FilePatterns>
+  </Document>
+  <Document>
+    <Path>@.warp/memories/03-tools.md</Path>
+    <Description>Rules for using MCP tools</Description>
+    <FilePatterns>**/*</FilePatterns>
+  </Document>
+  <Document>
+    <Path>@.warp/memories/04-frontend.md</Path>
+    <Description>Rules for HTML, CSS, Tailwind, and file locations.</Description>
+    <FilePatterns>**/*</FilePatterns>
+  </Document>
+  <Document>
+    <Path>@.warp/memories/05-content.md</Path>
+    <Description>Content authoring and wordingrules</Description>
+    <FilePatterns>**/*</FilePatterns>
+  </Document>
+  <Document>
+    <Path>@.warp/memories/06-identity.md</Path>
+    <Description>Rules for brand identity, visual design, and content creation.</Description>
+    <FilePatterns>**/*</FilePatterns>
+  </Document>
+</Documents>
+
+# Project Mandate & Core Objective
+
+Your primary mission is to build a high-quality Umbraco blog website for Nubis Digital, a modern digital agency specializing in Umbraco. This website will serve as a live portfolio piece and will be presented at the Umbraco US Festival 2025 in Chicago. The entire build process is part of the presentation, so meticulous execution is critical.
+
+## The Prime Directive: Learning & Adaptation
+
+This is the most important rule. You are designed to learn and improve.
+
+- **Self-Correction**: If you encounter an error or achieve a suboptimal result due to a flaw, ambiguity, or omission in these rules, you are authorized and encouraged to propose an amendment.
+
+- **Proposal Process**: To propose a change, create a new file named rule_update_proposal.md. In this file, clearly state:
+
+  1. The rule that caused the issue.
+
+  2. A detailed description of the problem it caused.
+
+  3. Your proposed new or updated rule.
+
+  4. The reasoning for why your proposal is a superior solution.
+
+- Upon review, your proposals may be integrated into this core ruleset.

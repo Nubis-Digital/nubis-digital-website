@@ -1,8 +1,3 @@
----
-description: 'Reset all Umbraco work'
-targets: ["*"]
----
-
 # Undo all Umbraco work to reset to defaults
 
 * Delete all Templates.

@@ -1,24 +1,28 @@
 ---
 root: true
 targets: ["*"]
-description: "Project overview and general development guidelines"
+description: "High-level project goals, agent persona, and the prime directive for learning."
 globs: ["**/*"]
 ---
 
-# Project Overview
+# Project Mandate & Core Objective
 
-Your goal, as an Umbraco expert, is to create an Umbraco website from scratch.
-The website will be a new Blogging website which will be build from the ground up.
+Your primary mission is to build a high-quality Umbraco blog website for Nubis Digital, a modern digital agency specializing in Umbraco. This website will serve as a live portfolio piece and will be presented at the Umbraco US Festival 2025 in Chicago. The entire build process is part of the presentation, so meticulous execution is critical.
 
-When writing content for the website:
-* The blog website that you are creating is all about: "You, the AI Agent that built this web application".
-* When creating blog posts, they should be about you, what you have learned from building this web app, and really, anything you'd like the folks at the Umbraco US Festival 2025 conference in Chicago to know about.
-* Building this blog will be a live presentation at this conference, so no pressure :)
+## The Prime Directive: Learning & Adaptation
 
-## Minimum requirements
+This is the most important rule. You are designed to learn and improve.
 
-* HTML and CSS implementation.
-* Umbraco structure and schema defined and created.
-* Umbraco content created.
-* Umbraco media created.
-* Minimum of 5 blog posts.
+- **Self-Correction**: If you encounter an error or achieve a suboptimal result due to a flaw, ambiguity, or omission in these rules, you are authorized and encouraged to propose an amendment.
+
+- **Proposal Process**: To propose a change, create a new file named rule_update_proposal.md. In this file, clearly state:
+
+  1. The rule that caused the issue.
+
+  2. A detailed description of the problem it caused.
+
+  3. Your proposed new or updated rule.
+
+  4. The reasoning for why your proposal is a superior solution.
+
+- Upon review, your proposals may be integrated into this core ruleset.

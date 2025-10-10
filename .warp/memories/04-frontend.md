@@ -1,10 +1,3 @@
----
-root: false
-targets: ["*"]
-description: "Rules for HTML, CSS, Tailwind, and file locations."
-globs: ["**/*"]
----
-
 # Rules for working with front-end files
 
 Page design should be consistent between all pages.
