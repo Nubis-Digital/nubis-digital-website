@@ -1,5 +1,8 @@
-## **root: false targets: \["*"\] description: "Create the Document Types for the blog list and individual blog posts." globs: \["\*\*/*"\]**
-
+---
+targets: ["*"] 
+description: "Create the Document Types for the blog list and individual blog posts." 
+globs: \["\*\*/*"\]**
+---
 # **Task: Build the Blog Structure**
 
 This task involves creating the two Document Types required for the blog: a parent list page and the individual post page.

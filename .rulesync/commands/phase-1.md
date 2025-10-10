@@ -1,5 +1,8 @@
-## **root: true targets: \["*"\] description: "Create the foundational Element Types and the Generic Page Document Type for the Nubis Digital website." globs: \["\*\*/*"\]**
-
+---
+targets: ["*"\] 
+description: "Create the foundational Element Types and the Generic Page Document Type for the Nubis Digital website." 
+globs: \["\*\*/*"\]**
+---
 # **Task: Create Foundational Block List Elements and Generic Page**
 
 Your first task is to set up the reusable components (Element Types) that will power the Block List Editor for standard pages. Then, you will create the Generic Page Document Type that uses these elements.

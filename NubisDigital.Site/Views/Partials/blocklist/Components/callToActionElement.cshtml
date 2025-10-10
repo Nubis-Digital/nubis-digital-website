@@ -1,0 +1,51 @@
+@using Microsoft.AspNetCore.Html
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
+
+@{
+    if (Model?.Content == null)
+    {
+        return;
+    }
+
+    var content = Model.Content;
+    var headline = content.Value<string>("headline");
+    var description = content.Value<IHtmlContent>("description");
+    var buttonText = content.Value<string>("buttonText");
+    var buttonLink = content.Value<IPublishedContent>("buttonLink");
+}
+
+<section class="section-padding">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-panel overflow-hidden">
+            <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                <div class="max-w-3xl">
+                    @if (!string.IsNullOrWhiteSpace(headline))
+                    {
+                        <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                            @headline
+                        </h2>
+                    }
+
+                    @if (description != null)
+                    {
+                        <div class="mt-4 prose prose-lg prose-slate dark:prose-invert max-w-none">
+                            @description
+                        </div>
+                    }
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(buttonText) && buttonLink != null)
+                {
+                    <div class="shrink-0">
+                        <a href="@buttonLink.Url()" class="btn-primary shadow-lg shadow-indigo-500/30">
+                            @buttonText
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

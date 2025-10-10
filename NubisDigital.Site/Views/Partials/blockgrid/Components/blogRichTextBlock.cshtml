@@ -1,0 +1,16 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+@using Umbraco.Extensions
+
+@{
+    var content = Model?.Content;
+    var richText = content?.Value<string>("content");
+
+    if (string.IsNullOrWhiteSpace(richText))
+    {
+        return;
+    }
+}
+
+<section class="prose prose-slate mx-auto w-full max-w-none dark:prose-invert">
+    @Html.Raw(richText)
+</section>

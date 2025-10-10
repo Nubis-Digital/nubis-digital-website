@@ -1,0 +1,153 @@
+@using System.Globalization
+@using System.Linq
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
+
+@{
+    if (Model?.Content == null)
+    {
+        return;
+    }
+
+    var blockContent = Model.Content;
+    var headline = blockContent.Value<string>("headline");
+    var requestedCount = blockContent.Value<int?>("numberOfPostsToShow") ?? 3;
+    var postsToTake = requestedCount <= 0 ? 3 : requestedCount;
+    var blogRoot = blockContent.Value<IPublishedContent>("blogListLink");
+
+    var posts = Enumerable.Empty<IPublishedContent>();
+
+    if (blogRoot != null)
+    {
+        posts = blogRoot.Children?
+            .Where(x => x.IsVisible())
+            .OrderByDescending(x => x.Value<DateTime?>("publishDate") ?? x.UpdateDate ?? x.CreateDate)
+            .Take(postsToTake)
+            .ToList() ?? Enumerable.Empty<IPublishedContent>();
+    }
+}
+
+<section class="section-padding">
+    <div class="container-wrapper">
+        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+                @if (!string.IsNullOrWhiteSpace(headline))
+                {
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                        @headline
+                    </h2>
+                }
+                <p class="max-w-xl text-slate-600 dark:text-slate-300">
+                    Curated insights from the Nubis Digital build—with fresh reflections every time the project evolves.
+                </p>
+            </div>
+
+            @if (blogRoot != null)
+            {
+                <a class="btn-outline" href="@blogRoot.Url()">
+                    View all posts
+                </a>
+            }
+        </div>
+
+        @if (posts?.Any() == true)
+        {
+            <div class="mt-10 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+                @foreach (var post in posts)
+                {
+                    var postTitle = post.Name;
+                    var postSubtitle = post.Value<string>("subtitle");
+                    var featureImage = post.Value<MediaWithCrops>("featureImage");
+                    var featureImageUrl = featureImage?.GetCropUrl(width: 640, height: 400, mode: ImageCropMode.Crop, furtherOptions: "&quality=85");
+                    var publishDate = post.Value<DateTime?>("publishDate") ?? post.CreateDate;
+                    var author = post.Value<string>("author");
+                    var tags = post.Value<IEnumerable<string>>("tags") ?? Enumerable.Empty<string>();
+                    var formattedDate = publishDate.ToString("MMMM d, yyyy", CultureInfo.CurrentCulture);
+
+                    <article class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/60 bg-white/40 shadow-xl shadow-sky-500/5 backdrop-blur-xl transition hover:-translate-y-1 hover:border-sky-400/60 hover:shadow-2xl hover:shadow-sky-500/20 dark:border-white/10 dark:bg-slate-900/40">
+                        @if (!string.IsNullOrWhiteSpace(featureImageUrl))
+                        {
+                            <div class="relative overflow-hidden">
+                                <img src="@featureImageUrl"
+                                     alt="@postTitle"
+                                     class="h-52 w-full object-cover transition duration-300 group-hover:scale-105" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent dark:from-slate-900/80"></div>
+                                <div class="absolute bottom-4 left-4 flex items-center gap-2 text-sm font-medium tracking-wide text-white/90">
+                                    <span class="inline-flex items-center gap-2 rounded-full bg-slate-900/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-sky-200">
+                                        Latest insight
+                                    </span>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="flex flex-1 flex-col px-6 py-6">
+                            <time class="text-sm font-medium uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
+                                @formattedDate
+                            </time>
+
+                            <h3 class="mt-4 text-2xl font-semibold text-slate-900 transition-colors duration-200 group-hover:text-sky-500 dark:text-slate-100">
+                                <a href="@post.Url()" class="stretched-link">
+                                    @postTitle
+                                </a>
+                            </h3>
+
+                            @if (!string.IsNullOrWhiteSpace(postSubtitle))
+                            {
+                                <p class="mt-3 text-slate-600 dark:text-slate-300">
+                                    @postSubtitle
+                                </p>
+                            }
+
+                            <div class="mt-4 flex flex-wrap gap-3">
+                                @if (!string.IsNullOrWhiteSpace(author))
+                                {
+                                    <span class="inline-flex items-center gap-2 rounded-full border border-slate-200/60 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-500 dark:border-white/10 dark:text-slate-300">
+                                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M10 2a4 4 0 100 8 4 4 0 000-8zm-6 9a6 6 0 0112 0v.333C16 13.806 13.866 16 11.333 16H8.667C6.134 16 4 13.806 4 11.333V11z" clip-rule="evenodd" />
+                                        </svg>
+                                        @author
+                                    </span>
+                                }
+
+                                @foreach (var tag in tags.Where(t => !string.IsNullOrWhiteSpace(t)).Take(3))
+                                {
+                                    <span class="inline-flex items-center rounded-full bg-sky-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">
+                                        @tag
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="mt-6 flex items-center text-sm font-semibold text-sky-500">
+                                Read more
+                                <svg class="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h9.69L10.22 6.03a.75.75 0 011.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="mt-10">
+                <div class="glass-panel">
+                    @if (blogRoot == null)
+                    {
+                        <p class="text-slate-600 dark:text-slate-300">
+                            Select a Blog List page in the block settings to surface the latest posts automatically.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="text-slate-600 dark:text-slate-300">
+                            No published blog posts were found. Publish your first post to showcase build updates here.
+                        </p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>

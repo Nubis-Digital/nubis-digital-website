@@ -1,0 +1,92 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Extensions
+
+@{
+    Layout = "master.cshtml";
+    var pageTitle = Model.Value<string>("pageTitle") ?? Model.Name;
+    var introduction = Model.Value<string>("introduction");
+    var blogPosts = Model.ChildrenOfType("blogPost");
+}
+
+<main class="relative min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+    <div class="pointer-events-none absolute inset-0 -z-10">
+        <div class="absolute inset-y-0 left-1/3 h-[130%] w-[120%] -translate-x-1/2 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_55%)]"></div>
+        <div class="absolute inset-y-0 left-2/3 h-[120%] w-[90%] -translate-x-1/2 bg-[radial-gradient(circle_at_bottom,_rgba(129,140,248,0.16),_transparent_60%)]"></div>
+    </div>
+
+    <section class="relative mx-auto max-w-6xl px-6 py-24">
+        <header class="mx-auto mb-16 max-w-3xl text-center">
+            <h1 class="text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text">
+                @pageTitle
+            </h1>
+            @if (!string.IsNullOrWhiteSpace(introduction))
+            {
+                <div class="prose prose-slate mx-auto mt-6 dark:prose-invert">
+                    @Html.Raw(introduction)
+                </div>
+            }
+        </header>
+
+        @if (blogPosts?.Any() == true)
+        {
+            <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach (var post in blogPosts)
+                {
+                    var teaserImage = post.Value<IPublishedContent>("featuredImage");
+                    var publishDate = post.Value<DateTime?>("publicationDate");
+                    var subtitle = post.Value<string>("subtitle");
+                    var tags = post.Value<IEnumerable<string>>("tags") ?? Enumerable.Empty<string>();
+
+                    <article class="glass-panel group flex h-full flex-col overflow-hidden border border-white/10 bg-white/70 shadow-xl backdrop-blur-lg transition-transform duration-300 hover:-translate-y-1 hover:border-sky-400/30 dark:bg-slate-900/60">
+                        <a href="@post.Url()" class="flex h-full flex-col">
+                            @if (teaserImage is not null)
+                            {
+                                <div class="relative h-52 overflow-hidden">
+                                    <img src="@teaserImage.Url()?width=900&height=520&mode=crop"
+                                         alt="@teaserImage.Name"
+                                         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                </div>
+                            }
+
+                            <div class="flex flex-1 flex-col gap-4 p-8">
+                                <div class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-300">
+                                    @if (publishDate is DateTime date)
+                                    {
+                                        <time datetime="@date:yyyy-MM-dd" class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-800/70 dark:text-slate-200">
+                                            @date.ToString("MMM d, yyyy")
+                                        </time>
+                                    }
+
+                                    @foreach (var tag in tags)
+                                    {
+                                        <span class="rounded-full bg-sky-400/10 px-3 py-1 text-sky-500 dark:bg-sky-400/10 dark:text-sky-300">@tag</span>
+                                    }
+                                </div>
+
+                                <h2 class="text-2xl font-semibold leading-tight text-slate-900 dark:text-white">
+                                    @(post.Value<string>("postTitle") ?? post.Name)
+                                </h2>
+
+                                @if (!string.IsNullOrWhiteSpace(subtitle))
+                                {
+                                    <p class="text-sm text-slate-600 dark:text-slate-300">
+                                        @subtitle
+                                    </p>
+                                }
+                            </div>
+                        </a>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="glass-panel border border-white/10 bg-white/70 p-12 text-center shadow-xl backdrop-blur-lg dark:bg-slate-900/60">
+                <h2 class="text-2xl font-semibold text-slate-800 dark:text-white">Blog posts are coming soon</h2>
+                <p class="mt-4 text-slate-600 dark:text-slate-300">
+                    Add some Blog Post pages under this Blog List to showcase the latest insights from the Nubis Digital studio.
+                </p>
+            </div>
+        }
+    </section>
+</main>

@@ -1,0 +1,23 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+@using Umbraco.Extensions
+
+@{
+    var content = Model?.Content;
+    var image = content?.Value<IPublishedContent>("image");
+    var caption = content?.Value<string>("caption");
+
+    if (image is null)
+    {
+        return;
+    }
+}
+
+<figure class="mx-auto w-full overflow-hidden rounded-3xl border border-white/10 shadow-lg dark:border-slate-800">
+    <img src="@image.Url()?width=1400" alt="@image.Name" class="h-full w-full object-cover" />
+    @if (!string.IsNullOrWhiteSpace(caption))
+    {
+        <figcaption class="bg-slate-100/70 px-6 py-4 text-sm text-slate-600 backdrop-blur dark:bg-slate-900/70 dark:text-slate-300">
+            @caption
+        </figcaption>
+    }
+</figure>

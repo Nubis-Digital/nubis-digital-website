@@ -1,0 +1,23 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+@using Umbraco.Extensions
+
+@{
+    var content = Model?.Content;
+    var quote = content?.Value<string>("quoteText");
+    var attribution = content?.Value<string>("quoteAttribution");
+
+    if (string.IsNullOrWhiteSpace(quote))
+    {
+        return;
+    }
+}
+
+<blockquote class="glass-panel border border-indigo-500/20 bg-indigo-500/10 p-8 text-lg italic text-indigo-900 dark:bg-indigo-400/10 dark:text-indigo-200">
+    <p class="leading-relaxed">“@quote”</p>
+    @if (!string.IsNullOrWhiteSpace(attribution))
+    {
+        <footer class="mt-4 text-right text-sm font-semibold uppercase tracking-wider text-indigo-500 dark:text-indigo-300">
+            — @attribution
+        </footer>
+    }
+</blockquote>

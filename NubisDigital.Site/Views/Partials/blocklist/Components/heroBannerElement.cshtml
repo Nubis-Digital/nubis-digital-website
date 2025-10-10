@@ -1,0 +1,75 @@
+@using System.Globalization
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
+
+@{
+    if (Model?.Content == null)
+    {
+        return;
+    }
+
+    var content = Model.Content;
+    var headline = content.Value<string>("headline");
+    var bodyContent = content.Value<IHtmlContent>("content");
+    var primaryCtaText = content.Value<string>("primaryCtaText");
+    var primaryCtaContent = content.Value<IPublishedContent>("primaryCtaLink");
+    var secondaryCtaText = content.Value<string>("secondaryCtaText");
+    var secondaryCtaContent = content.Value<IPublishedContent>("secondaryCtaLink");
+    var backgroundImage = content.Value<MediaWithCrops>("backgroundImage");
+    var backgroundUrl = backgroundImage?.MediaUrl();
+    var backgroundAlt = backgroundImage?.Value<string>("altText") ?? headline ?? "Hero background";
+}
+
+<section class="relative overflow-hidden py-16 sm:py-20 lg:py-28">
+    <div class="absolute inset-0 -z-20 bg-gradient-to-br from-sky-500/20 via-indigo-500/10 to-blue-900/70"></div>
+
+    @if (!string.IsNullOrWhiteSpace(backgroundUrl))
+    {
+        <div
+            class="absolute inset-0 -z-10 opacity-40"
+            style="background-image: url('@backgroundUrl'); background-size: cover; background-position: center;"
+            role="img"
+            aria-label="@backgroundAlt">
+        </div>
+    }
+
+    <div class="container mx-auto px-4">
+        <div class="glass-panel mx-auto max-w-4xl">
+            @if (!string.IsNullOrWhiteSpace(headline))
+            {
+                <h1 class="text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-6xl">
+                    @headline
+                </h1>
+            }
+
+            @if (bodyContent != null)
+            {
+                <div class="mt-6 prose prose-lg prose-slate dark:prose-invert max-w-none">
+                    @bodyContent
+                </div>
+            }
+
+            @if ((!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null) ||
+                 (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null))
+            {
+                <div class="mt-10 flex flex-wrap gap-4">
+                    @if (!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null)
+                    {
+                        <a href="@primaryCtaContent.Url()" class="btn-primary shadow-lg shadow-sky-500/30">
+                            @primaryCtaText
+                        </a>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null)
+                    {
+                        <a href="@secondaryCtaContent.Url()" class="btn-outline">
+                            @secondaryCtaText
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>

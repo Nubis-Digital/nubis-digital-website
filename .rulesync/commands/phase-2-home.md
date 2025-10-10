@@ -1,5 +1,8 @@
-## **root: false targets: \["*"\] description: "Create the specific Home Page Document Type and its unique Block List elements." globs: \["\*\*/*"\]**
-
+---
+targets: ["*"] 
+description: "Create the specific Home Page Document Type and its unique Block List elements." 
+globs: \["\*\*/*"\]**
+---
 # **Task: Create the Home Page Structure**
 
 This task focuses on creating the Home Page, which has a unique set of content requirements compared to generic pages.

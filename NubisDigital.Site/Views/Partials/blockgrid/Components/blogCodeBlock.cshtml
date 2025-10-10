@@ -1,0 +1,25 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+@using Umbraco.Extensions
+
+@{
+    var content = Model?.Content;
+    var code = content?.Value<string>("code");
+    var language = content?.Value<string>("language");
+
+    if (string.IsNullOrWhiteSpace(code))
+    {
+        return;
+    }
+
+    var normalizedLanguage = string.IsNullOrWhiteSpace(language) ? "plaintext" : language.ToLowerInvariant();
+}
+
+<section class="glass-panel border border-slate-200/40 bg-slate-900/80 p-6 text-slate-100 backdrop-blur-lg dark:border-slate-700/60">
+    <header class="mb-4 flex items-center justify-between text-xs uppercase tracking-widest text-slate-400">
+        <span class="font-semibold text-sky-400">Code Snippet</span>
+        <span class="rounded-full bg-slate-800/70 px-3 py-1 text-slate-300">@normalizedLanguage</span>
+    </header>
+    <pre class="overflow-x-auto text-sm leading-relaxed">
+<code class="language-@normalizedLanguage">@Html.Raw(code)</code>
+    </pre>
+</section>

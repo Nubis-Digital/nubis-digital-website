@@ -1,0 +1,23 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+@using Umbraco.Extensions
+
+@{
+    var content = Model?.Content;
+    var heading = content?.Value<string>("headingText");
+    var level = content?.Value<string>("headingLevel")?.ToLowerInvariant() ?? "h2";
+
+    if (string.IsNullOrWhiteSpace(heading))
+    {
+        return;
+    }
+
+    var allowedLevels = new[] { "h2", "h3", "h4" };
+    if (!allowedLevels.Contains(level))
+    {
+        level = "h2";
+    }
+}
+
+<section class="mx-auto w-full">
+    @Html.Raw($"<{level} class=\"text-3xl font-semibold tracking-tight text-slate-900 dark:text-white\">{heading}</{level}>")
+</section>
