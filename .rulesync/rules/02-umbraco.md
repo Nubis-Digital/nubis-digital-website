@@ -1,10 +1,3 @@
----
-root: false
-targets: ["*"]
-description: "Rules and best practices for developing within the Umbraco CMS."
-globs: ["**/*"]
----
-
 # Umbraco Development Rules
 
 * **Tooling:** Always use the umbraco-mcp MCP tool for all backoffice operations. Do not attempt to log in or modify content through the browser manually.

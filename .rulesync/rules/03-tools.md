@@ -1,10 +1,3 @@
----
-root: false
-targets: ["*"]
-description: "Rules for using MCP tools"
-globs: ["**/*"]
----
-
 # Rules for using MCP tools
 
 ## Common Rules
