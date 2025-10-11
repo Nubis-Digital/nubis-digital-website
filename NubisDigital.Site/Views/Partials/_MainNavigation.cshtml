@@ -1,0 +1,206 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
+@using System
+@using System.Collections.Generic
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+
+@{
+    var root = Model?.Root();
+    var navItems = new List<(string Label, IPublishedContent Node)>();
+
+    if (root is not null)
+    {
+        navItems.Add(("Home", root));
+
+        var childLookup = root.Children?.ToDictionary(
+            child => child.Name ?? string.Empty,
+            StringComparer.OrdinalIgnoreCase) ?? new Dictionary<string, IPublishedContent>(StringComparer.OrdinalIgnoreCase);
+
+        var orderedNames = new[] { "About", "Services", "Blog", "Contact" };
+
+        foreach (var name in orderedNames)
+        {
+            if (childLookup.TryGetValue(name, out var childNode) && navItems.TrueForAll(item => item.Node.Key != childNode.Key))
+            {
+                navItems.Add((name, childNode));
+            }
+        }
+    }
+}
+
+<nav class="sticky top-0 z-50 w-full border-b transition-colors duration-300" aria-label="Primary site navigation" style="background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-color: var(--glass-border);">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+            <a class="flex items-center gap-3 text-slate-900 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-white" href="@(root?.Url() ?? Url.Content("~/"))">
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-black text-white">N</span>
+                <span class="hidden flex-col leading-tight sm:flex">
+                    <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Nubis Digital</span>
+                </span>
+            </a>
+
+            <div class="hidden flex-1 items-center justify-center md:flex">
+                @if (navItems.Count > 0)
+                {
+                    <ul class="flex items-center gap-1 text-sm font-medium">
+                        @foreach (var nav in navItems)
+                        {
+                            var isActive = Model?.IsAncestorOrSelf(nav.Node) ?? false;
+                            var linkClasses = "relative inline-flex items-center justify-center px-4 py-2 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
+                            linkClasses += isActive
+                                ? " text-sky-500 dark:text-sky-400"
+                                : " text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white";
+
+                            <li>
+                                <a href="@nav.Node.Url()" class="@linkClasses" data-nav-link>@nav.Label</a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" type="button" class="theme-switch" aria-label="Toggle theme">
+                    <div class="theme-switch-handle"></div>
+                </button>
+
+                <button id="main-nav-toggle" type="button" class="inline-flex h-8 w-8 items-center justify-center rounded text-slate-600 transition hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-slate-300 dark:hover:text-white md:hidden" aria-controls="main-nav-panel" aria-expanded="false">
+                    <span class="sr-only">Open main navigation menu</span>
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        @if (navItems.Count > 0)
+        {
+            <div id="main-nav-panel" class="hidden border-t py-4 text-base font-medium md:hidden" style="border-color: var(--glass-border);">
+                <ul class="flex flex-col">
+                    @foreach (var nav in navItems)
+                    {
+                        var isActive = Model?.IsAncestorOrSelf(nav.Node) ?? false;
+                        var linkClasses = "flex items-center justify-between px-4 py-3 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
+                        linkClasses += isActive
+                            ? " text-sky-500 dark:text-sky-400"
+                            : " text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white";
+
+                        <li>
+                            <a href="@nav.Node.Url()" class="@linkClasses" data-nav-link>
+                                <span>@nav.Label</span>
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</nav>
+
+<script>
+    (() => {
+        if (window.__nubisNavigationInitialized) {
+            return;
+        }
+
+        window.__nubisNavigationInitialized = true;
+
+        const navToggle = document.getElementById('main-nav-toggle');
+        const navPanel = document.getElementById('main-nav-panel');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle?.querySelector('[data-theme-icon]');
+        const themeLabel = themeToggle?.querySelector('[data-theme-label]');
+        const storageKey = 'nubis-preferred-theme';
+        const darkClass = 'dark';
+
+        const applyTheme = (theme) => {
+            const nextTheme = theme === 'light' ? 'light' : 'dark';
+
+            if (nextTheme === 'dark') {
+                document.documentElement.classList.add(darkClass);
+            } else {
+                document.documentElement.classList.remove(darkClass);
+            }
+
+            themeToggle?.setAttribute('aria-pressed', (nextTheme === 'dark').toString());
+            
+            // Call the global theme toggle function if it exists
+            if (typeof window.toggleTheme === 'function') {
+                // The master page handles the actual theme switching
+                // We just need to keep our local state in sync
+            }
+        };
+
+        const getStoredTheme = () => {
+            try {
+                return localStorage.getItem(storageKey);
+            } catch {
+                return null;
+            }
+        };
+
+        const setStoredTheme = (value) => {
+            try {
+                localStorage.setItem(storageKey, value);
+            } catch {
+                // Ignore storage errors (private mode, etc.)
+            }
+        };
+
+        const storedTheme = getStoredTheme();
+        if (storedTheme) {
+            applyTheme(storedTheme);
+        } else {
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark ? 'dark' : 'light');
+        }
+
+        themeToggle?.addEventListener('click', () => {
+            // Use the global theme toggle function from master.cshtml
+            if (typeof window.toggleTheme === 'function') {
+                window.toggleTheme();
+            } else {
+                // Fallback if master script hasn't loaded yet
+                const isDark = document.documentElement.classList.contains(darkClass);
+                const nextTheme = isDark ? 'light' : 'dark';
+                applyTheme(nextTheme);
+                setStoredTheme(nextTheme);
+            }
+        });
+
+        const setMenuState = (open) => {
+            navToggle?.setAttribute('aria-expanded', open.toString());
+            if (navPanel) {
+                navPanel.classList.toggle('hidden', !open);
+            }
+            document.body.classList.toggle('overflow-hidden', open);
+        };
+
+        navToggle?.addEventListener('click', () => {
+            const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+            setMenuState(!isExpanded);
+        });
+
+        if (navPanel) {
+            navPanel.querySelectorAll('[data-nav-link]').forEach((link) => {
+                link.addEventListener('click', () => setMenuState(false));
+            });
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setMenuState(false);
+            }
+        });
+
+        if (window.matchMedia) {
+            window.matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
+                if (event.matches) {
+                    setMenuState(false);
+                }
+            });
+        }
+    })();
+</script>

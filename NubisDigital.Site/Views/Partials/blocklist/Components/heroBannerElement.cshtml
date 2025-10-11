@@ -20,56 +20,182 @@
     var backgroundImage = content.Value<MediaWithCrops>("backgroundImage");
     var backgroundUrl = backgroundImage?.MediaUrl();
     var backgroundAlt = backgroundImage?.Value<string>("altText") ?? headline ?? "Hero background";
+    
+    // Get hero style - defaults to "centered" if not set
+    var heroStyle = content.Value<string>("heroStyle") ?? "centered";
+    var hasBackground = !string.IsNullOrWhiteSpace(backgroundUrl);
 }
 
-<section class="relative overflow-hidden py-16 sm:py-20 lg:py-28">
-    <div class="absolute inset-0 -z-20 bg-gradient-to-br from-sky-500/20 via-indigo-500/10 to-blue-900/70"></div>
+@if (heroStyle == "fullscreen")
+{
+    <section class="relative flex min-h-screen items-center justify-center overflow-hidden">
+        @if (hasBackground)
+        {
+            <div
+                class="absolute inset-0 -z-10"
+                style="background-image: url('@backgroundUrl'); background-size: cover; background-position: center;"
+                role="img"
+                aria-label="@backgroundAlt">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20"></div>
+            </div>
+        }
 
-    @if (!string.IsNullOrWhiteSpace(backgroundUrl))
-    {
-        <div
-            class="absolute inset-0 -z-10 opacity-40"
-            style="background-image: url('@backgroundUrl'); background-size: cover; background-position: center;"
-            role="img"
-            aria-label="@backgroundAlt">
+        <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-4xl text-center">
+                @if (!string.IsNullOrWhiteSpace(headline))
+                {
+                    <h1 class="text-6xl font-bold tracking-tight text-white sm:text-7xl lg:text-8xl" style="letter-spacing: -0.03em; text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+                        @headline
+                    </h1>
+                }
+
+                @if (bodyContent != null)
+                {
+                    <div class="mx-auto mt-8 max-w-2xl text-xl leading-8 text-white/90 sm:text-2xl" style="text-shadow: 0 1px 10px rgba(0,0,0,0.3);">
+                        @bodyContent
+                    </div>
+                }
+
+                @if ((!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null) ||
+                     (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null))
+                {
+                    <div class="mt-12 flex items-center justify-center gap-4">
+                        @if (!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null)
+                        {
+                            <a href="@primaryCtaContent.Url()" class="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                                @primaryCtaText
+                            </a>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null)
+                        {
+                            <a href="@secondaryCtaContent.Url()" class="inline-flex items-center justify-center text-base font-semibold text-white transition hover:text-white/80">
+                                @secondaryCtaText
+                                <svg class="ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
         </div>
-    }
+    </section>
+}
+else if (heroStyle == "split")
+{
+    <section class="relative overflow-hidden">
+        <div class="mx-auto max-w-7xl">
+            <div class="grid lg:grid-cols-2 lg:gap-8">
+                <div class="flex items-center px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
+                    <div class="max-w-xl">
+                        @if (!string.IsNullOrWhiteSpace(headline))
+                        {
+                            <h1 class="text-5xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-6xl lg:text-7xl" style="letter-spacing: -0.02em;">
+                                @headline
+                            </h1>
+                        }
 
-    <div class="container mx-auto px-4">
-        <div class="glass-panel mx-auto max-w-4xl">
-            @if (!string.IsNullOrWhiteSpace(headline))
-            {
-                <h1 class="text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-6xl">
-                    @headline
-                </h1>
-            }
+                        @if (bodyContent != null)
+                        {
+                            <div class="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-300 sm:text-xl">
+                                @bodyContent
+                            </div>
+                        }
 
-            @if (bodyContent != null)
-            {
-                <div class="mt-6 prose prose-lg prose-slate dark:prose-invert max-w-none">
-                    @bodyContent
+                        @if ((!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null) ||
+                             (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null))
+                        {
+                            <div class="mt-10 flex items-center gap-4">
+                                @if (!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null)
+                                {
+                                    <a href="@primaryCtaContent.Url()" class="inline-flex items-center justify-center rounded-full bg-sky-500 px-6 py-3 text-base font-medium text-white transition hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500">
+                                        @primaryCtaText
+                                    </a>
+                                }
+
+                                @if (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null)
+                                {
+                                    <a href="@secondaryCtaContent.Url()" class="inline-flex items-center justify-center text-base font-medium text-sky-500 transition hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300">
+                                        @secondaryCtaText
+                                        <svg class="ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                        </svg>
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
                 </div>
-            }
 
-            @if ((!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null) ||
-                 (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null))
-            {
-                <div class="mt-10 flex flex-wrap gap-4">
-                    @if (!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null)
-                    {
-                        <a href="@primaryCtaContent.Url()" class="btn-primary shadow-lg shadow-sky-500/30">
-                            @primaryCtaText
-                        </a>
-                    }
-
-                    @if (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null)
-                    {
-                        <a href="@secondaryCtaContent.Url()" class="btn-outline">
-                            @secondaryCtaText
-                        </a>
-                    }
-                </div>
-            }
+                @if (hasBackground)
+                {
+                    <div class="relative h-64 lg:h-auto">
+                        <img
+                            src="@backgroundUrl"
+                            alt="@backgroundAlt"
+                            class="absolute inset-0 h-full w-full object-cover"
+                        />
+                    </div>
+                }
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+}
+else
+{
+    <!-- Default: Centered Style -->
+    <section class="relative overflow-hidden py-20 sm:py-28 lg:py-36">
+        @if (hasBackground)
+        {
+            <div
+                class="absolute inset-0 -z-10"
+                style="background-image: url('@backgroundUrl'); background-size: cover; background-position: center;"
+                role="img"
+                aria-label="@backgroundAlt">
+                <div class="absolute inset-0 bg-white/80 dark:bg-slate-900/80"></div>
+            </div>
+        }
+
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl text-center">
+                @if (!string.IsNullOrWhiteSpace(headline))
+                {
+                    <h1 class="text-5xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-6xl lg:text-7xl" style="letter-spacing: -0.02em;">
+                        @headline
+                    </h1>
+                }
+
+                @if (bodyContent != null)
+                {
+                    <div class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300 sm:text-xl">
+                        @bodyContent
+                    </div>
+                }
+
+                @if ((!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null) ||
+                     (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null))
+                {
+                    <div class="mt-10 flex items-center justify-center gap-4">
+                        @if (!string.IsNullOrWhiteSpace(primaryCtaText) && primaryCtaContent != null)
+                        {
+                            <a href="@primaryCtaContent.Url()" class="inline-flex items-center justify-center rounded-full bg-sky-500 px-6 py-3 text-base font-medium text-white transition hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500">
+                                @primaryCtaText
+                            </a>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaContent != null)
+                        {
+                            <a href="@secondaryCtaContent.Url()" class="inline-flex items-center justify-center text-base font-medium text-sky-500 transition hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300">
+                                @secondaryCtaText
+                                <svg class="ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}

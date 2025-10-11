@@ -9,13 +9,13 @@
     var mainContent = Model.Value<BlockListModel>("mainContent");
 }
 
-<main class="relative min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
-    <div class="pointer-events-none absolute inset-0 -z-10">
-        <div class="absolute inset-y-0 left-1/2 h-[140%] w-[120%] -translate-x-1/2 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_50%)]"></div>
-        <div class="absolute inset-y-0 left-1/3 h-[120%] w-[90%] -translate-x-1/2 bg-[radial-gradient(circle_at_bottom,_rgba(129,140,248,0.16),_transparent_55%)]"></div>
+<main class="relative min-h-screen transition-colors duration-300">
+    <div class="gradient-bg">
+        <div class="gradient-orb-1"></div>
+        <div class="gradient-orb-2"></div>
     </div>
 
-    <div class="relative">
+    <div class="relative z-10">
         @if (!string.IsNullOrWhiteSpace(siteTitle))
         {
             <header class="sr-only">
@@ -31,9 +31,9 @@
         {
             <section class="section-padding">
                 <div class="container-wrapper">
-                    <div class="glass-panel">
-                        <h2 class="text-2xl font-semibold">Build in progress</h2>
-                        <p class="mt-4 text-slate-600 dark:text-slate-300">
+                    <div class="glass-panel max-w-2xl mx-auto text-center">
+                        <h2 class="text-heading-2 mb-4">Build in progress</h2>
+                        <p class="text-body">
                             Add blocks to the <strong>Main Content</strong> area to bring the home page to life.
                         </p>
                     </div>

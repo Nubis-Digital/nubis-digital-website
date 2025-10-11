@@ -1,16 +1,12 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
-@using Umbraco.Extensions
-
+@using Umbraco.Cms.Core.Models.Blocks
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
 @{
-    var content = Model?.Content;
-    var richText = content?.Value<string>("content");
-
-    if (string.IsNullOrWhiteSpace(richText))
-    {
-        return;
-    }
+    var content = Model.Content.Value<string>("content");
 }
 
-<section class="prose prose-slate mx-auto w-full max-w-none dark:prose-invert">
-    @Html.Raw(richText)
-</section>
+@if (!string.IsNullOrEmpty(content))
+{
+    <div class="prose prose-lg dark:prose-invert max-w-none">
+        @Html.Raw(content)
+    </div>
+}

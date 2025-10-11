@@ -12,40 +12,129 @@
 
     var content = Model.Content;
     var headline = content.Value<string>("headline");
-    var description = content.Value<IHtmlContent>("description");
+    var descriptionContent = content.Value("description");
     var buttonText = content.Value<string>("buttonText");
     var buttonLink = content.Value<IPublishedContent>("buttonLink");
+    var ctaStyle = content.Value<string>("ctaStyle") ?? "banner";
 }
 
-<section class="section-padding">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="glass-panel overflow-hidden">
-            <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                <div class="max-w-3xl">
+@if (ctaStyle == "banner")
+{
+    <section class="py-20 sm:py-28">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 px-8 py-16 shadow-2xl shadow-sky-500/30 sm:px-16 lg:px-24">
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6TTIwIDM0YzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00em0wIDEwYzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00eiIvPjwvZz48L2c+PC9zdmc+')] opacity-20"></div>
+                
+                <div class="relative flex flex-col items-center gap-8 text-center lg:flex-row lg:text-left">
+                    <div class="flex-1">
+                        @if (!string.IsNullOrWhiteSpace(headline))
+                        {
+                            <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl" style="letter-spacing: -0.02em;">
+                                @headline
+                            </h2>
+                        }
+
+                        @if (descriptionContent != null)
+                        {
+                            <div class="mt-4 text-lg leading-8 text-sky-50">
+                                @Html.Raw(descriptionContent)
+                            </div>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(buttonText) && buttonLink != null)
+                    {
+                        <div class="shrink-0">
+                            <a href="@buttonLink.Url()" class="group inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl transition-all hover:scale-105 hover:shadow-2xl">
+                                @buttonText
+                                <svg class="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h9.69L10.22 6.03a.75.75 0 011.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+}
+else if (ctaStyle == "centered")
+{
+    <section class="py-20 sm:py-28">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="relative overflow-hidden rounded-3xl bg-white/60 px-8 py-20 text-center shadow-xl ring-1 ring-slate-900/5 backdrop-blur-xl dark:bg-slate-900/60 dark:ring-white/10 sm:px-16">
+                <div class="absolute inset-0 bg-gradient-to-br from-sky-500/10 via-transparent to-indigo-500/10"></div>
+                
+                <div class="relative mx-auto max-w-2xl">
                     @if (!string.IsNullOrWhiteSpace(headline))
                     {
-                        <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                        <h2 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl" style="letter-spacing: -0.02em;">
                             @headline
                         </h2>
                     }
 
-                    @if (description != null)
+                    @if (descriptionContent != null)
                     {
-                        <div class="mt-4 prose prose-lg prose-slate dark:prose-invert max-w-none">
-                            @description
+                        <div class="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-300">
+                            @Html.Raw(descriptionContent)
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(buttonText) && buttonLink != null)
+                    {
+                        <div class="mt-10">
+                            <a href="@buttonLink.Url()" class="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-sky-500/40">
+                                @buttonText
+                                <svg class="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h9.69L10.22 6.03a.75.75 0 011.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
                         </div>
                     }
                 </div>
-
-                @if (!string.IsNullOrWhiteSpace(buttonText) && buttonLink != null)
-                {
-                    <div class="shrink-0">
-                        <a href="@buttonLink.Url()" class="btn-primary shadow-lg shadow-indigo-500/30">
-                            @buttonText
-                        </a>
-                    </div>
-                }
             </div>
         </div>
-    </div>
-</section>
+    </section>
+}
+else if (ctaStyle == "split")
+{
+    <section class="py-20 sm:py-28">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="overflow-hidden rounded-3xl bg-white/60 shadow-xl ring-1 ring-slate-900/5 backdrop-blur-xl dark:bg-slate-900/60 dark:ring-white/10">
+                <div class="grid gap-0 lg:grid-cols-2">
+                    <div class="relative bg-gradient-to-br from-sky-500 to-indigo-600 px-8 py-16 sm:px-12 lg:px-16">
+                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAgMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6TTIwIDM0YzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00em0wIDEwYzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00eiIvPjwvZz48L2c+PC9zdmc+')] opacity-20"></div>
+                        
+                        <div class="relative">
+                            @if (!string.IsNullOrWhiteSpace(headline))
+                            {
+                                <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl" style="letter-spacing: -0.02em;">
+                                    @headline
+                                </h2>
+                            }
+
+                            @if (descriptionContent != null)
+                            {
+                                <div class="mt-6 text-lg leading-8 text-sky-50">
+                                    @Html.Raw(descriptionContent)
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-8 py-16 dark:from-slate-800 dark:to-slate-900 sm:px-12 lg:px-16">
+                        @if (!string.IsNullOrWhiteSpace(buttonText) && buttonLink != null)
+                        {
+                            <a href="@buttonLink.Url()" class="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-10 py-5 text-lg font-semibold text-white shadow-2xl shadow-sky-500/30 transition-all hover:scale-105 hover:shadow-sky-500/50">
+                                @buttonText
+                                <svg class="h-6 w-6 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h9.69L10.22 6.03a.75.75 0 011.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "Nubis.BlockGridCustomViews",
+  "version": "1.0.0",
+  "extensions": [
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.richText",
+      "name": "Blog Rich Text Custom View",
+      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-richtext-view.ts",
+      "forContentTypeAlias": "blogRichTextBlock"
+    },
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.headline",
+      "name": "Blog Headline Custom View",
+      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-headline-view.ts",
+      "forContentTypeAlias": "blogHeadlineBlock"
+    },
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.image",
+      "name": "Blog Image Custom View",
+      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-image-view.ts",
+      "forContentTypeAlias": "blogImageBlock"
+    },
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.quote",
+      "name": "Blog Quote Custom View",
+      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-quote-view.ts",
+      "forContentTypeAlias": "blogQuoteBlock"
+    },
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.code",
+      "name": "Blog Code Custom View",
+      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-code-view.ts",
+      "forContentTypeAlias": "blogCodeBlock"
+    }
+  ]
+}

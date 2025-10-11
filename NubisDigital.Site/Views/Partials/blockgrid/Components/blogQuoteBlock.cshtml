@@ -1,23 +1,21 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
-@using Umbraco.Extensions
-
+@using Umbraco.Cms.Core.Models.Blocks
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
 @{
-    var content = Model?.Content;
-    var quote = content?.Value<string>("quoteText");
-    var attribution = content?.Value<string>("quoteAttribution");
-
-    if (string.IsNullOrWhiteSpace(quote))
-    {
-        return;
-    }
+    var quoteText = Model.Content.Value<string>("quoteText");
+    var quoteAttribution = Model.Content.Value<string>("quoteAttribution");
 }
 
-<blockquote class="glass-panel border border-indigo-500/20 bg-indigo-500/10 p-8 text-lg italic text-indigo-900 dark:bg-indigo-400/10 dark:text-indigo-200">
-    <p class="leading-relaxed">“@quote”</p>
-    @if (!string.IsNullOrWhiteSpace(attribution))
-    {
-        <footer class="mt-4 text-right text-sm font-semibold uppercase tracking-wider text-indigo-500 dark:text-indigo-300">
-            — @attribution
-        </footer>
-    }
-</blockquote>
+@if (!string.IsNullOrEmpty(quoteText))
+{
+    <blockquote class="my-8 pl-6 border-l-4 border-sky-500 dark:border-indigo-500 bg-gradient-to-r from-sky-50 to-transparent dark:from-indigo-950 dark:to-transparent py-4 pr-4 rounded-r-lg">
+        <p class="text-xl md:text-2xl text-gray-900 dark:text-white font-medium italic mb-2">
+            "@quoteText"
+        </p>
+        @if (!string.IsNullOrEmpty(quoteAttribution))
+        {
+            <footer class="text-sm text-gray-600 dark:text-gray-400">
+                — @quoteAttribution
+            </footer>
+        }
+    </blockquote>
+}

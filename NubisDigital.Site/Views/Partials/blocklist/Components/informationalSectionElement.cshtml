@@ -1,0 +1,36 @@
+@using Microsoft.AspNetCore.Html
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
+
+@{
+    if (Model?.Content == null)
+    {
+        return;
+    }
+
+    var content = Model.Content;
+    var headline = content.Value<string>("headline");
+    var richText = content.Value<IHtmlContent>("content");
+}
+
+<section class="section-padding">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-panel">
+            @if (!string.IsNullOrWhiteSpace(headline))
+            {
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                    @headline
+                </h2>
+            }
+
+            @if (richText is IHtmlContent contentRichText)
+            {
+                <div class="mt-6 prose prose-lg prose-slate dark:prose-invert max-w-none">
+                    @contentRichText
+                </div>
+            }
+        </div>
+    </div>
+</section>
