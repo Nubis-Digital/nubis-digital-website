@@ -1,5 +1,12 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
 @using System.Globalization
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+
 @{
+    var siteRoot = Model.AncestorOrSelf("siteRoot");
+    var siteSettings = siteRoot?.FirstChild(x => x.ContentType.Alias == "siteSettings");
     var currentCulture = CultureInfo.CurrentCulture.Name;
     var langCode = currentCulture.Split('-')[0]; // Get just the language part (e.g., "en" from "en-US")
 }
@@ -113,17 +120,20 @@
                 <!-- Quick Links -->
                 <div>
                     <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-white">Quick Links</h3>
-                    <ul class="mt-4 space-y-3">
-                        <li>
-                            <a href="/" class="text-sm text-slate-600 transition-colors hover:text-sky-500 dark:text-slate-400 dark:hover:text-sky-400">Home</a>
-                        </li>
-                        <li>
-                            <a href="/about/" class="text-sm text-slate-600 transition-colors hover:text-sky-500 dark:text-slate-400 dark:hover:text-sky-400">About</a>
-                        </li>
-                        <li>
-                            <a href="/blog/" class="text-sm text-slate-600 transition-colors hover:text-sky-500 dark:text-slate-400 dark:hover:text-sky-400">Blog</a>
-                        </li>
-                    </ul>
+                    @{
+                        var footerLinks = siteSettings.Value<IEnumerable<Link>>("footerLinks") ?? Enumerable.Empty<Link>();
+                    }
+                    @if (footerLinks.Any())
+                    {
+                        <ul class="mt-4 space-y-3">
+                            @foreach (var link in footerLinks)
+                            {
+                                <li>
+                                    <a href="@link.Url" target="@link.Target" class="text-sm text-slate-600 transition-colors hover:text-sky-500 dark:text-slate-400 dark:hover:text-sky-400">@link.Name</a>
+                                </li>
+                            }
+                        </ul>
+                    }
                 </div>
 
                 <!-- Resources -->
@@ -163,7 +173,17 @@
             <div class="mt-12 border-t border-slate-200/10 pt-8 dark:border-slate-800/50">
                 <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
                     <p class="text-sm text-slate-600 dark:text-slate-400">
-                        © @DateTime.Now.Year Nubis Digital. Built with <span class="text-red-500">♥</span> using Umbraco CMS.
+                        @{
+                            var copyright = siteSettings.Value<string>("footerCopyright");
+                        }
+                        @if (!string.IsNullOrEmpty(copyright))
+                        {
+                            @Html.Raw(copyright)
+                        }
+                        else
+                        {
+                            @:© @DateTime.Now.Year Nubis Digital. Built with <span class="text-red-500">♥</span> using Umbraco CMS.
+                        }
                     </p>
                     <div class="flex gap-6">
                         <a href="#" class="text-sm text-slate-600 transition-colors hover:text-sky-500 dark:text-slate-400 dark:hover:text-sky-400">Privacy Policy</a>

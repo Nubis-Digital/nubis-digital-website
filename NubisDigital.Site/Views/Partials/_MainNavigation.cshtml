@@ -2,41 +2,24 @@
 @using System
 @using System.Collections.Generic
 @using System.Globalization
+@using Umbraco.Cms.Core.Models
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Extensions
 
 @{
-    var root = Model?.Root();
-    var navItems = new List<(string Label, IPublishedContent Node)>();
-    
+    var siteRoot = Model.AncestorOrSelf("siteRoot");
+    var siteSettings = siteRoot?.FirstChild(x => x.ContentType.Alias == "siteSettings");
+    var navLinks = siteSettings?.Value<IEnumerable<Link>>("navbarLinks") ?? Enumerable.Empty<Link>();
+
     // Get current culture and available cultures
     var currentCulture = CultureInfo.CurrentCulture.Name;
     var availableCultures = Model?.Cultures?.Keys?.ToList() ?? new List<string>();
-
-    if (root is not null)
-    {
-        navItems.Add(("Home", root));
-
-        var childLookup = root.Children?.ToDictionary(
-            child => child.Name ?? string.Empty,
-            StringComparer.OrdinalIgnoreCase) ?? new Dictionary<string, IPublishedContent>(StringComparer.OrdinalIgnoreCase);
-
-        var orderedNames = new[] { "About", "Services", "Blog", "Contact" };
-
-        foreach (var name in orderedNames)
-        {
-            if (childLookup.TryGetValue(name, out var childNode) && navItems.TrueForAll(item => item.Node.Key != childNode.Key))
-            {
-                navItems.Add((name, childNode));
-            }
-        }
-    }
 }
 
 <nav class="sticky top-0 z-50 w-full border-b transition-colors duration-300" aria-label="Primary site navigation" style="background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-color: var(--glass-border);">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
-            <a class="flex items-center gap-3 text-slate-900 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-white" href="@(root?.Url() ?? Url.Content("~/"))">
+            <a class="flex items-center gap-3 text-slate-900 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-white" href="@(siteRoot?.Url() ?? Url.Content("~/"))">
                 <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-black text-white">N</span>
                 <span class="hidden flex-col leading-tight sm:flex">
                     <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Nubis Digital</span>
@@ -44,19 +27,20 @@
             </a>
 
             <div class="hidden flex-1 items-center justify-center md:flex">
-                @if (navItems.Count > 0)
+                @if (navLinks.Any())
                 {
                     <ul class="flex items-center gap-1 text-sm font-medium">
-                        @foreach (var nav in navItems)
+                        @foreach (var link in navLinks)
                         {
-                            var isActive = Model?.IsAncestorOrSelf(nav.Node) ?? false;
+                            var linkTarget = link.Target ?? "_self";
+                            var isActive = (Model?.Url() == link.Url);
                             var linkClasses = "relative inline-flex items-center justify-center px-4 py-2 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
                             linkClasses += isActive
                                 ? " text-sky-500 dark:text-sky-400"
                                 : " text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white";
 
                             <li>
-                                <a href="@nav.Node.Url()" class="@linkClasses" data-nav-link>@nav.Label</a>
+                                <a href="@link.Url" target="@linkTarget" class="@linkClasses" data-nav-link>@link.Name</a>
                             </li>
                         }
                     </ul>
@@ -216,21 +200,22 @@
             </div>
         </div>
 
-        @if (navItems.Count > 0)
+        @if (navLinks.Any())
         {
             <div id="main-nav-panel" class="hidden border-t py-4 text-base font-medium md:hidden" style="border-color: var(--glass-border);">
                 <ul class="flex flex-col">
-                    @foreach (var nav in navItems)
+                    @foreach (var link in navLinks)
                     {
-                        var isActive = Model?.IsAncestorOrSelf(nav.Node) ?? false;
+                        var linkTarget = link.Target ?? "_self";
+                        var isActive = (Model?.Url() == link.Url);
                         var linkClasses = "flex items-center justify-between px-4 py-3 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
                         linkClasses += isActive
                             ? " text-sky-500 dark:text-sky-400"
                             : " text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white";
 
                         <li>
-                            <a href="@nav.Node.Url()" class="@linkClasses" data-nav-link>
-                                <span>@nav.Label</span>
+                            <a href="@link.Url" target="@linkTarget" class="@linkClasses" data-nav-link>
+                                <span>@link.Name</span>
                                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="m9 18 6-6-6-6" />
                                 </svg>
