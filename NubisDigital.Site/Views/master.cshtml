@@ -1,11 +1,36 @@
+@using System.Globalization
+@{
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+    var langCode = currentCulture.Split('-')[0]; // Get just the language part (e.g., "en" from "en-US")
+}
 <!DOCTYPE html>
-<html lang="en" class="dark" data-theme="dark">
+<html lang="@langCode" class="dark" data-theme="dark">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <meta-fields></meta-fields>
+    
+    @* Add hreflang tags for SEO *@
+    @if (Model is Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent publishedContent)
+    {
+        var cultures = publishedContent.Cultures?.Keys?.ToList() ?? new List<string>();
+        foreach (var culture in cultures)
+        {
+            var cultureUrl = publishedContent.Url(culture,UrlMode.Absolute);
+            <link rel="alternate" hreflang="@culture" href="@cultureUrl" />
+        }
+        
+        @* Add x-default for default language *@
+        if (cultures.Any())
+        {
+            var defaultCulture = cultures.FirstOrDefault(c => c.StartsWith("en")) ?? cultures.First();
+            var defaultUrl = publishedContent.Url(defaultCulture, UrlMode.Absolute);
+            <link rel="alternate" hreflang="x-default" href="@defaultUrl" />
+        }
+    }
+    
     <render-script position="HeadBottom"></render-script>
 
     <script>

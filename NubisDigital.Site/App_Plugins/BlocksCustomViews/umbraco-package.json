@@ -7,77 +7,77 @@
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.richText",
       "name": "Blog Rich Text Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-richtext-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/blog-richtext-view.js",
       "forContentTypeAlias": "blogRichTextBlock"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.headline",
       "name": "Blog Headline Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-headline-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/blog-headline-view.js",
       "forContentTypeAlias": "blogHeadlineBlock"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.image",
       "name": "Blog Image Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-image-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/blog-image-view.js",
       "forContentTypeAlias": "blogImageBlock"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.quote",
       "name": "Blog Quote Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-quote-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/blog-quote-view.js",
       "forContentTypeAlias": "blogQuoteBlock"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.code",
       "name": "Blog Code Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/blog-code-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/blog-code-view.js",
       "forContentTypeAlias": "blogCodeBlock"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.heroBanner",
       "name": "Hero Banner Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/hero-banner-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/hero-banner-view.js",
       "forContentTypeAlias": "heroBannerElement"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.callToAction",
       "name": "Call To Action Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/call-to-action-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/call-to-action-view.js",
       "forContentTypeAlias": "callToActionElement"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.servicesOverview",
       "name": "Services Overview Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/services-overview-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/services-overview-view.js",
       "forContentTypeAlias": "servicesOverviewElement"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.latestBlogPosts",
       "name": "Latest Blog Posts Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/latest-blog-posts-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/latest-blog-posts-view.js",
       "forContentTypeAlias": "latestBlogPostsElement"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.informationalSection",
       "name": "Informational Section Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/informational-section-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/informational-section-view.js",
       "forContentTypeAlias": "informationalSectionElement"
     },
     {
       "type": "blockEditorCustomView",
       "alias": "nubis.blockEditorCustomView.contactForm",
       "name": "Contact Form Custom View",
-      "element": "/App_Plugins/BlockGridCustomViews/dist/contact-form-view.js",
+      "element": "/App_Plugins/BlocksCustomViews/dist/contact-form-view.js",
       "forContentTypeAlias": "contactFormElement"
     }
   ]

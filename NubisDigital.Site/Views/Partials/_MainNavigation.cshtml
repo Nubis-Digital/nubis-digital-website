@@ -1,12 +1,17 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
 @using System
 @using System.Collections.Generic
+@using System.Globalization
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Extensions
 
 @{
     var root = Model?.Root();
     var navItems = new List<(string Label, IPublishedContent Node)>();
+    
+    // Get current culture and available cultures
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+    var availableCultures = Model?.Cultures?.Keys?.ToList() ?? new List<string>();
 
     if (root is not null)
     {
@@ -59,9 +64,148 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <button id="theme-toggle" type="button" class="theme-switch" aria-label="Toggle theme">
-                    <div class="theme-switch-handle"></div>
-                </button>
+                @* Language Switcher Dropdown *@
+                @if (availableCultures.Count > 1)
+                {
+                    <div class="language-switcher hidden md:block relative">
+                        <button id="language-dropdown-toggle"
+                                type="button"
+                                class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                aria-label="Select language">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                                <path d="M2 12h20"/>
+                            </svg>
+                            <span class="text-xs font-semibold uppercase">
+                                @{
+                                    var currentDisplayName = currentCulture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "EN" :
+                                                            currentCulture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "ES" :
+                                                            currentCulture.Split('-')[0].ToUpper();
+                                }
+                                @currentDisplayName
+                            </span>
+                            <svg class="h-4 w-4 transition-transform duration-200" id="language-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </button>
+                        
+                        <div id="language-dropdown-menu"
+                             class="absolute right-0 mt-2 w-48 origin-top-right rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 hidden"
+                             style="background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border);"
+                             role="menu"
+                             aria-orientation="vertical"
+                             aria-labelledby="language-dropdown-toggle">
+                            <div class="py-1" role="none">
+                                @foreach (var culture in availableCultures)
+                                {
+                                    var isActive = culture.Equals(currentCulture, StringComparison.OrdinalIgnoreCase);
+                                    var cultureUrl = Model?.Url(culture) ?? "#";
+                                    var displayName = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "English" :
+                                                    culture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "Español" :
+                                                    culture;
+                                    var flag = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "🇺🇸" :
+                                              culture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "🇪🇸" :
+                                              "🌐";
+                                    var linkClasses = "flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
+                                    linkClasses += isActive
+                                        ? " bg-gradient-to-r from-sky-500/10 to-indigo-500/10 text-sky-600 dark:text-sky-400 font-medium"
+                                        : " text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800";
+                                    
+                                    <a href="@cultureUrl"
+                                       class="@linkClasses"
+                                       hreflang="@culture"
+                                       role="menuitem"
+                                       aria-label="Switch to @displayName"
+                                       aria-current="@(isActive ? "true" : "false")">
+                                        <span class="text-lg">@flag</span>
+                                        <span>@displayName</span>
+                                        @if (isActive)
+                                        {
+                                            <svg class="ml-auto h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M20 6 9 17l-5-5"/>
+                                            </svg>
+                                        }
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @* Theme Switcher Dropdown *@
+                <div class="theme-switcher relative">
+                    <button id="theme-dropdown-toggle"
+                            type="button"
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-label="Select theme">
+                        <svg id="theme-icon-sun" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/>
+                            <path d="M12 20v2"/>
+                            <path d="m4.93 4.93 1.41 1.41"/>
+                            <path d="m17.66 17.66 1.41 1.41"/>
+                            <path d="M2 12h2"/>
+                            <path d="M20 12h2"/>
+                            <path d="m6.34 17.66-1.41 1.41"/>
+                            <path d="m19.07 4.93-1.41 1.41"/>
+                        </svg>
+                        <svg id="theme-icon-moon" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                        <span id="theme-current-label" class="text-xs font-semibold uppercase"></span>
+                        <svg class="h-4 w-4 transition-transform duration-200" id="theme-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </button>
+                    
+                    <div id="theme-dropdown-menu"
+                         class="absolute right-0 mt-2 w-48 origin-top-right rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 hidden"
+                         style="background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border);"
+                         role="menu"
+                         aria-orientation="vertical"
+                         aria-labelledby="theme-dropdown-toggle">
+                        <div class="py-1" role="none">
+                            <button type="button"
+                                    data-theme-option="light"
+                                    class="flex items-center gap-3 px-4 py-2 text-sm w-full text-left transition-colors duration-200 text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                                    role="menuitem">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="4"/>
+                                    <path d="M12 2v2"/>
+                                    <path d="M12 20v2"/>
+                                    <path d="m4.93 4.93 1.41 1.41"/>
+                                    <path d="m17.66 17.66 1.41 1.41"/>
+                                    <path d="M2 12h2"/>
+                                    <path d="M20 12h2"/>
+                                    <path d="m6.34 17.66-1.41 1.41"/>
+                                    <path d="m19.07 4.93-1.41 1.41"/>
+                                </svg>
+                                <span class="flex-1">Light</span>
+                                <svg class="h-4 w-4 hidden theme-check-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20 6 9 17l-5-5"/>
+                                </svg>
+                            </button>
+                            
+                            <button type="button"
+                                    data-theme-option="dark"
+                                    class="flex items-center gap-3 px-4 py-2 text-sm w-full text-left transition-colors duration-200 text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                                    role="menuitem">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                                </svg>
+                                <span class="flex-1">Dark</span>
+                                <svg class="h-4 w-4 hidden theme-check-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20 6 9 17l-5-5"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <button id="main-nav-toggle" type="button" class="inline-flex h-8 w-8 items-center justify-center rounded text-slate-600 transition hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-slate-300 dark:hover:text-white md:hidden" aria-controls="main-nav-panel" aria-expanded="false">
                     <span class="sr-only">Open main navigation menu</span>
@@ -93,6 +237,55 @@
                             </a>
                         </li>
                     }
+                    
+                    @* Mobile Language Switcher *@
+                    @if (availableCultures.Count > 1)
+                    {
+                        <li class="border-t mt-2 pt-2" style="border-color: var(--glass-border);">
+                            <div class="px-4 py-2">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <svg class="h-4 w-4 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                                        <path d="M2 12h20"/>
+                                    </svg>
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Language</span>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    @foreach (var culture in availableCultures)
+                                    {
+                                        var isActive = culture.Equals(currentCulture, StringComparison.OrdinalIgnoreCase);
+                                        var cultureUrl = Model?.Url(culture) ?? "#";
+                                        var displayName = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "English" :
+                                                        culture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "Español" :
+                                                        culture;
+                                        var flag = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "🇺🇸" :
+                                                  culture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "🇪🇸" :
+                                                  "🌐";
+                                        var linkClasses = "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
+                                        linkClasses += isActive
+                                            ? " bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/30"
+                                            : " bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700";
+                                        
+                                        <a href="@cultureUrl"
+                                           class="@linkClasses"
+                                           hreflang="@culture"
+                                           aria-label="Switch to @displayName"
+                                           aria-current="@(isActive ? "true" : "false")">
+                                            <span class="text-lg">@flag</span>
+                                            <span class="flex-1">@displayName</span>
+                                            @if (isActive)
+                                            {
+                                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <path d="M20 6 9 17l-5-5"/>
+                                                </svg>
+                                            }
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </li>
+                    }
                 </ul>
             </div>
         }
@@ -109,64 +302,110 @@
 
         const navToggle = document.getElementById('main-nav-toggle');
         const navPanel = document.getElementById('main-nav-panel');
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = themeToggle?.querySelector('[data-theme-icon]');
-        const themeLabel = themeToggle?.querySelector('[data-theme-label]');
-        const storageKey = 'nubis-preferred-theme';
-        const darkClass = 'dark';
+        
+        // Theme dropdown elements
+        const themeDropdownToggle = document.getElementById('theme-dropdown-toggle');
+        const themeDropdownMenu = document.getElementById('theme-dropdown-menu');
+        const themeDropdownIcon = document.getElementById('theme-dropdown-icon');
+        const themeIconSun = document.getElementById('theme-icon-sun');
+        const themeIconMoon = document.getElementById('theme-icon-moon');
+        const themeCurrentLabel = document.getElementById('theme-current-label');
+        const themeCheckLight = document.querySelector('.theme-check-light');
+        const themeCheckDark = document.querySelector('.theme-check-dark');
 
-        const applyTheme = (theme) => {
-            const nextTheme = theme === 'light' ? 'light' : 'dark';
-
-            if (nextTheme === 'dark') {
-                document.documentElement.classList.add(darkClass);
+        // Update theme UI based on current theme
+        const updateThemeUI = (theme) => {
+            if (theme === 'light') {
+                themeIconSun?.classList.remove('hidden');
+                themeIconMoon?.classList.add('hidden');
+                if (themeCurrentLabel) themeCurrentLabel.textContent = 'Light';
+                themeCheckLight?.classList.remove('hidden');
+                themeCheckDark?.classList.add('hidden');
             } else {
-                document.documentElement.classList.remove(darkClass);
-            }
-
-            themeToggle?.setAttribute('aria-pressed', (nextTheme === 'dark').toString());
-            
-            // Call the global theme toggle function if it exists
-            if (typeof window.toggleTheme === 'function') {
-                // The master page handles the actual theme switching
-                // We just need to keep our local state in sync
+                themeIconSun?.classList.add('hidden');
+                themeIconMoon?.classList.remove('hidden');
+                if (themeCurrentLabel) themeCurrentLabel.textContent = 'Dark';
+                themeCheckLight?.classList.add('hidden');
+                themeCheckDark?.classList.remove('hidden');
             }
         };
 
-        const getStoredTheme = () => {
-            try {
-                return localStorage.getItem(storageKey);
-            } catch {
-                return null;
+        // Set theme dropdown state (open/closed)
+        const setThemeDropdownState = (open) => {
+            themeDropdownToggle?.setAttribute('aria-expanded', open.toString());
+            themeDropdownMenu?.classList.toggle('hidden', !open);
+            if (themeDropdownIcon) {
+                themeDropdownIcon.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
             }
         };
 
-        const setStoredTheme = (value) => {
-            try {
-                localStorage.setItem(storageKey, value);
-            } catch {
-                // Ignore storage errors (private mode, etc.)
+        // Initialize theme UI on page load
+        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        updateThemeUI(currentTheme);
+
+        // Toggle theme dropdown
+        themeDropdownToggle?.addEventListener('click', () => {
+            const isExpanded = themeDropdownToggle.getAttribute('aria-expanded') === 'true';
+            setThemeDropdownState(!isExpanded);
+        });
+
+        // Theme selection from dropdown
+        document.querySelectorAll('[data-theme-option]').forEach(button => {
+            button.addEventListener('click', () => {
+                const selectedTheme = button.getAttribute('data-theme-option');
+                
+                // Use the global theme toggle function if it exists
+                if (typeof window.toggleTheme === 'function') {
+                    const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+                    // Only toggle if we're switching to a different theme
+                    if (currentTheme !== selectedTheme) {
+                        window.toggleTheme();
+                    }
+                }
+                
+                updateThemeUI(selectedTheme);
+                setThemeDropdownState(false);
+            });
+        });
+
+        // Close theme dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!themeDropdownToggle?.contains(event.target) && !themeDropdownMenu?.contains(event.target)) {
+                setThemeDropdownState(false);
+            }
+        });
+
+        // Language dropdown functionality
+        const languageDropdownToggle = document.getElementById('language-dropdown-toggle');
+        const languageDropdownMenu = document.getElementById('language-dropdown-menu');
+        const languageDropdownIcon = document.getElementById('language-dropdown-icon');
+
+        const setLanguageDropdownState = (open) => {
+            languageDropdownToggle?.setAttribute('aria-expanded', open.toString());
+            if (languageDropdownMenu) {
+                languageDropdownMenu.classList.toggle('hidden', !open);
+            }
+            if (languageDropdownIcon) {
+                languageDropdownIcon.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
             }
         };
 
-        const storedTheme = getStoredTheme();
-        if (storedTheme) {
-            applyTheme(storedTheme);
-        } else {
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            applyTheme(prefersDark ? 'dark' : 'light');
-        }
+        languageDropdownToggle?.addEventListener('click', () => {
+            const isExpanded = languageDropdownToggle.getAttribute('aria-expanded') === 'true';
+            setLanguageDropdownState(!isExpanded);
+        });
 
-        themeToggle?.addEventListener('click', () => {
-            // Use the global theme toggle function from master.cshtml
-            if (typeof window.toggleTheme === 'function') {
-                window.toggleTheme();
-            } else {
-                // Fallback if master script hasn't loaded yet
-                const isDark = document.documentElement.classList.contains(darkClass);
-                const nextTheme = isDark ? 'light' : 'dark';
-                applyTheme(nextTheme);
-                setStoredTheme(nextTheme);
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!languageDropdownToggle?.contains(event.target) && !languageDropdownMenu?.contains(event.target)) {
+                setLanguageDropdownState(false);
+            }
+        });
+
+        // Close dropdown on Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setLanguageDropdownState(false);
             }
         });
 
