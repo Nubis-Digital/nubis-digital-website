@@ -10,6 +10,7 @@
     var siteRoot = Model.AncestorOrSelf("siteRoot");
     var siteSettings = siteRoot?.FirstChild(x => x.ContentType.Alias == "siteSettings");
     var navLinks = siteSettings?.Value<IEnumerable<Link>>("navbarLinks") ?? Enumerable.Empty<Link>();
+    var siteTitle = siteSettings?.Value<string>("siteTitle") ?? "Nubis Digital";
 
     // Get current culture and available cultures
     var currentCulture = CultureInfo.CurrentCulture.Name;
@@ -20,7 +21,17 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             <a class="flex items-center gap-3 text-slate-900 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-white" href="@(siteRoot?.Url() ?? Url.Content("~/"))">
-                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-black text-white">N</span>
+                @{
+                    var logo = siteSettings?.Value<IPublishedContent>("siteLogo");
+                }
+                @if (logo != null)
+                {
+                    <img src="@logo.Url()" alt="@siteTitle" class="h-8 w-auto" />
+                }
+                else
+                {
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-black text-white">N</span>
+                }
                 <span class="hidden flex-col leading-tight sm:flex">
                     <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Nubis Digital</span>
                 </span>

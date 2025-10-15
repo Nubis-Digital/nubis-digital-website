@@ -1,3 +1,10 @@
+---
+root: false
+targets: ["*"]
+description: "Rules for creating blocks for blockgrid and blocklist"
+globs: ["**/*"]
+---
+
 # Block List Element Type Container Requirements
 
 ## Critical Issue: Element Type Properties Must Have Containers
@@ -159,10 +166,6 @@ Before deploying any Element Type for Block List/Grid editors:
 - [ ] Container UUID is unique across all element types
 - [ ] Tested in browser that modal displays all properties
 
-## Related Files
-
-- Element Type definitions: [`NubisDigital.Site/uSync/v16/ContentTypes/`](NubisDigital.Site/uSync/v16/ContentTypes/)
-- Block List Data Types: [`GenericPageBlocks.config`](NubisDigital.Site/uSync/v16/DataTypes/GenericPageBlocks.config), [`HomePageBlocks.config`](NubisDigital.Site/uSync/v16/DataTypes/HomePageBlocks.config)
 
 ## Key Takeaway
 

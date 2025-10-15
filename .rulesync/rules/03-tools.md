@@ -1,4 +1,10 @@
-# Rules for using MCP tools
+---
+root: false
+targets: ["*"]
+description: "Defines the operational protocol for all MCP tools."
+globs: ["**/*"]
+---
+# Tool Usage Protocol
 
 ## Common Rules
 

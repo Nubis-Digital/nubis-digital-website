@@ -16,15 +16,15 @@
 }
 
 [data-theme="light"] {
-  --bg-color: #f1f5f9;
-  --text-color: #0f172a;
-  --text-muted-color: #475569;
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(148, 163, 184, 0.3);
-  --glass-shadow: rgba(0, 0, 0, 0.1);
+  --bg-color: #f8fafc;
+  --text-color: #334155;
+  --text-muted-color: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(148, 163, 184, 0.25);
+  --glass-shadow: rgba(0, 0, 0, 0.08);
   --logo-color-1: #0ea5e9;
   --logo-color-2: #6366f1;
-  --nav-bg: rgba(255, 255, 255, 0.95);
+  --nav-bg: rgba(255, 255, 255, 0.90);
 }
 
 .dark {
@@ -40,15 +40,15 @@
 }
 
 .light {
-  --bg-color: #f1f5f9;
-  --text-color: #0f172a;
-  --text-muted-color: #475569;
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(148, 163, 184, 0.3);
-  --glass-shadow: rgba(0, 0, 0, 0.1);
+  --bg-color: #f8fafc;
+  --text-color: #334155;
+  --text-muted-color: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(148, 163, 184, 0.25);
+  --glass-shadow: rgba(0, 0, 0, 0.08);
   --logo-color-1: #0ea5e9;
   --logo-color-2: #6366f1;
-  --nav-bg: rgba(255, 255, 255, 0.95);
+  --nav-bg: rgba(255, 255, 255, 0.90);
 }
 
 /* Custom Component Classes */

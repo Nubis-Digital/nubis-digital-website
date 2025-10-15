@@ -1,3 +1,10 @@
+---
+root: false
+targets: ["*"]
+description: "Umbraco best practices"
+globs: ["**/*"]
+---
+
 # Umbraco Development Rules
 
 * **Tooling:** Always use the umbraco-mcp MCP tool for all backoffice operations. Do not attempt to log in or modify content through the browser manually.

@@ -1,32 +1,41 @@
-# Rules for working with front-end files
+---
+root: false
+targets: ["*"]
+description: "Rules for working with front-end files."
+globs: ["**/*"]
+---
+# Frontend Development & Design Protocol
 
-Page design should be consistent between all pages.
+## 1. Guiding Principles
 
-## Umbraco Templates
+* **Consistency**: A consistent design language and user experience **MUST** be maintained across all pages and components of the website.
+* **Framework First**: Adhere to the conventions and best practices of the specified frameworks (Umbraco, Tailwind CSS) before introducing custom solutions.
 
-* When creating Umbraco Templates, this must be done via the Umbraco Template MCP tools.
-* After Umbraco Templates have been created, modifying the cshtml file content directly via the file system is acceptable.
-* Rendering Umbraco content in the cshtml files DO NOT require additional plugins.
-  * Even for markdown editors, etc... Umbraco has all of the functionality built in to render this correctly using the standard syntax: `@Model.Value("propertyName")`.
-  * DO NOT install Markdig or other libraries, they are not needed.
+## 2. Styling (Tailwind CSS)
 
-## Partial Views
+* **Primary Framework**: All HTML and CSS markup **MUST** use Tailwind CSS classes for styling. Do not write custom, non-utility CSS unless absolutely necessary for a complex component.
+* **Central Stylesheet**: The file `index.css` is the single source of truth for all styles. This file **MUST** contain all Tailwind directives (`@tailwind`), custom component classes, and CSS variables.
+* **No Separate Files**: Do not create additional CSS files for individual pages or components. All styles must be managed within the central stylesheet.
+* **Theming**: All brand colors, fonts, and spacing properties **MUST** be defined as CSS variables at the root of `index.css` for site-wide consistency.
+* **Responsive Design**: All layouts **MUST** be fully responsive. Use Tailwind's mobile-first breakpoint prefixes (e.g., `sm:`, `md:`, `lg:`) to adapt the design for different screen sizes.
 
-* Razor partial views or components will need to be manually authored via the file system and stored at: NubisDigital.Site\Views\Partials
+## 3. Umbraco Views & Templates
 
-# Design & Frontend Rules
+### Templates (`.cshtml`)
 
-* **Primary Framework:** ALL HTML and CSS markup MUST use Tailwind CSS classes for styling.
+* **Creation**: Templates **MUST** be created using the Umbraco Template MCP tool.
+* **Modification**: After a template is created, modifying its `.cshtml` file content directly via the file system is permitted.
+* **Content Rendering**:
+    * Use Umbraco's built-in property rendering syntax exclusively: `@Model.Value("propertyName")`.
+    * You **MUST NOT** install or use third-party rendering libraries (like Markdig). Umbraco's native functionality is sufficient for all content types, including markdown.
 
-* **Stylesheet:** Use NubisDigital.Site/wwwroot/css/index.css as the single, main stylesheet for all site-wide styles, Tailwind directives, and custom component classes. Do not create separate CSS files for individual pages.
+### Partial Views
 
+* **Authoring**: All Razor partial views (`.cshtml` files used as components) **MUST** be authored manually in the file system.
 
-* **CSS Variables:** Define all brand colors and theme properties as CSS variables within index.css.
+## 4. File System Structure
 
-* **Responsive Design:** All layouts must be fully responsive using Tailwind's breakpoint prefixes (e.g., sm:, md:, lg:).
+To ensure consistency, all front-end assets must be stored in their designated locations.
 
-**File Locations:**
-
-* CSS files must be stored at NubisDigital.Site/wwwroot/css/.
-
-* Razor partial views must be stored at NubisDigital.Site\Views\Partials.
+* **Stylesheets**: `NubisDigital.Site/wwwroot/css/`
+* **Partial Views**: `NubisDigital.Site/Views/Partials/`

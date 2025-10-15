@@ -1,3 +1,10 @@
+---
+root: false
+targets: ["*"]
+description: "Rules for creating csutom views blocks elements"
+globs: ["**/*"]
+---
+
 # Block Grid Custom Views Implementation Guide
 
 ## Overview
@@ -10,7 +17,7 @@ The Block Grid editor in Umbraco's backoffice was not displaying custom views fo
 
 ### File Structure
 ```
-NubisDigital.Site/App_Plugins/BlockGridCustomViews/
+UmbCatering.Site/App_Plugins/BlockGridCustomViews/
 ├── umbraco-package.json          # Extension manifest
 └── dist/                          # Compiled JavaScript files
     ├── blog-richtext-view.js

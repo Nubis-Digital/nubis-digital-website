@@ -9,6 +9,8 @@
     var siteSettings = siteRoot?.FirstChild(x => x.ContentType.Alias == "siteSettings");
     var currentCulture = CultureInfo.CurrentCulture.Name;
     var langCode = currentCulture.Split('-')[0]; // Get just the language part (e.g., "en" from "en-US")
+    var pageTitle = Model.Value<string>("pageTitle") ?? Model.Name;
+    var siteTitle = siteSettings?.Value<string>("siteTitle") ?? "Nubis Digital";
 }
 <!DOCTYPE html>
 <html lang="@langCode" class="dark" data-theme="dark">
@@ -16,6 +18,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>@pageTitle - @siteTitle</title>
 
     <meta-fields></meta-fields>
     
@@ -67,8 +71,10 @@
 <body class="min-h-screen antialiased transition-colors duration-300">
     <render-script position="BodyTop"></render-script>
 
-    <!-- 3D Canvas Background -->
-    <div id="three-canvas-container"></div>
+    <div role="presentation" aria-hidden="true">
+        <!-- 3D Canvas Background -->
+        <div id="three-canvas-container"></div>
+    </div>
 
     @{
         var currentPage = Model as Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent;
@@ -90,9 +96,19 @@
                 <!-- Brand Column -->
                 <div class="lg:col-span-1">
                     <div class="flex items-center gap-3">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-indigo-500 text-lg font-bold text-white shadow-lg shadow-sky-500/30">
-                            N
-                        </div>
+                        @{
+                            var logo = siteSettings?.Value<IPublishedContent>("siteLogo");
+                        }
+                        @if (logo != null)
+                        {
+                            <img src="@logo.Url()" alt="@siteTitle" class="h-10 w-auto" />
+                        }
+                        else
+                        {
+                            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-indigo-500 text-lg font-bold text-white shadow-lg shadow-sky-500/30">
+                                N
+                            </div>
+                        }
                         <span class="text-xl font-bold text-slate-900 dark:text-white">Nubis Digital</span>
                     </div>
                     <p class="mt-4 text-sm text-slate-600 dark:text-slate-400">
