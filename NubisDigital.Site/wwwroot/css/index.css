@@ -240,4 +240,22 @@
       grid-column: span 1;
     }
   }
+  
+  /* Enhanced Navigation Components */
+  .nav-link-indicator {
+    @apply absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full;
+    background: linear-gradient(90deg, var(--logo-color-1), var(--logo-color-2));
+  }
+  
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Focus visible improvements for better accessibility */
+  *:focus-visible {
+    outline: 2px solid var(--logo-color-1);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
 }

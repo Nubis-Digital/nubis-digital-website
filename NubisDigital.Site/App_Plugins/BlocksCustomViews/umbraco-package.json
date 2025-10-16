@@ -79,6 +79,13 @@
       "name": "Contact Form Custom View",
       "element": "/App_Plugins/BlocksCustomViews/dist/contact-form-view.js",
       "forContentTypeAlias": "contactFormElement"
+    },
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.heroSlider",
+      "name": "Hero Slider Custom View",
+      "element": "/App_Plugins/BlocksCustomViews/dist/hero-slider-view.js",
+      "forContentTypeAlias": "heroSliderElement"
     }
   ]
 }

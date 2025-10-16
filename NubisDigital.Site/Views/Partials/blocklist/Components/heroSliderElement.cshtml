@@ -1,0 +1,576 @@
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
+
+@{
+    if (Model?.Content == null)
+    {
+        return;
+    }
+
+    var content = Model.Content;
+    var slides = content.Value<IEnumerable<BlockListItem>>("slides");
+    var autoPlay = content.Value<bool>("autoPlay");
+    var autoPlayDelay = content.Value<int>("autoPlayDelay");
+    var sliderVariant = content.Value<string>("sliderVariant") ?? "Fade";
+    
+    // Default to 5000ms if not set
+    if (autoPlayDelay <= 0)
+    {
+        autoPlayDelay = 5000;
+    }
+    
+    var sliderId = $"hero-slider-{Guid.NewGuid():N}";
+    var slideCount = slides?.Count() ?? 0;
+    
+    // Helper function to extract video ID from YouTube/Vimeo URLs
+    string GetVideoEmbedUrl(string videoUrl)
+    {
+        if (string.IsNullOrWhiteSpace(videoUrl)) return null;
+        
+        // YouTube
+        if (videoUrl.Contains("youtube.com") || videoUrl.Contains("youtu.be"))
+        {
+            var videoId = "";
+            if (videoUrl.Contains("youtube.com/watch?v="))
+            {
+                videoId = videoUrl.Split("v=")[1].Split("&")[0];
+            }
+            else if (videoUrl.Contains("youtu.be/"))
+            {
+                videoId = videoUrl.Split("youtu.be/")[1].Split("?")[0];
+            }
+            return !string.IsNullOrEmpty(videoId) ? $"https://www.youtube.com/embed/{videoId}?autoplay=1&mute=1&loop=1&playlist={videoId}&controls=0&showinfo=0&rel=0&modestbranding=1" : null;
+        }
+        
+        // Vimeo
+        if (videoUrl.Contains("vimeo.com"))
+        {
+            var videoId = videoUrl.Split("vimeo.com/")[1].Split("?")[0];
+            return !string.IsNullOrEmpty(videoId) ? $"https://player.vimeo.com/video/{videoId}?autoplay=1&muted=1&loop=1&background=1&controls=0" : null;
+        }
+        
+        return null;
+    }
+}
+
+@if (slides != null && slides.Any())
+{
+    <section class="relative h-screen w-full overflow-hidden" role="region" aria-label="Hero Slider" aria-roledescription="carousel">
+        <div class="swiper-container h-full" id="@sliderId">
+            <div class="swiper-wrapper">
+                @{
+                    var slideIndex = 0;
+                }
+                @foreach (var slide in slides)
+                {
+                    var slideContent = slide.Content;
+                    var slideImage = slideContent.Value<MediaWithCrops>("slideImage");
+                    var slideImageUrl = slideImage?.MediaUrl();
+                    var videoUrl = slideContent.Value<string>("videoUrl");
+                    var videoEmbedUrl = GetVideoEmbedUrl(videoUrl);
+                    var headline = slideContent.Value<string>("headline");
+                    var subheadline = slideContent.Value<string>("subheadline");
+                    var ctaText = slideContent.Value<string>("ctaText");
+                    var ctaLink = slideContent.Value<IPublishedContent>("ctaLink");
+                    var secondaryCtaText = slideContent.Value<string>("secondaryCtaText");
+                    var secondaryCtaLink = slideContent.Value<IPublishedContent>("secondaryCtaLink");
+                    var imageAlt = slideImage?.Value<string>("altText") ?? headline ?? "Hero slide";
+                    slideIndex++;
+                    
+                    <div class="swiper-slide relative" role="group" aria-roledescription="slide" aria-label="Slide @slideIndex of @slideCount">
+                        @if (!string.IsNullOrWhiteSpace(videoEmbedUrl))
+                        {
+                            <!-- Video background -->
+                            <div class="hero-slide-video-wrapper">
+                                <iframe
+                                    src="@videoEmbedUrl"
+                                    class="hero-slide-video"
+                                    frameborder="0"
+                                    allow="autoplay; fullscreen; picture-in-picture"
+                                    allowfullscreen
+                                    title="@(headline ?? "Hero video")"
+                                    loading="@(slideIndex == 1 ? "eager" : "lazy")"
+                                ></iframe>
+                            </div>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(slideImageUrl))
+                        {
+                            <!-- Image background with Ken Burns effect (only if variant is Ken Burns) -->
+                            <div class="hero-slide-image-wrapper">
+                                <img
+                                    src="@slideImageUrl"
+                                    alt="@imageAlt"
+                                    class="hero-slide-image h-full w-full object-cover @(sliderVariant == "Ken Burns" ? "ken-burns-active" : "")"
+                                    loading="@(slideIndex == 1 ? "eager" : "lazy")"
+                                />
+                            </div>
+                        }
+                        
+                        <!-- Gradient overlay for better text readability -->
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60"></div>
+                        
+                        <!-- Content -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="hero-slide-content container mx-auto px-6 text-center text-white">
+                                @if (!string.IsNullOrWhiteSpace(headline))
+                                {
+                                    <h1 class="hero-slide-headline text-4xl font-bold leading-tight md:text-6xl lg:text-7xl mb-4 animate-fade-in-up"
+                                        style="letter-spacing: -0.02em; text-shadow: 0 4px 30px rgba(0,0,0,0.5);">
+                                        @headline
+                                    </h1>
+                                }
+                                
+                                @if (!string.IsNullOrWhiteSpace(subheadline))
+                                {
+                                    <p class="hero-slide-subheadline text-lg md:text-xl lg:text-2xl mb-8 text-white/90 max-w-3xl mx-auto animate-fade-in-up animation-delay-200"
+                                       style="text-shadow: 0 2px 20px rgba(0,0,0,0.4);">
+                                        @subheadline
+                                    </p>
+                                }
+                                
+                                @if ((!string.IsNullOrWhiteSpace(ctaText) && ctaLink != null) || (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaLink != null))
+                                {
+                                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up animation-delay-400">
+                                        @if (!string.IsNullOrWhiteSpace(ctaText) && ctaLink != null)
+                                        {
+                                            <a
+                                                href="@ctaLink.Url()"
+                                                class="hero-slide-cta inline-flex items-center justify-center rounded-full bg-sky-500 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:bg-sky-600 hover:scale-105 hover:shadow-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                                                aria-label="@ctaText - @headline"
+                                            >
+                                                @ctaText
+                                                <svg class="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                </svg>
+                                            </a>
+                                        }
+                                        
+                                        @if (!string.IsNullOrWhiteSpace(secondaryCtaText) && secondaryCtaLink != null)
+                                        {
+                                            <a
+                                                href="@secondaryCtaLink.Url()"
+                                                class="hero-slide-secondary-cta inline-flex items-center justify-center rounded-full border-2 border-white/80 bg-white/10 backdrop-blur-sm px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:border-white hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                                                aria-label="@secondaryCtaText - @headline"
+                                            >
+                                                @secondaryCtaText
+                                            </a>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <!-- Progress bar -->
+            <div class="hero-slider-progress" role="progressbar" aria-label="Slide progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="hero-slider-progress-bar"></div>
+            </div>
+            
+            <!-- Pagination with custom styling -->
+            <div class="swiper-pagination" role="tablist" aria-label="Slide navigation"></div>
+            
+            <!-- Navigation buttons with accessibility -->
+            <button class="swiper-button-next" aria-label="Next slide" type="button"></button>
+            <button class="swiper-button-prev" aria-label="Previous slide" type="button"></button>
+            
+            <!-- Play/Pause button -->
+            @if (autoPlay)
+            {
+                <button class="hero-slider-play-pause" aria-label="Pause slideshow" type="button">
+                    <svg class="play-icon hidden" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg class="pause-icon" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                </button>
+            }
+        </div>
+    </section>
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Initialize Enhanced Swiper -->
+    <script>
+        (function() {
+            const sliderId = '@sliderId';
+            const container = document.getElementById(sliderId);
+            const autoPlayEnabled = @(autoPlay ? "true" : "false");
+            const autoPlayDelay = @autoPlayDelay;
+            const sliderVariant = '@sliderVariant';
+            
+            // Check for reduced motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            
+            // Configure effect based on variant
+            let effectConfig = {};
+            let swiperEffect = 'slide';
+            
+            if (sliderVariant === 'Fade' || sliderVariant === 'Ken Burns') {
+                swiperEffect = 'fade';
+                effectConfig = {
+                    fadeEffect: {
+                        crossFade: true
+                    }
+                };
+            } else if (sliderVariant === 'Slide') {
+                swiperEffect = 'slide';
+                effectConfig = {
+                    slidesPerView: 1,
+                    spaceBetween: 0
+                };
+            }
+            
+            const swiper = new Swiper('#' + sliderId, {
+                loop: true,
+                speed: prefersReducedMotion ? 300 : 1000,
+                effect: swiperEffect,
+                ...effectConfig,
+                keyboard: {
+                    enabled: true,
+                    onlyInViewport: true,
+                },
+                mousewheel: {
+                    forceToAxis: true,
+                    sensitivity: 1,
+                    releaseOnEdges: true,
+                },
+                pagination: {
+                    el: '#' + sliderId + ' .swiper-pagination',
+                    clickable: true,
+                    renderBullet: function (index, className) {
+                        return '<button class="' + className + '" role="tab" aria-label="Go to slide ' + (index + 1) + '" aria-selected="false"></button>';
+                    },
+                },
+                navigation: {
+                    nextEl: '#' + sliderId + ' .swiper-button-next',
+                    prevEl: '#' + sliderId + ' .swiper-button-prev',
+                },
+                autoplay: autoPlayEnabled && !prefersReducedMotion ? {
+                    delay: autoPlayDelay,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                } : false,
+                a11y: {
+                    enabled: true,
+                    prevSlideMessage: 'Previous slide',
+                    nextSlideMessage: 'Next slide',
+                    firstSlideMessage: 'This is the first slide',
+                    lastSlideMessage: 'This is the last slide',
+                },
+                on: {
+                    init: function() {
+                        updateProgressBar(this);
+                        updateActiveSlideAria(this);
+                    },
+                    slideChange: function() {
+                        updateProgressBar(this);
+                        updateActiveSlideAria(this);
+                    },
+                    autoplayTimeLeft: function(swiper, time, percentage) {
+                        const progressBar = container.querySelector('.hero-slider-progress-bar');
+                        if (progressBar) {
+                            progressBar.style.width = (100 - percentage * 100) + '%';
+                        }
+                    },
+                }
+            });
+            
+            // Progress bar update
+            function updateProgressBar(swiperInstance) {
+                const progressBar = container.querySelector('.hero-slider-progress-bar');
+                if (progressBar && !autoPlayEnabled) {
+                    const progress = ((swiperInstance.realIndex + 1) / swiperInstance.slides.length) * 100;
+                    progressBar.style.width = progress + '%';
+                }
+            }
+            
+            // Update ARIA attributes for active slide
+            function updateActiveSlideAria(swiperInstance) {
+                const bullets = container.querySelectorAll('.swiper-pagination-bullet');
+                bullets.forEach((bullet, index) => {
+                    bullet.setAttribute('aria-selected', index === swiperInstance.realIndex ? 'true' : 'false');
+                });
+            }
+            
+            // Play/Pause functionality
+            if (autoPlayEnabled) {
+                const playPauseBtn = container.querySelector('.hero-slider-play-pause');
+                const playIcon = playPauseBtn?.querySelector('.play-icon');
+                const pauseIcon = playPauseBtn?.querySelector('.pause-icon');
+                
+                if (playPauseBtn) {
+                    playPauseBtn.addEventListener('click', function() {
+                        if (swiper.autoplay.running) {
+                            swiper.autoplay.stop();
+                            playIcon.classList.remove('hidden');
+                            pauseIcon.classList.add('hidden');
+                            playPauseBtn.setAttribute('aria-label', 'Play slideshow');
+                        } else {
+                            swiper.autoplay.start();
+                            playIcon.classList.add('hidden');
+                            pauseIcon.classList.remove('hidden');
+                            playPauseBtn.setAttribute('aria-label', 'Pause slideshow');
+                        }
+                    });
+                }
+            }
+            
+            // Pause on focus for accessibility
+            container.addEventListener('focusin', function() {
+                if (swiper.autoplay.running) {
+                    swiper.autoplay.stop();
+                }
+            });
+            
+            container.addEventListener('focusout', function() {
+                if (autoPlayEnabled && !prefersReducedMotion) {
+                    swiper.autoplay.start();
+                }
+            });
+        })();
+    </script>
+    
+    <style>
+        /* Hero Slider Enhanced Styles */
+        #@sliderId {
+            --swiper-theme-color: #38bdf8;
+            --swiper-navigation-size: 24px;
+        }
+        
+        /* Image wrapper */
+        .hero-slide-image-wrapper {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+        
+        .hero-slide-image {
+            transform: scale(1);
+        }
+        
+        /* Ken Burns zoom effect - only applied when ken-burns-active class is present */
+        .hero-slide-image.ken-burns-active {
+            transition: transform 8s ease-out;
+        }
+        
+        .swiper-slide-active .hero-slide-image.ken-burns-active {
+            transform: scale(1.1);
+        }
+        
+        /* Video wrapper */
+        .hero-slide-video-wrapper {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+        
+        .hero-slide-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        /* Ensure video covers the entire slide */
+        @@media (min-aspect-ratio: 16/9) {
+            .hero-slide-video {
+                height: 56.25vw;
+            }
+        }
+        
+        @@media (max-aspect-ratio: 16/9) {
+            .hero-slide-video {
+                width: 177.78vh;
+            }
+        }
+        
+        /* Disable Ken Burns on reduced motion */
+        @@media (prefers-reduced-motion: reduce) {
+            .hero-slide-image.ken-burns-active {
+                transition: none !important;
+                transform: scale(1) !important;
+            }
+        }
+        
+        /* Content animations */
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .animation-delay-200 {
+            animation-delay: 0.2s;
+        }
+        
+        .animation-delay-400 {
+            animation-delay: 0.4s;
+        }
+        
+        /* Disable animations on reduced motion */
+        @@media (prefers-reduced-motion: reduce) {
+            .animate-fade-in-up {
+                animation: none !important;
+                opacity: 1 !important;
+            }
+        }
+        
+        /* Navigation buttons */
+        #@sliderId .swiper-button-next,
+        #@sliderId .swiper-button-prev {
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 9999px;
+            width: 3.5rem;
+            height: 3.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #@sliderId .swiper-button-next:hover,
+        #@sliderId .swiper-button-prev:hover {
+            background: rgba(56, 189, 248, 0.8);
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+        }
+        
+        #@sliderId .swiper-button-next:after,
+        #@sliderId .swiper-button-prev:after {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        
+        /* Pagination bullets */
+        #@sliderId .swiper-pagination {
+            bottom: 2rem;
+        }
+        
+        #@sliderId .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        #@sliderId .swiper-pagination-bullet:hover {
+            opacity: 0.8;
+            transform: scale(1.2);
+        }
+        
+        #@sliderId .swiper-pagination-bullet-active {
+            opacity: 1;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            border-color: white;
+            transform: scale(1.3);
+        }
+        
+        /* Progress bar */
+        .hero-slider-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 10;
+        }
+        
+        .hero-slider-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+        
+        /* Play/Pause button */
+        .hero-slider-play-pause {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .hero-slider-play-pause:hover {
+            background: rgba(56, 189, 248, 0.8);
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+        }
+        
+        .hero-slider-play-pause svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            #@sliderId .swiper-button-next,
+            #@sliderId .swiper-button-prev {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            #@sliderId .swiper-button-next:after,
+            #@sliderId .swiper-button-prev:after {
+                font-size: 1rem;
+            }
+            
+            .hero-slider-play-pause {
+                width: 2.5rem;
+                height: 2.5rem;
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+            
+            .hero-slider-play-pause svg {
+                width: 1rem;
+                height: 1rem;
+            }
+        }
+        
+        /* Focus styles for accessibility */
+        #@sliderId .swiper-button-next:focus-visible,
+        #@sliderId .swiper-button-prev:focus-visible,
+        #@sliderId .swiper-pagination-bullet:focus-visible,
+        .hero-slider-play-pause:focus-visible {
+            outline: 3px solid #38bdf8;
+            outline-offset: 3px;
+        }
+    </style>
+}

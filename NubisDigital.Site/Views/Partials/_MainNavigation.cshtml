@@ -17,10 +17,13 @@
     var availableCultures = Model?.Cultures?.Keys?.ToList() ?? new List<string>();
 }
 
-<nav class="sticky top-0 z-50 w-full border-b transition-colors duration-300" aria-label="Primary site navigation" style="background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-color: var(--glass-border);">
+<nav class="nav-enhanced sticky top-0 z-50 w-full border-b transition-all duration-300" aria-label="Primary site navigation" style="background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-color: var(--glass-border);">
+    <!-- Progress bar for scroll depth -->
+    <div id="scroll-progress" class="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-sky-400 to-indigo-500 transition-all duration-150" style="width: 0%;"></div>
+    
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
-            <a class="flex items-center gap-3 text-slate-900 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-white" href="@(siteRoot?.Url() ?? Url.Content("~/"))">
+            <a class="logo-link group flex items-center gap-3 text-slate-900 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-white" href="@(siteRoot?.Url() ?? Url.Content("~/"))">
                 @{
                     var logo = siteSettings?.Value<IPublishedContent>("siteLogo");
                 }
@@ -30,10 +33,10 @@
                 }
                 else
                 {
-                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-black text-white">N</span>
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-black text-white shadow-lg shadow-sky-500/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-sky-500/50">N</span>
                 }
                 <span class="hidden flex-col leading-tight sm:flex">
-                    <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Nubis Digital</span>
+                    <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 transition-colors duration-300 group-hover:text-sky-500 dark:text-slate-400 dark:group-hover:text-sky-400">Nubis Digital</span>
                 </span>
             </a>
 
@@ -45,13 +48,23 @@
                         {
                             var linkTarget = link.Target ?? "_self";
                             var isActive = (Model?.Url() == link.Url);
-                            var linkClasses = "relative inline-flex items-center justify-center px-4 py-2 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
+                            var linkClasses = "nav-link group relative inline-flex items-center justify-center px-4 py-2 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
                             linkClasses += isActive
                                 ? " text-sky-500 dark:text-sky-400"
                                 : " text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white";
 
                             <li>
-                                <a href="@link.Url" target="@linkTarget" class="@linkClasses" data-nav-link>@link.Name</a>
+                                <a href="@link.Url" target="@linkTarget" class="@linkClasses" data-nav-link>
+                                    <span class="relative z-10">@link.Name</span>
+                                    @if (isActive)
+                                    {
+                                        <span class="absolute inset-x-2 -bottom-0.5 h-0.5 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="absolute inset-x-2 -bottom-0.5 h-0.5 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                                    }
+                                </a>
                             </li>
                         }
                     </ul>
@@ -65,7 +78,7 @@
                     <div class="language-switcher hidden md:block relative">
                         <button id="language-dropdown-toggle"
                                 type="button"
-                                class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                                class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 text-slate-600 hover:bg-slate-100 hover:scale-105 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
                                 aria-haspopup="true"
                                 aria-expanded="false"
                                 aria-label="Select language">
@@ -134,7 +147,7 @@
                 <div class="theme-switcher relative">
                     <button id="theme-dropdown-toggle"
                             type="button"
-                            class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 text-slate-600 hover:bg-slate-100 hover:scale-105 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
                             aria-haspopup="true"
                             aria-expanded="false"
                             aria-label="Select theme">
@@ -202,11 +215,13 @@
                     </div>
                 </div>
 
-                <button id="main-nav-toggle" type="button" class="inline-flex h-8 w-8 items-center justify-center rounded text-slate-600 transition hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-slate-300 dark:hover:text-white md:hidden" aria-controls="main-nav-panel" aria-expanded="false">
+                <button id="main-nav-toggle" type="button" class="hamburger-menu inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 transition-all duration-300 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white md:hidden" aria-controls="main-nav-panel" aria-expanded="false">
                     <span class="sr-only">Open main navigation menu</span>
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+                    <div class="hamburger-icon">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </div>
                 </button>
             </div>
         </div>
@@ -288,6 +303,110 @@
     </div>
 </nav>
 
+<style>
+    /* Enhanced Navigation Styles */
+    .nav-enhanced {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .nav-enhanced.scrolled {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Animated Hamburger Menu */
+    .hamburger-icon {
+        width: 20px;
+        height: 16px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .hamburger-line {
+        width: 100%;
+        height: 2px;
+        background-color: currentColor;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .hamburger-menu[aria-expanded="true"] .hamburger-line:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    
+    .hamburger-menu[aria-expanded="true"] .hamburger-line:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    
+    .hamburger-menu[aria-expanded="true"] .hamburger-line:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+    
+    /* Scroll Progress Bar Animation */
+    #scroll-progress {
+        background: linear-gradient(90deg,
+            var(--logo-color-1) 0%,
+            var(--logo-color-2) 100%);
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+    
+    /* Nav Link Hover Effects */
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, rgba(56, 189, 248, 0.1), transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 0.375rem;
+    }
+    
+    .nav-link:hover::before {
+        opacity: 1;
+    }
+    
+    /* Logo Animation */
+    .logo-link:hover {
+        transform: translateY(-1px);
+    }
+    
+    /* Dropdown Menu Animations */
+    #language-dropdown-menu,
+    #theme-dropdown-menu {
+        animation: slideDown 0.2s ease-out;
+        transform-origin: top;
+    }
+    
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    /* Mobile Menu Slide Animation */
+    #main-nav-panel {
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
 <script>
     (() => {
         if (window.__nubisNavigationInitialized) {
@@ -295,6 +414,33 @@
         }
 
         window.__nubisNavigationInitialized = true;
+        
+        // --- SCROLL PROGRESS BAR ---
+        const scrollProgress = document.getElementById('scroll-progress');
+        const nav = document.querySelector('.nav-enhanced');
+        
+        function updateScrollProgress() {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+            
+            if (scrollProgress) {
+                scrollProgress.style.width = `${Math.min(scrollPercent, 100)}%`;
+            }
+            
+            // Add shadow on scroll
+            if (nav) {
+                if (scrollTop > 10) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            }
+        }
+        
+        window.addEventListener('scroll', updateScrollProgress, { passive: true });
+        updateScrollProgress(); // Initial call
 
         const navToggle = document.getElementById('main-nav-toggle');
         const navPanel = document.getElementById('main-nav-panel');
