@@ -18,19 +18,26 @@
     var servicesLink = content.Value<IPublishedContent>("servicesLink");
 }
 
-<section class="py-20 sm:py-28">
+<section class="relative py-20 sm:py-28 overflow-hidden">
+    <!-- Decorative gradient background -->
+    <div class="absolute inset-0 -z-10 opacity-30">
+        <div class="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl"></div>
+        <div class="absolute right-1/4 bottom-0 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl"></div>
+    </div>
+
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mx-auto max-w-2xl text-center">
+        <!-- Header Section with Enhanced Typography -->
+        <div class="mx-auto max-w-3xl text-center">
             @if (!string.IsNullOrWhiteSpace(headline))
             {
-                <h2 class="text-4xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-5xl" style="letter-spacing: -0.02em;">
-                    @headline
+                <h2 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl" style="letter-spacing: -0.03em;">
+                    <span class="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">@headline</span>
                 </h2>
             }
 
             @if (richTextContent != null)
             {
-                <div class="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-600 dark:text-slate-300">
+                <div class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300 sm:text-xl">
                     @Html.Raw(richTextContent)
                 </div>
             }
@@ -40,32 +47,59 @@
         {
             @if (servicesStyle == "grid")
             {
+                <!-- Enhanced Grid Layout with Staggered Animation -->
                 <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+                    @{
+                        var index = 0;
+                    }
                     @foreach (var block in serviceItems)
                     {
-                        @await Html.PartialAsync("~/Views/Partials/blocklist/Components/serviceItem.cshtml", block)
+                        <div class="group relative" style="animation: fadeInUp 0.6s ease-out @(index * 0.1)s both;">
+                            @await Html.PartialAsync("~/Views/Partials/blocklist/Components/serviceItem.cshtml", block)
+                        </div>
+                        index++;
                     }
                 </div>
             }
             else if (servicesStyle == "cards")
             {
+                <!-- Enhanced Card Layout with Glassmorphism -->
                 <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+                    @{
+                        var index = 0;
+                    }
                     @foreach (var block in serviceItems)
                     {
-                        <div class="card-glass rounded-2xl p-8 transition-all duration-300 hover:scale-105">
-                            @await Html.PartialAsync("~/Views/Partials/blocklist/Components/serviceItem.cshtml", block)
+                        <div class="group card-glass rounded-2xl p-8 transition-all duration-500 hover:scale-105 hover:shadow-2xl"
+                             style="animation: fadeInUp 0.6s ease-out @(index * 0.1)s both;">
+                            <!-- Hover gradient overlay -->
+                            <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-sky-500/5 to-indigo-500/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+                            <div class="relative">
+                                @await Html.PartialAsync("~/Views/Partials/blocklist/Components/serviceItem.cshtml", block)
+                            </div>
                         </div>
+                        index++;
                     }
                 </div>
             }
             else if (servicesStyle == "list")
             {
-                <div class="mx-auto mt-16 max-w-3xl space-y-6 sm:mt-20">
+                <!-- Enhanced List Layout with Slide Animation -->
+                <div class="mx-auto mt-16 max-w-4xl space-y-6 sm:mt-20">
+                    @{
+                        var index = 0;
+                    }
                     @foreach (var block in serviceItems)
                     {
-                        <div class="card-glass rounded-xl p-6 transition-all duration-300 hover:translate-x-2">
-                            @await Html.PartialAsync("~/Views/Partials/blocklist/Components/serviceItem.cshtml", block)
+                        <div class="group card-glass rounded-xl p-6 transition-all duration-500 hover:translate-x-3 hover:shadow-xl"
+                             style="animation: fadeInLeft 0.6s ease-out @(index * 0.1)s both;">
+                            <!-- Left accent border -->
+                            <div class="absolute left-0 top-1/2 h-0 w-1 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-sky-500 to-indigo-500 transition-all duration-500 group-hover:h-3/4"></div>
+                            <div class="relative">
+                                @await Html.PartialAsync("~/Views/Partials/blocklist/Components/serviceItem.cshtml", block)
+                            </div>
                         </div>
+                        index++;
                     }
                 </div>
             }
@@ -73,10 +107,12 @@
 
         @if (servicesLink != null)
         {
-            <div class="mt-12 flex justify-center">
-                <a href="@servicesLink.Url()" class="inline-flex items-center text-base font-medium text-sky-500 transition hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300">
-                    Explore our services
-                    <svg class="ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <div class="mt-16 flex justify-center">
+                <a href="@servicesLink.Url()"
+                   class="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                   aria-label="Explore our services">
+                    <span>Explore our services</span>
+                    <svg class="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
                     </svg>
                 </a>
@@ -84,3 +120,35 @@
         }
     </div>
 </section>
+
+<style>
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+</style>

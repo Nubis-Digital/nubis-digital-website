@@ -3,19 +3,145 @@
 @{
     var quoteText = Model.Content.Value<string>("quoteText");
     var quoteAttribution = Model.Content.Value<string>("quoteAttribution");
+    var quoteId = Guid.NewGuid().ToString("N");
 }
 
 @if (!string.IsNullOrEmpty(quoteText))
 {
-    <blockquote class="my-8 pl-6 border-l-4 border-sky-500 dark:border-indigo-500 bg-gradient-to-r from-sky-50 to-transparent dark:from-indigo-950 dark:to-transparent py-4 pr-4 rounded-r-lg">
-        <p class="text-xl md:text-2xl text-gray-900 dark:text-white font-medium italic mb-2">
-            "@quoteText"
-        </p>
-        @if (!string.IsNullOrEmpty(quoteAttribution))
-        {
-            <footer class="text-sm text-gray-600 dark:text-gray-400">
-                — @quoteAttribution
-            </footer>
-        }
+    <blockquote class="group relative my-12 animate-fade-in-left quote-block-container" data-quote-id="@quoteId">
+        <!-- Glassmorphic container -->
+        <div class="card-glass rounded-2xl p-8 md:p-10 border-l-4 border-sky-500 dark:border-indigo-500 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:border-l-8">
+            <!-- Action buttons (visible on hover) -->
+            <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                <button
+                    onclick="copyQuote('@quoteId')"
+                    class="p-2 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 hover:bg-sky-500 dark:hover:bg-indigo-500 text-slate-700 dark:text-slate-300 hover:text-white transition-all duration-300 backdrop-blur-sm"
+                    aria-label="Copy quote"
+                    title="Copy quote">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                </button>
+                <button
+                    onclick="shareQuote('@quoteId')"
+                    class="p-2 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 hover:bg-sky-500 dark:hover:bg-indigo-500 text-slate-700 dark:text-slate-300 hover:text-white transition-all duration-300 backdrop-blur-sm"
+                    aria-label="Share quote"
+                    title="Share quote">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Large decorative quote mark -->
+            <div class="absolute -top-4 -left-4 text-8xl text-sky-500/10 dark:text-indigo-500/10 font-serif leading-none select-none transition-all duration-500 group-hover:text-sky-500/20 dark:group-hover:text-indigo-500/20 group-hover:scale-110">"</div>
+            
+            <!-- Quote content -->
+            <div class="relative z-10">
+                <p id="quote-text-@quoteId" class="text-xl md:text-2xl lg:text-3xl text-slate-900 dark:text-white font-medium italic leading-relaxed mb-4 transition-colors duration-300 group-hover:text-sky-900 dark:group-hover:text-sky-100">
+                    @quoteText
+                </p>
+                
+                @if (!string.IsNullOrEmpty(quoteAttribution))
+                {
+                    <footer class="flex items-center gap-3 mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <!-- Decorative dash -->
+                        <div class="h-px w-12 bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-500 group-hover:w-16"></div>
+                        <cite id="quote-author-@quoteId" class="not-italic text-base md:text-lg text-slate-600 dark:text-slate-400 font-semibold transition-colors duration-300 group-hover:text-sky-600 dark:group-hover:text-sky-400">
+                            @quoteAttribution
+                        </cite>
+                    </footer>
+                }
+            </div>
+            
+            <!-- Decorative gradient overlay -->
+            <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-sky-500/5 to-indigo-500/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none"></div>
+        </div>
     </blockquote>
 }
+
+<script>
+    function copyQuote(quoteId) {
+        const quoteText = document.getElementById('quote-text-' + quoteId).textContent;
+        const quoteAuthor = document.getElementById('quote-author-' + quoteId)?.textContent;
+        const fullQuote = quoteAuthor ? `"${quoteText}" - ${quoteAuthor}` : `"${quoteText}"`;
+        
+        navigator.clipboard.writeText(fullQuote).then(() => {
+            showQuoteNotification('Quote copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy quote:', err);
+            showQuoteNotification('Failed to copy quote', 'error');
+        });
+    }
+    
+    function shareQuote(quoteId) {
+        const quoteText = document.getElementById('quote-text-' + quoteId).textContent;
+        const quoteAuthor = document.getElementById('quote-author-' + quoteId)?.textContent;
+        const fullQuote = quoteAuthor ? `"${quoteText}" - ${quoteAuthor}` : `"${quoteText}"`;
+        const pageUrl = window.location.href;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Quote from Nubis Digital',
+                text: fullQuote,
+                url: pageUrl
+            }).then(() => {
+                showQuoteNotification('Quote shared successfully!', 'success');
+            }).catch(err => {
+                if (err.name !== 'AbortError') {
+                    console.error('Error sharing:', err);
+                }
+            });
+        } else {
+            // Fallback: Copy to clipboard
+            const shareText = `${fullQuote}\n\nRead more: ${pageUrl}`;
+            navigator.clipboard.writeText(shareText).then(() => {
+                showQuoteNotification('Quote link copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                showQuoteNotification('Failed to share quote', 'error');
+            });
+        }
+    }
+    
+    function showQuoteNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-2xl z-50 transition-all duration-300 ${
+            type === 'success'
+                ? 'bg-green-500 text-white'
+                : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(20px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+</script>
+
+<style>
+    @@keyframes fade-in-left {
+        from {
+            opacity: 0;
+            transform: translateX(-40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .animate-fade-in-left {
+        animation: fade-in-left 0.7s ease-out;
+    }
+    
+    @@media (prefers-reduced-motion: reduce) {
+        .animate-fade-in-left {
+            animation: none;
+        }
+    }
+</style>

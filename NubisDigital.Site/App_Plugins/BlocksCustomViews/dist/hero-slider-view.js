@@ -14,15 +14,18 @@ export default class HeroSliderCustomView extends UmbElementMixin(LitElement) {
 
 	render() {
 		// Get the slides array from the content
-		const slides = this.content?.slides || [];
-		const slideCount = Array.isArray(slides) ? slides.length : 0;
+		const slides = this.content?.slides.contentData || [];
+		console.log(slides)
+		const slideCount = slides.length;
+
+		
 		const autoPlay = this.content?.autoPlay || false;
 		const autoPlayDelay = this.content?.autoPlayDelay || 5000;
 		
 		// Get first slide headline for preview
 		let firstSlideHeadline = 'No slides added';
-		if (slideCount > 0 && slides[0]?.headline) {
-			firstSlideHeadline = slides[0].headline;
+		if (slideCount > 0 && slides[0]?.values[1].value) {
+			firstSlideHeadline = slides[0]?.values[1].value;
 		}
 		
 		return html`
@@ -53,6 +56,10 @@ export default class HeroSliderCustomView extends UmbElementMixin(LitElement) {
 				display: block;
 				height: 100%;
 				box-sizing: border-box;
+				pointer-events: none;
+			}
+			:host * {
+				pointer-events: none;
 			}
 			.block-preview {
 				display: flex;

@@ -21,7 +21,7 @@
 
     <title>@pageTitle - @siteTitle</title>
 
-    <meta-fields></meta-fields>
+    @* <meta-fields></meta-fields> *@
     
     @* Add hreflang tags for SEO *@
     @if (Model is Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent publishedContent)
@@ -69,7 +69,7 @@
 </head>
 
 <body class="min-h-screen antialiased transition-colors duration-300">
-    <render-script position="BodyTop"></render-script>
+    @* <render-script position="BodyTop"></render-script> *@
 
     <div role="presentation" aria-hidden="true">
         <!-- 3D Canvas Background -->
@@ -91,7 +91,7 @@
 
     @await Html.PartialAsync("_Footer", currentPage)
 
-    <render-script position="BodyBottom"></render-script>
+    @* <render-script position="BodyBottom"></render-script> *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <script>

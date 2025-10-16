@@ -1,0 +1,269 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
+
+@{
+    if (Model?.Content == null)
+    {
+        return;
+    }
+
+    var content = Model.Content;
+    var formTitle = content.Value<string>("formTitle") ?? "Get in Touch";
+    var formDescription = content.Value<string>("formDescription");
+    var submitButtonText = content.Value<string>("submitButtonText") ?? "Send Message";
+    var successMessage = content.Value<string>("successMessage") ?? "Thank you for your message! We'll get back to you soon.";
+}
+
+<section id="contact" class="py-20 sm:py-28 scroll-mt-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl">
+            <!-- Form Header -->
+            <div class="text-center mb-12">
+                @if (!string.IsNullOrWhiteSpace(formTitle))
+                {
+                    <h2 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl" style="letter-spacing: -0.02em;">
+                        @formTitle
+                    </h2>
+                }
+                
+                @if (!string.IsNullOrWhiteSpace(formDescription))
+                {
+                    <p class="mt-4 text-lg leading-8 text-slate-600 dark:text-slate-300">
+                        @formDescription
+                    </p>
+                }
+            </div>
+
+            <!-- Contact Form -->
+            <div class="glass-panel">
+                <form id="contact-form" class="space-y-6" novalidate>
+                    <!-- Name Field -->
+                    <div>
+                        <label for="contact-name" class="block text-sm font-semibold leading-6 text-slate-900 dark:text-white">
+                            Name <span class="text-red-500" aria-label="required">*</span>
+                        </label>
+                        <div class="mt-2">
+                            <input type="text" 
+                                   name="name" 
+                                   id="contact-name" 
+                                   required
+                                   autocomplete="name"
+                                   class="form-input"
+                                   placeholder="Your full name"
+                                   aria-required="true"
+                                   aria-describedby="name-error">
+                            <p id="name-error" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden" role="alert">
+                                Please enter your name
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label for="contact-email" class="block text-sm font-semibold leading-6 text-slate-900 dark:text-white">
+                            Email <span class="text-red-500" aria-label="required">*</span>
+                        </label>
+                        <div class="mt-2">
+                            <input type="email" 
+                                   name="email" 
+                                   id="contact-email" 
+                                   required
+                                   autocomplete="email"
+                                   class="form-input"
+                                   placeholder="your.email@example.com"
+                                   aria-required="true"
+                                   aria-describedby="email-error">
+                            <p id="email-error" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden" role="alert">
+                                Please enter a valid email address
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Message Field -->
+                    <div>
+                        <label for="contact-message" class="block text-sm font-semibold leading-6 text-slate-900 dark:text-white">
+                            Message <span class="text-red-500" aria-label="required">*</span>
+                        </label>
+                        <div class="mt-2">
+                            <textarea name="message" 
+                                      id="contact-message" 
+                                      rows="6" 
+                                      required
+                                      class="form-textarea"
+                                      placeholder="Tell us about your project..."
+                                      aria-required="true"
+                                      aria-describedby="message-error"></textarea>
+                            <p id="message-error" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden" role="alert">
+                                Please enter your message
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div>
+                        <button type="submit" 
+                                class="group w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-sky-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                aria-label="Submit contact form">
+                            <span id="button-text">@submitButtonText</span>
+                            <svg id="button-icon" class="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                                <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                            </svg>
+                            <svg id="button-spinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div id="success-message" class="hidden rounded-lg bg-green-50 p-4 dark:bg-green-900/20" role="alert">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-green-800 dark:text-green-200">
+                                    @successMessage
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error-message" class="hidden rounded-lg bg-red-50 p-4 dark:bg-red-900/20" role="alert">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-red-800 dark:text-red-200">
+                                    There was an error submitting your message. Please try again.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    (() => {
+        const form = document.getElementById('contact-form');
+        if (!form) return;
+
+        const nameInput = document.getElementById('contact-name');
+        const emailInput = document.getElementById('contact-email');
+        const messageInput = document.getElementById('contact-message');
+        const submitButton = form.querySelector('button[type="submit"]');
+        const buttonText = document.getElementById('button-text');
+        const buttonIcon = document.getElementById('button-icon');
+        const buttonSpinner = document.getElementById('button-spinner');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+
+        // Validation functions
+        const validateName = () => {
+            const nameError = document.getElementById('name-error');
+            if (!nameInput.value.trim()) {
+                nameError.classList.remove('hidden');
+                nameInput.setAttribute('aria-invalid', 'true');
+                return false;
+            }
+            nameError.classList.add('hidden');
+            nameInput.setAttribute('aria-invalid', 'false');
+            return true;
+        };
+
+        const validateEmail = () => {
+            const emailError = document.getElementById('email-error');
+            const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            if (!emailInput.value.trim() || !emailRegex.test(emailInput.value)) {
+                emailError.classList.remove('hidden');
+                emailInput.setAttribute('aria-invalid', 'true');
+                return false;
+            }
+            emailError.classList.add('hidden');
+            emailInput.setAttribute('aria-invalid', 'false');
+            return true;
+        };
+
+        const validateMessage = () => {
+            const messageError = document.getElementById('message-error');
+            if (!messageInput.value.trim()) {
+                messageError.classList.remove('hidden');
+                messageInput.setAttribute('aria-invalid', 'true');
+                return false;
+            }
+            messageError.classList.add('hidden');
+            messageInput.setAttribute('aria-invalid', 'false');
+            return true;
+        };
+
+        // Real-time validation
+        nameInput.addEventListener('blur', validateName);
+        emailInput.addEventListener('blur', validateEmail);
+        messageInput.addEventListener('blur', validateMessage);
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate all fields
+            const isNameValid = validateName();
+            const isEmailValid = validateEmail();
+            const isMessageValid = validateMessage();
+
+            if (!isNameValid || !isEmailValid || !isMessageValid) {
+                return;
+            }
+
+            // Hide previous messages
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+
+            // Show loading state
+            submitButton.disabled = true;
+            buttonText.textContent = 'Sending...';
+            buttonIcon.classList.add('hidden');
+            buttonSpinner.classList.remove('hidden');
+
+            try {
+                // Simulate form submission (replace with actual API call)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Show success message
+                successMessage.classList.remove('hidden');
+                form.reset();
+
+                // Reset button state
+                buttonText.textContent = '@submitButtonText';
+                buttonIcon.classList.remove('hidden');
+                buttonSpinner.classList.add('hidden');
+                submitButton.disabled = false;
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 5000);
+
+            } catch (error) {
+                // Show error message
+                errorMessage.classList.remove('hidden');
+
+                // Reset button state
+                buttonText.textContent = '@submitButtonText';
+                buttonIcon.classList.remove('hidden');
+                buttonSpinner.classList.add('hidden');
+                submitButton.disabled = false;
+            }
+        });
+    })();
+</script>

@@ -1,12 +1,142 @@
 @using Umbraco.Cms.Core.Models.Blocks
+@using System.Text.RegularExpressions
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
 @{
     var content = Model.Content.Value<string>("content");
+    var blockId = Guid.NewGuid().ToString("N");
+    
+    // Calculate reading time (average 200 words per minute)
+    var wordCount = 0;
+    if (!string.IsNullOrEmpty(content))
+    {
+        var plainText = Regex.Replace(content, "<.*?>", string.Empty);
+        wordCount = plainText.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+    }
+    var readingTime = Math.Max(1, (int)Math.Ceiling(wordCount / 200.0));
 }
 
 @if (!string.IsNullOrEmpty(content))
 {
-    <div class="prose prose-lg dark:prose-invert max-w-none">
-        @Html.Raw(content)
+    <div class="richtext-block-container my-8 transition-all duration-700" data-block-id="@blockId">
+        <div class="card-glass rounded-2xl p-8 transition-all duration-300 hover:shadow-xl group">
+            <!-- Reading time indicator -->
+            @if (wordCount > 50)
+            {
+                <div class="flex items-center gap-2 mb-6 pb-4 border-b border-slate-200/50 dark:border-slate-700/50">
+                    <svg class="w-5 h-5 text-sky-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
+                        @readingTime min read · @wordCount words
+                    </span>
+                </div>
+            }
+            
+            <!-- Content with enhanced prose styling -->
+            <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:scroll-mt-20 prose-a:text-sky-600 dark:prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-lg">
+                @Html.Raw(content)
+            </div>
+            
+            <!-- Progress indicator for long content -->
+            @if (wordCount > 200)
+            {
+                <div class="mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span>Reading progress</span>
+                        <span id="progress-@blockId" class="font-mono">0%</span>
+                    </div>
+                    <div class="mt-2 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div id="progress-bar-@blockId" class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
 }
+
+<script>
+    // Reading progress tracker - only initialize once
+    if (typeof window.updateReadingProgress === 'undefined') {
+        window.updateReadingProgress = function() {
+            document.querySelectorAll('[id^="progress-bar-"]').forEach(progressBar => {
+                const blockId = progressBar.id.replace('progress-bar-', '');
+                const container = document.querySelector(`[data-block-id="${blockId}"]`);
+                
+                if (container) {
+                    const rect = container.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    const containerHeight = rect.height;
+                    
+                    // Calculate how much of the block is visible
+                    let progress = 0;
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+                        progress = Math.min(100, Math.max(0, (visibleHeight / containerHeight) * 100));
+                    }
+                    
+                    progressBar.style.width = progress + '%';
+                    const progressText = document.getElementById('progress-' + blockId);
+                    if (progressText) {
+                        progressText.textContent = Math.round(progress) + '%';
+                    }
+                }
+            });
+        };
+        
+        // Throttle scroll events
+        let richtextScrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (richtextScrollTimeout) {
+                window.cancelAnimationFrame(richtextScrollTimeout);
+            }
+            richtextScrollTimeout = window.requestAnimationFrame(window.updateReadingProgress);
+        }, { passive: true });
+        
+        // Initial progress update
+        setTimeout(window.updateReadingProgress, 100);
+    } else {
+        // If function already exists, just update progress
+        setTimeout(window.updateReadingProgress, 100);
+    }
+</script>
+
+<style>
+    /* Enhanced prose styling */
+    .prose {
+        --tw-prose-body: theme('colors.slate.700');
+        --tw-prose-headings: theme('colors.slate.900');
+        --tw-prose-links: theme('colors.sky.600');
+        --tw-prose-bold: theme('colors.slate.900');
+        --tw-prose-counters: theme('colors.slate.500');
+        --tw-prose-bullets: theme('colors.slate.400');
+        --tw-prose-hr: theme('colors.slate.200');
+        --tw-prose-quotes: theme('colors.slate.900');
+        --tw-prose-quote-borders: theme('colors.sky.500');
+        --tw-prose-code: theme('colors.sky.600');
+        --tw-prose-pre-code: theme('colors.slate.200');
+        --tw-prose-pre-bg: theme('colors.slate.900');
+    }
+    
+    .dark .prose {
+        --tw-prose-body: theme('colors.slate.300');
+        --tw-prose-headings: theme('colors.white');
+        --tw-prose-links: theme('colors.indigo.400');
+        --tw-prose-bold: theme('colors.white');
+        --tw-prose-counters: theme('colors.slate.400');
+        --tw-prose-bullets: theme('colors.slate.600');
+        --tw-prose-hr: theme('colors.slate.700');
+        --tw-prose-quotes: theme('colors.slate.100');
+        --tw-prose-quote-borders: theme('colors.indigo.500');
+        --tw-prose-code: theme('colors.indigo.400');
+        --tw-prose-pre-code: theme('colors.slate.200');
+        --tw-prose-pre-bg: theme('colors.black');
+    }
+    
+    @@media (prefers-reduced-motion: reduce) {
+        .richtext-block-container {
+            transition: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    }
+</style>

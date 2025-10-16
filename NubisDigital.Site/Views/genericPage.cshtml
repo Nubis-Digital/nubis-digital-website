@@ -5,15 +5,8 @@
 
 <section class="section-padding">
     <div class="container-wrapper">
-        <div class="mx-auto max-w-5xl space-y-12">
-            <header class="space-y-4 text-center">
-                <p class="text-sm font-semibold uppercase tracking-[0.4em]" style="color: var(--logo-color-1);">Nubis Digital</p>
-                <h1 class="text-heading-1">@Model.Value("pageTitle")</h1>
-            </header>
-
-            <div class="space-y-8">
-                @await Html.PartialAsync("~/Views/Partials/blocklist/default.cshtml", Model.Value("pageContent"))
-            </div>
+        <div class="mx-auto max-w-5xl">
+            @await Html.PartialAsync("~/Views/Partials/blocklist/default.cshtml", Model.Value("pageContent"))
         </div>
     </div>
 </section>

@@ -215,6 +215,13 @@
                     </div>
                 </div>
 
+                @* Contact Button *@
+                <a href="#contact"
+                   class="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/50 transition-all duration-300 hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                   aria-label="Contact us">
+                    Contact
+                </a>
+
                 <button id="main-nav-toggle" type="button" class="hamburger-menu inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 transition-all duration-300 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white md:hidden" aria-controls="main-nav-panel" aria-expanded="false">
                     <span class="sr-only">Open main navigation menu</span>
                     <div class="hamburger-icon">
@@ -249,20 +256,46 @@
                         </li>
                     }
                     
+                    @* Mobile Contact Button *@
+                    <li class="border-t mt-2 pt-2" style="border-color: var(--glass-border);">
+                        <a href="#contact"
+                           class="flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/30 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 font-semibold"
+                           aria-label="Contact us">
+                            Contact
+                        </a>
+                    </li>
+                    
                     @* Mobile Language Switcher *@
                     @if (availableCultures.Count > 1)
                     {
                         <li class="border-t mt-2 pt-2" style="border-color: var(--glass-border);">
                             <div class="px-4 py-2">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <svg class="h-4 w-4 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-                                        <path d="M2 12h20"/>
+                                <button id="mobile-language-toggle"
+                                        type="button"
+                                        class="flex items-center justify-between w-full px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                                        aria-expanded="false"
+                                        aria-controls="mobile-language-menu">
+                                    <span class="flex items-center gap-2">
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                                            <path d="M2 12h20"/>
+                                        </svg>
+                                        <span>
+                                            @{
+                                                var currentDisplayName = currentCulture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "English" :
+                                                                        currentCulture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "Español" :
+                                                                        currentCulture;
+                                            }
+                                            @currentDisplayName
+                                        </span>
+                                    </span>
+                                    <svg class="h-4 w-4 transition-transform duration-200" id="mobile-language-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="m6 9 6 6 6-6"/>
                                     </svg>
-                                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Language</span>
-                                </div>
-                                <div class="flex flex-col gap-2">
+                                </button>
+                                
+                                <div id="mobile-language-menu" class="hidden mt-2 flex flex-col gap-2">
                                     @foreach (var culture in availableCultures)
                                     {
                                         var isActive = culture.Equals(currentCulture, StringComparison.OrdinalIgnoreCase);
@@ -271,8 +304,8 @@
                                                         culture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "Español" :
                                                         culture;
                                         var flag = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "🇺🇸" :
-                                                  culture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "🇪🇸" :
-                                                  "🌐";
+                                                   culture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "🇪🇸" :
+                                                   "🌐";
                                         var linkClasses = "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400";
                                         linkClasses += isActive
                                             ? " bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/30"
@@ -548,7 +581,28 @@
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 setLanguageDropdownState(false);
+                setMobileLanguageDropdownState(false);
             }
+        });
+
+        // Mobile language dropdown functionality
+        const mobileLanguageToggle = document.getElementById('mobile-language-toggle');
+        const mobileLanguageMenu = document.getElementById('mobile-language-menu');
+        const mobileLanguageIcon = document.getElementById('mobile-language-icon');
+
+        const setMobileLanguageDropdownState = (open) => {
+            mobileLanguageToggle?.setAttribute('aria-expanded', open.toString());
+            if (mobileLanguageMenu) {
+                mobileLanguageMenu.classList.toggle('hidden', !open);
+            }
+            if (mobileLanguageIcon) {
+                mobileLanguageIcon.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        };
+
+        mobileLanguageToggle?.addEventListener('click', () => {
+            const isExpanded = mobileLanguageToggle.getAttribute('aria-expanded') === 'true';
+            setMobileLanguageDropdownState(!isExpanded);
         });
 
         const setMenuState = (open) => {

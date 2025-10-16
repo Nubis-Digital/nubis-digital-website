@@ -6,17 +6,159 @@
     var caption = Model.Content.Value<string>("caption");
     var imageUrl = image?.Url() ?? "";
     var altText = image?.Value<string>("altText") ?? caption ?? "Blog image";
+    var imageId = Guid.NewGuid().ToString("N");
 }
 
 @if (!string.IsNullOrEmpty(imageUrl))
 {
-    <figure class="my-8">
-        <img src="@imageUrl" alt="@altText" class="w-full rounded-lg shadow-lg" />
+    <figure class="group my-12 animate-zoom-in image-block-container" data-image-id="@imageId">
+        <div class="relative overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:shadow-3xl hover:scale-[1.02] cursor-zoom-in" onclick="openLightbox('@imageId', '@imageUrl', '@altText', '@caption')">
+            <!-- Glassmorphic overlay on hover -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 z-10"></div>
+            
+            <!-- Zoom indicator -->
+            <div class="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 rounded-full bg-slate-900/70 backdrop-blur-sm opacity-0 transition-opacity duration-500 group-hover:opacity-100 z-20">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path>
+                </svg>
+                <span class="text-xs text-white font-medium">Click to zoom</span>
+            </div>
+            
+            <!-- Image -->
+            <img src="@imageUrl"
+                 alt="@altText"
+                 class="w-full h-auto transition-transform duration-700 group-hover:scale-110"
+                 loading="lazy" />
+            
+            <!-- Decorative corner accent -->
+            <div class="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-gradient-to-br from-sky-500/20 to-indigo-500/20 backdrop-blur-sm opacity-0 transition-opacity duration-500 group-hover:opacity-100 z-20"></div>
+        </div>
+        
         @if (!string.IsNullOrEmpty(caption))
         {
-            <figcaption class="mt-3 text-sm text-center text-gray-600 dark:text-gray-400 italic">
-                @caption
+            <figcaption class="mt-4 text-center">
+                <div class="inline-block card-glass rounded-full px-6 py-2 transition-all duration-300 hover:scale-105">
+                    <p class="text-sm text-slate-600 dark:text-slate-300 italic font-medium">
+                        @caption
+                    </p>
+                </div>
             </figcaption>
         }
     </figure>
 }
+
+<!-- Lightbox Modal (shared across all images) -->
+<div id="image-lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/95 backdrop-blur-sm" onclick="closeLightbox()">
+    <button onclick="closeLightbox()" class="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 group" aria-label="Close lightbox">
+        <svg class="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+    </button>
+    
+    <div class="relative max-w-7xl max-h-[90vh] mx-4" onclick="event.stopPropagation()">
+        <img id="lightbox-image" src="" alt="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" />
+        <div id="lightbox-caption" class="mt-4 text-center">
+            <p class="text-white text-lg font-medium"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openLightbox(imageId, imageUrl, altText, caption) {
+        const lightbox = document.getElementById('image-lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        
+        lightboxImage.src = imageUrl;
+        lightboxImage.alt = altText;
+        
+        if (caption) {
+            lightboxCaption.querySelector('p').textContent = caption;
+            lightboxCaption.classList.remove('hidden');
+        } else {
+            lightboxCaption.classList.add('hidden');
+        }
+        
+        lightbox.classList.remove('hidden');
+        lightbox.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        
+        // Animate in
+        setTimeout(() => {
+            lightbox.style.opacity = '1';
+        }, 10);
+    }
+    
+    function closeLightbox() {
+        const lightbox = document.getElementById('image-lightbox');
+        lightbox.style.opacity = '0';
+        
+        setTimeout(() => {
+            lightbox.classList.add('hidden');
+            lightbox.classList.remove('flex');
+            document.body.style.overflow = '';
+        }, 300);
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeLightbox();
+        }
+    });
+</script>
+
+<style>
+    @@keyframes zoom-in {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .animate-zoom-in {
+        animation: zoom-in 0.6s ease-out;
+    }
+    
+    #image-lightbox {
+        transition: opacity 0.3s ease-in-out;
+        opacity: 0;
+    }
+    
+    .cursor-zoom-in {
+        cursor: zoom-in;
+    }
+    
+    @@media (prefers-reduced-motion: reduce) {
+        .animate-zoom-in {
+            animation: none;
+        }
+    }
+</style>
+
+<style>
+    @@keyframes zoom-in {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .animate-zoom-in {
+        animation: zoom-in 0.6s ease-out;
+    }
+    
+    @@media (prefers-reduced-motion: reduce) {
+        .animate-zoom-in {
+            animation: none;
+        }
+    }
+</style>

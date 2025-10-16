@@ -1,4 +1,6 @@
 @using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
 
 @{
@@ -8,35 +10,77 @@
     }
 
     var content = Model.Content;
-    var icon = content.Value<string>("icon") ?? "icon-check";
     var title = content.Value<string>("title");
     var description = content.Value<string>("description");
     
-    // Map icon names to colors
-    var iconColorClass = icon switch
-    {
-        "icon-check" => "bg-sky-500/10 ring-sky-500/20 text-sky-500 dark:bg-sky-400/10 dark:ring-sky-400/20 dark:text-sky-400",
-        "icon-lightbulb-active" => "bg-indigo-500/10 ring-indigo-500/20 text-indigo-500 dark:bg-indigo-400/10 dark:ring-indigo-400/20 dark:text-indigo-400",
-        "icon-rocket" => "bg-purple-500/10 ring-purple-500/20 text-purple-500 dark:bg-purple-400/10 dark:ring-purple-400/20 dark:text-purple-400",
-        "icon-briefcase" => "bg-blue-500/10 ring-blue-500/20 text-blue-500 dark:bg-blue-400/10 dark:ring-blue-400/20 dark:text-blue-400",
-        "icon-settings" => "bg-slate-500/10 ring-slate-500/20 text-slate-500 dark:bg-slate-400/10 dark:ring-slate-400/20 dark:text-slate-400",
-        "icon-trophy" => "bg-amber-500/10 ring-amber-500/20 text-amber-500 dark:bg-amber-400/10 dark:ring-amber-400/20 dark:text-amber-400",
-        _ => "bg-sky-500/10 ring-sky-500/20 text-sky-500 dark:bg-sky-400/10 dark:ring-sky-400/20 dark:text-sky-400"
-    };
+    // Get icon image from the new iconImage property
+    var iconMedia = content.Value<IPublishedContent>("iconImage");
+    string iconUrl = iconMedia?.Url() ?? "";
+    string iconAlt = iconMedia?.Value<string>("altText") ?? title ?? "Service icon";
 }
 
-<div class="flex flex-col items-start">
-    <div class="rounded-lg p-3 ring-1 @iconColorClass">
-        <svg class="h-6 w-6" aria-hidden="true">
-            <use href="#@icon"></use>
-        </svg>
+<div class="group flex flex-col items-start h-full">
+    <!-- Enhanced Icon Container with Hover Effects -->
+    <div class="relative">
+        <div class="rounded-xl p-4 ring-1 ring-sky-500/20 bg-gradient-to-br from-sky-500/10 to-indigo-500/10 transition-all duration-500 group-hover:ring-sky-500/40 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-sky-500/20 dark:from-sky-400/10 dark:to-indigo-400/10 dark:ring-sky-400/20">
+            @if (!string.IsNullOrWhiteSpace(iconUrl))
+            {
+                <img src="@iconUrl"
+                     alt="@iconAlt"
+                     class="h-12 w-12 object-contain transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110"
+                     loading="lazy" />
+            }
+            else
+            {
+                <!-- Fallback icon if no image is provided -->
+                <div class="h-12 w-12 flex items-center justify-center text-sky-500 dark:text-sky-400">
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            }
+        </div>
+        <!-- Decorative pulse effect on hover -->
+        <div class="absolute inset-0 rounded-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+            <div class="absolute inset-0 animate-ping rounded-xl bg-gradient-to-br from-sky-500/10 to-indigo-500/10 ring-1 ring-sky-500/20 opacity-20"></div>
+        </div>
     </div>
-    @if (!string.IsNullOrWhiteSpace(title))
-    {
-        <h3 class="mt-4 text-lg font-semibold text-slate-900 dark:text-white">@title</h3>
-    }
-    @if (!string.IsNullOrWhiteSpace(description))
-    {
-        <p class="mt-2 text-base leading-7 text-slate-600 dark:text-slate-300">@description</p>
-    }
+
+    <!-- Content Section -->
+    <div class="mt-6 flex-1">
+        @if (!string.IsNullOrWhiteSpace(title))
+        {
+            <h3 class="text-xl font-bold text-slate-900 transition-colors duration-300 group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400">
+                @title
+            </h3>
+        }
+        @if (!string.IsNullOrWhiteSpace(description))
+        {
+            <p class="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+                @description
+            </p>
+        }
+    </div>
+
+    <!-- Decorative bottom accent line -->
+    <div class="mt-6 h-1 w-0 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-500 group-hover:w-full"></div>
 </div>
+
+<style>
+    @@keyframes ping {
+        75%, 100% {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+    }
+
+    .animate-ping {
+        animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .animate-ping {
+            animation: none;
+        }
+    }
+</style>
