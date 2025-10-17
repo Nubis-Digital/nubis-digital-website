@@ -393,19 +393,144 @@
         box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
     }
     
-    /* Nav Link Hover Effects */
+    /* Apple-style Liquid Morphing Blob Effect */
+    .nav-link {
+        overflow: visible;
+        position: relative;
+        --mouse-x: 50%;
+        --mouse-y: 50%;
+    }
+    
+    /* Morphing liquid blob - follows mouse with organic shape */
     .nav-link::before {
         content: '';
         position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at center, rgba(56, 189, 248, 0.1), transparent 70%);
+        inset: -8px;
+        background:
+            radial-gradient(
+                ellipse 120% 80% at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(236, 72, 153, 0.4) 0%,
+                rgba(168, 85, 247, 0.35) 20%,
+                rgba(99, 102, 241, 0.3) 35%,
+                rgba(59, 130, 246, 0.25) 50%,
+                rgba(56, 189, 248, 0.2) 65%,
+                transparent 80%
+            );
         opacity: 0;
-        transition: opacity 0.3s ease;
-        border-radius: 0.375rem;
+        transition:
+            opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+            background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 50% 40% 60% 50% / 60% 50% 50% 40%;
+        filter: blur(20px) saturate(1.5);
+        pointer-events: none;
+        will-change: opacity, background, border-radius;
+        mix-blend-mode: screen;
+    }
+    
+    /* Glass overlay with liquid distortion */
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(
+                circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(255, 255, 255, 0.25) 0%,
+                rgba(168, 85, 247, 0.15) 30%,
+                rgba(56, 189, 248, 0.12) 60%,
+                transparent 100%
+            );
+        opacity: 0;
+        transition:
+            opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+            transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+            background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 12px;
+        transform: scale(0.88);
+        backdrop-filter: blur(12px) saturate(1.8);
+        -webkit-backdrop-filter: blur(12px) saturate(1.8);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        pointer-events: none;
+        will-change: opacity, transform, background;
+        box-shadow:
+            inset 0 1px 2px rgba(255, 255, 255, 0.4),
+            inset 0 -1px 2px rgba(168, 85, 247, 0.2);
     }
     
     .nav-link:hover::before {
         opacity: 1;
+        animation: liquidMorph 3s ease-in-out infinite;
+        transition-delay: 0s;
+    }
+    
+    .nav-link:hover::after {
+        opacity: 1;
+        transform: scale(1);
+        transition-delay: 0s;
+    }
+    
+    /* Smooth exit transitions */
+    .nav-link:not(:hover)::before {
+        transition-delay: 0.15s;
+    }
+    
+    .nav-link:not(:hover)::after {
+        transition-delay: 0.1s;
+    }
+    
+    @@keyframes liquidMorph {
+        0%, 100% {
+            border-radius: 50% 40% 60% 50% / 60% 50% 50% 40%;
+            filter: blur(20px) saturate(1.5);
+            transform: scale(1) rotate(0deg);
+        }
+        25% {
+            border-radius: 40% 60% 50% 40% / 50% 60% 40% 60%;
+            filter: blur(22px) saturate(1.7);
+            transform: scale(1.05) rotate(2deg);
+        }
+        50% {
+            border-radius: 60% 50% 40% 60% / 40% 50% 60% 50%;
+            filter: blur(24px) saturate(1.8);
+            transform: scale(1.08) rotate(-2deg);
+        }
+        75% {
+            border-radius: 50% 60% 40% 50% / 60% 40% 50% 60%;
+            filter: blur(22px) saturate(1.6);
+            transform: scale(1.05) rotate(1deg);
+        }
+    }
+    
+    /* Dark mode - more vibrant liquid effect */
+    .dark .nav-link::before {
+        background:
+            radial-gradient(
+                ellipse 120% 80% at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(236, 72, 153, 0.5) 0%,
+                rgba(168, 85, 247, 0.45) 20%,
+                rgba(99, 102, 241, 0.4) 35%,
+                rgba(59, 130, 246, 0.35) 50%,
+                rgba(56, 189, 248, 0.3) 65%,
+                transparent 80%
+            );
+        filter: blur(20px) saturate(2);
+    }
+    
+    .dark .nav-link::after {
+        background:
+            radial-gradient(
+                circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(168, 85, 247, 0.25) 0%,
+                rgba(99, 102, 241, 0.2) 30%,
+                rgba(56, 189, 248, 0.18) 60%,
+                transparent 100%
+            );
+        border: 1px solid rgba(168, 85, 247, 0.4);
+        box-shadow:
+            inset 0 1px 2px rgba(168, 85, 247, 0.5),
+            inset 0 -1px 2px rgba(56, 189, 248, 0.3),
+            0 4px 20px rgba(168, 85, 247, 0.3),
+            0 2px 8px rgba(56, 189, 248, 0.2);
     }
     
     /* Logo Animation */
@@ -455,6 +580,65 @@
         }
 
         window.__nubisNavigationInitialized = true;
+        
+        // --- LIQUID GLASS HOVER EFFECT WITH SMOOTH TRANSITIONS ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        // Smooth interpolation for mouse position
+        const lerp = (start, end, factor) => start + (end - start) * factor;
+        
+        navLinks.forEach(link => {
+            let targetX = 50;
+            let targetY = 50;
+            let currentX = 50;
+            let currentY = 50;
+            let animationFrameId = null; // Each link has its own animation frame
+            let isHovering = false;
+            
+            const updatePosition = () => {
+                // Smooth interpolation with easing
+                currentX = lerp(currentX, targetX, 0.15);
+                currentY = lerp(currentY, targetY, 0.15);
+                
+                link.style.setProperty('--mouse-x', `${currentX}%`);
+                link.style.setProperty('--mouse-y', `${currentY}%`);
+                
+                // Continue animation if not at target
+                if (Math.abs(currentX - targetX) > 0.1 || Math.abs(currentY - targetY) > 0.1) {
+                    animationFrameId = requestAnimationFrame(updatePosition);
+                } else {
+                    animationFrameId = null;
+                }
+            };
+            
+            link.addEventListener('mouseenter', () => {
+                isHovering = true;
+            });
+            
+            link.addEventListener('mousemove', (e) => {
+                if (isHovering) {
+                    const rect = link.getBoundingClientRect();
+                    targetX = ((e.clientX - rect.left) / rect.width) * 100;
+                    targetY = ((e.clientY - rect.top) / rect.height) * 100;
+                    
+                    // Start smooth animation if not already running
+                    if (!animationFrameId) {
+                        updatePosition();
+                    }
+                }
+            });
+            
+            link.addEventListener('mouseleave', () => {
+                isHovering = false;
+                targetX = 50;
+                targetY = 50;
+                
+                // Animate back to center if not already animating
+                if (!animationFrameId) {
+                    updatePosition();
+                }
+            });
+        });
         
         // --- SCROLL PROGRESS BAR ---
         const scrollProgress = document.getElementById('scroll-progress');
