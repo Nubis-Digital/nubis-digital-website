@@ -11,6 +11,12 @@
     var siteSettings = siteRoot?.FirstChild(x => x.ContentType.Alias == "siteSettings");
     var navLinks = siteSettings?.Value<IEnumerable<Link>>("navbarLinks") ?? Enumerable.Empty<Link>();
     var siteTitle = siteSettings?.Value<string>("siteTitle") ?? "Nubis Digital";
+    
+    // Get contact button link from settings
+    var contactButtonLinks = siteSettings?.Value<IEnumerable<Link>>("contactButtonLink") ?? Enumerable.Empty<Link>();
+    var contactButtonLink = contactButtonLinks.FirstOrDefault();
+    var contactUrl = contactButtonLink?.Url ?? "#contact";
+    var contactTarget = contactButtonLink?.Target ?? "_self";
 
     // Get current culture and available cultures
     var currentCulture = CultureInfo.CurrentCulture.Name;
@@ -216,7 +222,8 @@
                 </div>
 
                 @* Contact Button *@
-                <a href="#contact"
+                <a href="@contactUrl"
+                   target="@contactTarget"
                    class="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/50 transition-all duration-300 hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
                    aria-label="Contact us">
                     Contact
@@ -258,7 +265,8 @@
                     
                     @* Mobile Contact Button *@
                     <li class="border-t mt-2 pt-2" style="border-color: var(--glass-border);">
-                        <a href="#contact"
+                        <a href="@contactUrl"
+                           target="@contactTarget"
                            class="flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 shadow-lg shadow-sky-500/30 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 font-semibold"
                            aria-label="Contact us">
                             Contact

@@ -96,7 +96,7 @@
     
     <script>
         // --- THEME MANAGEMENT ---
-        let headMaterial, nodeMaterial, lineMaterial;
+        let nodeMaterial, lineMaterial;
 
         // Function to apply a theme and update 3D object colors
         function setTheme(theme) {
@@ -104,16 +104,38 @@
             document.documentElement.classList.remove('light', 'dark');
             document.documentElement.classList.add(theme);
             
-            // Wait for CSS variables to be applied, then update materials
+            // Wait for CSS variables to be applied, then update neural network colors
             requestAnimationFrame(() => {
-                if (headMaterial && nodeMaterial && lineMaterial) {
+                if (neuralNetwork && connectionLines) {
                     const newColor1 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-1').trim());
                     const newColor2 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-2').trim());
                     
-                    headMaterial.color.set(newColor1);
-                    nodeMaterial.color.set(newColor1);
-                    nodeMaterial.emissive.set(newColor1);
-                    lineMaterial.color.set(newColor2);
+                    // Update node colors
+                    const nodeColors = neuralNetwork.geometry.attributes.color.array;
+                    const nodeCount = nodeColors.length / 3;
+                    for (let i = 0; i < nodeCount; i++) {
+                        const t = i / nodeCount;
+                        const color = new THREE.Color().lerpColors(newColor1, newColor2, t);
+                        nodeColors[i * 3] = color.r;
+                        nodeColors[i * 3 + 1] = color.g;
+                        nodeColors[i * 3 + 2] = color.b;
+                    }
+                    neuralNetwork.geometry.attributes.color.needsUpdate = true;
+                    
+                    // Update connection line colors
+                    const lineColors = connectionLines.geometry.attributes.color.array;
+                    const lineCount = lineColors.length / 6;
+                    for (let i = 0; i < lineCount; i++) {
+                        const t = i / lineCount;
+                        const color = new THREE.Color().lerpColors(newColor1, newColor2, t);
+                        lineColors[i * 6] = color.r;
+                        lineColors[i * 6 + 1] = color.g;
+                        lineColors[i * 6 + 2] = color.b;
+                        lineColors[i * 6 + 3] = color.r;
+                        lineColors[i * 6 + 4] = color.g;
+                        lineColors[i * 6 + 5] = color.b;
+                    }
+                    connectionLines.geometry.attributes.color.needsUpdate = true;
                 }
             });
         }
@@ -131,9 +153,11 @@
             setTheme(newTheme);
         };
         
-        // --- 3D SCENE SETUP ---
-        let scene, camera, renderer, logoGroup;
+        // --- 3D SCENE SETUP - NEURAL NETWORK ---
+        let scene, camera, renderer, neuralNetwork, connectionLines;
         const mouse = new THREE.Vector2();
+        const nodes = [];
+        const connections = [];
 
         function initThree() {
             const container = document.getElementById('three-canvas-container');
@@ -146,149 +170,93 @@
             renderer.setClearColor(0x000000, 0);
             container.appendChild(renderer.domElement);
 
-            logoGroup = new THREE.Group();
+            // Get theme colors
+            const color1 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-1').trim());
+            const color2 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-2').trim());
+
+            // Create neural network nodes (dense circuitry pattern)
+            const nodeCount = 150;
+            const nodeGeometry = new THREE.BufferGeometry();
+            const nodePositions = [];
+            const nodeColors = [];
             
-            // Define materials for the logo components
-            headMaterial = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                metalness: 0.3,
-                roughness: 0.4,
+            // Create a dense 3D grid of nodes with some randomness
+            for (let i = 0; i < nodeCount; i++) {
+                const x = (Math.random() - 0.5) * 30;
+                const y = (Math.random() - 0.5) * 20;
+                const z = (Math.random() - 0.5) * 15;
+                
+                nodes.push({ x, y, z, vx: (Math.random() - 0.5) * 0.02, vy: (Math.random() - 0.5) * 0.02, vz: (Math.random() - 0.5) * 0.01 });
+                nodePositions.push(x, y, z);
+                
+                // Gradient color based on position
+                const t = (i / nodeCount);
+                const color = new THREE.Color().lerpColors(color1, color2, t);
+                nodeColors.push(color.r, color.g, color.b);
+            }
+            
+            nodeGeometry.setAttribute('position', new THREE.Float32BufferAttribute(nodePositions, 3));
+            nodeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(nodeColors, 3));
+            
+            nodeMaterial = new THREE.PointsMaterial({
+                size: 0.12,
+                vertexColors: true,
                 transparent: true,
-                opacity: 0.08,
-                wireframe: false
+                opacity: 0.9,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
             });
-            nodeMaterial = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                metalness: 0.5,
-                roughness: 0.2,
-                emissive: 0xffffff,
-                emissiveIntensity: 0.3
-            });
+            
+            neuralNetwork = new THREE.Points(nodeGeometry, nodeMaterial);
+            scene.add(neuralNetwork);
+            
+            // Create connection lines between nearby nodes
+            const linePositions = [];
+            const lineColors = [];
+            const maxDistance = 5; // Maximum distance to connect nodes
+            
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dz = nodes[i].z - nodes[j].z;
+                    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    
+                    if (distance < maxDistance) {
+                        linePositions.push(nodes[i].x, nodes[i].y, nodes[i].z);
+                        linePositions.push(nodes[j].x, nodes[j].y, nodes[j].z);
+                        
+                        const t1 = i / nodeCount;
+                        const t2 = j / nodeCount;
+                        const color = new THREE.Color().lerpColors(color1, color2, (t1 + t2) / 2);
+                        
+                        lineColors.push(color.r, color.g, color.b);
+                        lineColors.push(color.r, color.g, color.b);
+                        
+                        connections.push({ i, j });
+                    }
+                }
+            }
+            
+            const lineGeometry = new THREE.BufferGeometry();
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+            lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
+            
             lineMaterial = new THREE.LineBasicMaterial({
-                color: 0xffffff,
+                vertexColors: true,
                 transparent: true,
-                opacity: 0.35,
-                linewidth: 1
-            });
-
-            // Create a more organic head shape resembling a brain
-            const headShape = new THREE.Shape();
-            // Start from bottom center
-            headShape.moveTo(0, -2.5);
-            // Left side of head with more organic curves
-            headShape.bezierCurveTo(-0.8, -2.5, -1.8, -2, -2.2, -1);
-            headShape.bezierCurveTo(-2.5, 0, -2.8, 1.5, -2.5, 2.5);
-            headShape.bezierCurveTo(-2.2, 3.5, -1.5, 4.2, -0.5, 4.5);
-            // Top of head
-            headShape.bezierCurveTo(0, 4.6, 0.5, 4.5, 0.5, 4.5);
-            // Right side of head
-            headShape.bezierCurveTo(1.5, 4.2, 2.2, 3.5, 2.5, 2.5);
-            headShape.bezierCurveTo(2.8, 1.5, 2.5, 0, 2.2, -1);
-            headShape.bezierCurveTo(1.8, -2, 0.8, -2.5, 0, -2.5);
-            
-            const extrudeSettings = {
-                depth: 0.5,
-                bevelEnabled: true,
-                bevelSegments: 4,
-                steps: 3,
-                bevelSize: 0.2,
-                bevelThickness: 0.15
-            };
-            const headGeometry = new THREE.ExtrudeGeometry(headShape, extrudeSettings);
-            const head = new THREE.Mesh(headGeometry, headMaterial);
-            head.position.z = -0.25;
-            logoGroup.add(head);
-
-            // Create a neural network with more nodes distributed throughout the head
-            const nodePositions = [
-                // Top layer (frontal cortex area)
-                { x: 0, y: 3.2, z: 0, size: 0.15 },
-                { x: -1, y: 3, z: 0.1, size: 0.12 },
-                { x: 1, y: 3, z: -0.1, size: 0.12 },
-                
-                // Upper middle layer (parietal area)
-                { x: -1.5, y: 2, z: 0, size: 0.14 },
-                { x: 0, y: 2.2, z: 0.2, size: 0.13 },
-                { x: 1.5, y: 2, z: 0, size: 0.14 },
-                
-                // Central layer (thalamus/central processing)
-                { x: -0.8, y: 1, z: 0.1, size: 0.16 },
-                { x: 0, y: 0.8, z: 0, size: 0.18 }, // Central hub
-                { x: 0.8, y: 1, z: -0.1, size: 0.16 },
-                
-                // Lower middle layer (temporal area)
-                { x: -1.6, y: 0, z: 0.1, size: 0.13 },
-                { x: 1.6, y: 0, z: -0.1, size: 0.13 },
-                
-                // Lower layer (cerebellum/brainstem area)
-                { x: -1, y: -1, z: 0, size: 0.12 },
-                { x: 0, y: -1.2, z: 0.1, size: 0.14 },
-                { x: 1, y: -1, z: 0, size: 0.12 },
-                
-                // Additional scattered neurons for depth
-                { x: -0.5, y: 1.8, z: 0.3, size: 0.1 },
-                { x: 0.5, y: 1.8, z: -0.3, size: 0.1 },
-                { x: -1.2, y: 0.5, z: -0.2, size: 0.11 },
-                { x: 1.2, y: 0.5, z: 0.2, size: 0.11 }
-            ];
-            
-            const nodes = nodePositions.map(pos => {
-                const nodeGeometry = new THREE.SphereGeometry(pos.size, 16, 16);
-                const node = new THREE.Mesh(nodeGeometry, nodeMaterial.clone());
-                node.position.set(pos.x, pos.y, pos.z);
-                node.userData.originalSize = pos.size;
-                node.userData.pulsePhase = Math.random() * Math.PI * 2; // Random phase for pulsing
-                logoGroup.add(node);
-                return node;
+                opacity: 0.25,
+                blending: THREE.AdditiveBlending
             });
             
-            // Create neural connections with a more organic network pattern
-            const connections = [
-                // Top layer connections
-                [0, 1], [0, 2], [1, 2],
-                // Top to upper middle
-                [0, 4], [1, 4], [2, 4],
-                [1, 3], [2, 5],
-                // Upper middle to central hub
-                [3, 7], [4, 7], [5, 7],
-                [3, 6], [5, 8],
-                // Central hub connections
-                [6, 7], [7, 8],
-                [7, 12], // Central to lower
-                // Central to sides
-                [6, 9], [8, 10],
-                // Lower connections
-                [9, 11], [10, 13],
-                [11, 12], [12, 13],
-                // Depth connections
-                [4, 14], [4, 15],
-                [6, 16], [8, 17],
-                // Cross connections for complexity
-                [3, 9], [5, 10],
-                [14, 15], [16, 17]
-            ];
-            
-            connections.forEach(conn => {
-                const points = [nodes[conn[0]].position, nodes[conn[1]].position];
-                const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-                const line = new THREE.Line(lineGeometry, lineMaterial.clone());
-                line.userData.connectionIndex = conn;
-                logoGroup.add(line);
-            });
-            
-            // Store nodes for animation
-            logoGroup.userData.nodes = nodes;
-            
-            scene.add(logoGroup);
+            connectionLines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(connectionLines);
 
-            // Add lighting
-            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(5, 5, 5);
-            scene.add(directionalLight);
+            // Add subtle ambient lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 0.3));
             
-            // Set initial camera position and apply theme colors
-            camera.position.set(0, 0, 8);
+            // Set initial camera position
+            camera.position.set(0, 0, 25);
             setTheme(document.documentElement.dataset.theme);
             
             // Start the animation loop
@@ -298,44 +266,65 @@
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
-            const time = Date.now() * 0.001; // Time in seconds
+            const time = Date.now() * 0.001;
 
-            // Gently rotate the logo based on mouse position for subtle interaction
-            if (logoGroup) {
-                logoGroup.rotation.y += (mouse.x * 0.5 - logoGroup.rotation.y) * 0.05;
-                logoGroup.rotation.x += (-mouse.y * 0.5 - logoGroup.rotation.x) * 0.05;
+            if (neuralNetwork && connectionLines) {
+                // Animate node positions (gentle floating motion)
+                const positions = neuralNetwork.geometry.attributes.position.array;
                 
-                // Add a slow, constant rotation
-                logoGroup.rotation.y += 0.0003;
-                
-                // Animate neurons with pulsing effect
-                if (logoGroup.userData.nodes) {
-                    logoGroup.userData.nodes.forEach((node, index) => {
-                        // Create pulsing effect with different phases for each neuron
-                        const pulseSpeed = 2.0;
-                        const pulseAmount = 0.15;
-                        const pulse = Math.sin(time * pulseSpeed + node.userData.pulsePhase) * pulseAmount + 1;
-                        node.scale.setScalar(pulse);
-                        
-                        // Vary emissive intensity for "firing" neurons
-                        const emissiveIntensity = (Math.sin(time * 1.5 + node.userData.pulsePhase) + 1) * 0.2 + 0.1;
-                        node.material.emissiveIntensity = emissiveIntensity;
-                        
-                        // Add subtle floating motion
-                        const floatAmount = 0.02;
-                        node.position.y += Math.sin(time * 0.5 + index) * floatAmount * 0.01;
-                    });
+                for (let i = 0; i < nodes.length; i++) {
+                    // Update velocities with slight random changes
+                    nodes[i].vx += (Math.random() - 0.5) * 0.0005;
+                    nodes[i].vy += (Math.random() - 0.5) * 0.0005;
+                    nodes[i].vz += (Math.random() - 0.5) * 0.0003;
+                    
+                    // Damping
+                    nodes[i].vx *= 0.98;
+                    nodes[i].vy *= 0.98;
+                    nodes[i].vz *= 0.98;
+                    
+                    // Update positions
+                    nodes[i].x += nodes[i].vx;
+                    nodes[i].y += nodes[i].vy;
+                    nodes[i].z += nodes[i].vz;
+                    
+                    // Boundary constraints (keep in view)
+                    if (Math.abs(nodes[i].x) > 15) nodes[i].vx *= -0.5;
+                    if (Math.abs(nodes[i].y) > 10) nodes[i].vy *= -0.5;
+                    if (Math.abs(nodes[i].z) > 7.5) nodes[i].vz *= -0.5;
+                    
+                    positions[i * 3] = nodes[i].x;
+                    positions[i * 3 + 1] = nodes[i].y;
+                    positions[i * 3 + 2] = nodes[i].z;
                 }
+                neuralNetwork.geometry.attributes.position.needsUpdate = true;
                 
-                // Animate neural connection lines with opacity pulsing
-                logoGroup.children.forEach(child => {
-                    if (child instanceof THREE.Line && child.userData.connectionIndex) {
-                        const [start, end] = child.userData.connectionIndex;
-                        const pulsePhase = (start + end) * 0.5;
-                        const opacity = (Math.sin(time * 1.2 + pulsePhase) + 1) * 0.15 + 0.2;
-                        child.material.opacity = opacity;
-                    }
-                });
+                // Update connection lines to follow nodes
+                const linePositions = connectionLines.geometry.attributes.position.array;
+                for (let c = 0; c < connections.length; c++) {
+                    const { i, j } = connections[c];
+                    linePositions[c * 6] = nodes[i].x;
+                    linePositions[c * 6 + 1] = nodes[i].y;
+                    linePositions[c * 6 + 2] = nodes[i].z;
+                    linePositions[c * 6 + 3] = nodes[j].x;
+                    linePositions[c * 6 + 4] = nodes[j].y;
+                    linePositions[c * 6 + 5] = nodes[j].z;
+                }
+                connectionLines.geometry.attributes.position.needsUpdate = true;
+                
+                // Slow rotation for depth perception
+                neuralNetwork.rotation.y = Math.sin(time * 0.05) * 0.2;
+                neuralNetwork.rotation.x = Math.cos(time * 0.08) * 0.1;
+                connectionLines.rotation.y = neuralNetwork.rotation.y;
+                connectionLines.rotation.x = neuralNetwork.rotation.x;
+                
+                // Subtle mouse interaction
+                const targetRotationY = mouse.x * 0.3;
+                const targetRotationX = -mouse.y * 0.3;
+                neuralNetwork.rotation.y += (targetRotationY - neuralNetwork.rotation.y) * 0.02;
+                neuralNetwork.rotation.x += (targetRotationX - neuralNetwork.rotation.x) * 0.02;
+                connectionLines.rotation.y = neuralNetwork.rotation.y;
+                connectionLines.rotation.x = neuralNetwork.rotation.x;
             }
 
             renderer.render(scene, camera);
