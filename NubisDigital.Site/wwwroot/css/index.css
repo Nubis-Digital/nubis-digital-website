@@ -2,31 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS variables for theming - Dark Mode Default */
-:root {
-  --bg-color: #0f172a;
-  --text-color: #ffffff;
-  --text-muted-color: #94a3b8;
-  --glass-bg: rgba(30, 41, 59, 0.4);
-  --glass-border: rgba(148, 163, 184, 0.15);
-  --glass-shadow: rgba(0, 0, 0, 0.3);
-  --logo-color-1: #38bdf8;
-  --logo-color-2: #818cf8;
-  --nav-bg: rgba(15, 23, 42, 0.8);
-}
-
-[data-theme="light"] {
-  --bg-color: #f8fafc;
-  --text-color: #334155;
-  --text-muted-color: #64748b;
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(148, 163, 184, 0.25);
-  --glass-shadow: rgba(0, 0, 0, 0.08);
-  --logo-color-1: #0ea5e9;
-  --logo-color-2: #6366f1;
-  --nav-bg: rgba(255, 255, 255, 0.90);
-}
-
+/* CSS variables for theming */
+/* Dark theme variables */
+:root.dark,
 .dark {
   --bg-color: #0f172a;
   --text-color: #ffffff;
@@ -39,6 +17,8 @@
   --nav-bg: rgba(15, 23, 42, 0.8);
 }
 
+/* Light theme variables */
+:root.light,
 .light {
   --bg-color: #f8fafc;
   --text-color: #334155;
@@ -257,5 +237,104 @@
     outline: 2px solid var(--logo-color-1);
     outline-offset: 2px;
     border-radius: 0.25rem;
+  }
+  
+  /* GLOBAL LIQUID GLASS EFFECT - Apply to all interactive elements */
+  a:not(.no-glass),
+  button:not(.no-glass),
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline,
+  [role="button"]:not(.no-glass) {
+    position: relative;
+    overflow: visible;
+    --glass-mouse-x: 50%;
+    --glass-mouse-y: 50%;
+  }
+  
+  /* Subtle glow effect on hover/focus */
+  a:not(.no-glass)::before,
+  button:not(.no-glass)::before,
+  .btn-primary::before,
+  .btn-secondary::before,
+  .btn-outline::before,
+  [role="button"]:not(.no-glass)::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    background:
+      radial-gradient(
+        ellipse 100% 60% at var(--glass-mouse-x, 50%) var(--glass-mouse-y, 50%),
+        rgba(168, 85, 247, 0.15) 0%,
+        rgba(99, 102, 241, 0.12) 30%,
+        rgba(56, 189, 248, 0.1) 50%,
+        transparent 70%
+      );
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: inherit;
+    filter: blur(8px);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    z-index: -1;
+  }
+  
+  /* Show effect on hover and focus */
+  a:not(.no-glass):hover::before,
+  a:not(.no-glass):focus::before,
+  button:not(.no-glass):hover::before,
+  button:not(.no-glass):focus::before,
+  .btn-primary:hover::before,
+  .btn-primary:focus::before,
+  .btn-secondary:hover::before,
+  .btn-secondary:focus::before,
+  .btn-outline:hover::before,
+  .btn-outline:focus::before,
+  [role="button"]:not(.no-glass):hover::before,
+  [role="button"]:not(.no-glass):focus::before {
+    opacity: 1;
+  }
+  
+  /* Dark mode - more vibrant glow */
+  .dark a:not(.no-glass)::before,
+  .dark button:not(.no-glass)::before,
+  .dark .btn-primary::before,
+  .dark .btn-secondary::before,
+  .dark .btn-outline::before,
+  .dark [role="button"]:not(.no-glass)::before {
+    background:
+      radial-gradient(
+        ellipse 100% 60% at var(--glass-mouse-x, 50%) var(--glass-mouse-y, 50%),
+        rgba(168, 85, 247, 0.25) 0%,
+        rgba(99, 102, 241, 0.2) 30%,
+        rgba(56, 189, 248, 0.15) 50%,
+        transparent 70%
+      );
+    filter: blur(10px);
+  }
+  
+  /* Touch device support - show effect on active state */
+  @media (hover: none) and (pointer: coarse) {
+    a:not(.no-glass):active::before,
+    button:not(.no-glass):active::before,
+    .btn-primary:active::before,
+    .btn-secondary:active::before,
+    .btn-outline:active::before,
+    [role="button"]:not(.no-glass):active::before {
+      opacity: 1;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    a:not(.no-glass)::before,
+    button:not(.no-glass)::before,
+    .btn-primary::before,
+    .btn-secondary::before,
+    .btn-outline::before,
+    [role="button"]:not(.no-glass)::before {
+      transition: none;
+      animation: none;
+    }
   }
 }

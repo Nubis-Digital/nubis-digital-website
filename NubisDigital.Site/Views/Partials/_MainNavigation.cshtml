@@ -41,7 +41,7 @@
                 {
                     <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-black text-white shadow-lg shadow-sky-500/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-sky-500/50">N</span>
                 }
-                <span class="hidden flex-col leading-tight sm:flex">
+                <span class="flex flex-col leading-tight">
                     <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 transition-colors duration-300 group-hover:text-sky-500 dark:text-slate-400 dark:group-hover:text-sky-400">Nubis Digital</span>
                 </span>
             </a>
@@ -96,14 +96,6 @@
                                 <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
                                 <path d="M2 12h20"/>
                             </svg>
-                            <span class="text-xs font-semibold uppercase">
-                                @{
-                                    var currentDisplayName = currentCulture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "EN" :
-                                                            currentCulture.StartsWith("es", StringComparison.OrdinalIgnoreCase) ? "ES" :
-                                                            currentCulture.Split('-')[0].ToUpper();
-                                }
-                                @currentDisplayName
-                            </span>
                             <svg class="h-4 w-4 transition-transform duration-200" id="language-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="m6 9 6 6 6-6"/>
                             </svg>
@@ -174,7 +166,6 @@
                         <svg id="theme-icon-moon" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
                         </svg>
-                        <span id="theme-current-label" class="text-xs font-semibold uppercase"></span>
                         <svg class="h-4 w-4 transition-transform duration-200" id="theme-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="m6 9 6 6 6-6"/>
                         </svg>
@@ -773,13 +764,11 @@
             if (theme === 'light') {
                 themeIconSun?.classList.remove('hidden');
                 themeIconMoon?.classList.add('hidden');
-                if (themeCurrentLabel) themeCurrentLabel.textContent = 'Light';
                 themeCheckLight?.classList.remove('hidden');
                 themeCheckDark?.classList.add('hidden');
             } else {
                 themeIconSun?.classList.add('hidden');
                 themeIconMoon?.classList.remove('hidden');
-                if (themeCurrentLabel) themeCurrentLabel.textContent = 'Dark';
                 themeCheckLight?.classList.add('hidden');
                 themeCheckDark?.classList.remove('hidden');
             }
