@@ -16,20 +16,16 @@
 <html lang="@langCode" class="dark" data-theme="dark">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>@pageTitle - @siteTitle</title>
-
-    @* <meta-fields></meta-fields> *@
+    @* SEO Meta Tags *@
+    @await Html.PartialAsync("_SeoMetaTags", Model)
     
-    @* Add hreflang tags for SEO *@
+    @* Add hreflang tags for multilingual SEO *@
     @if (Model is Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent publishedContent)
     {
         var cultures = publishedContent.Cultures?.Keys?.ToList() ?? new List<string>();
         foreach (var culture in cultures)
         {
-            var cultureUrl = publishedContent.Url(culture,UrlMode.Absolute);
+            var cultureUrl = publishedContent.Url(culture, UrlMode.Absolute);
             <link rel="alternate" hreflang="@culture" href="@cultureUrl" />
         }
         

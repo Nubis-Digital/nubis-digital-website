@@ -5,7 +5,24 @@
     Layout = "master.cshtml";
     var pageTitle = Model.Value<string>("pageTitle") ?? Model.Name;
     var introduction = Model.Value<string>("introduction");
-    var blogPosts = Model.ChildrenOfType("blogPost");
+    var blogPosts = Model.ChildrenOfType("blogPost")
+        .OrderByDescending(x => x.Value<DateTime?>("publicationDate") ?? DateTime.MinValue)
+        .ToList();
+    
+    // Get all unique tags for filtering
+    var allTags = blogPosts
+        .SelectMany(p => p.Value<IEnumerable<string>>("tags") ?? Enumerable.Empty<string>())
+        .Distinct()
+        .OrderBy(t => t)
+        .ToList();
+    
+    // Calculate reading time (approximate)
+    int CalculateReadingTime(IPublishedContent post)
+    {
+        var content = post.Value<string>("mainContent") ?? "";
+        var wordCount = content.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        return Math.Max(1, (int)Math.Ceiling(wordCount / 200.0)); // 200 words per minute
+    }
 }
 
 <main class="relative min-h-screen transition-colors duration-300">
@@ -14,81 +31,272 @@
         <div class="gradient-orb-2"></div>
     </div>
 
-    <section class="section-padding">
-        <div class="container-wrapper">
-        <header class="mx-auto mb-12 max-w-3xl text-center lg:mb-16">
-            <h1 class="text-heading-1 bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
-                @pageTitle
-            </h1>
-            @if (!string.IsNullOrWhiteSpace(introduction))
-            {
-                <div class="prose prose-slate mx-auto mt-6 dark:prose-invert">
-                    @Html.Raw(introduction)
-                </div>
-            }
-        </header>
-
-        @if (blogPosts?.Any() == true)
-        {
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
-                @foreach (var post in blogPosts)
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden py-20 sm:py-28 lg:py-36">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl text-center">
+                @if (!string.IsNullOrWhiteSpace(pageTitle))
                 {
-                    var teaserImage = post.Value<IPublishedContent>("featuredImage");
-                    var publishDate = post.Value<DateTime?>("publicationDate");
-                    var subtitle = post.Value<string>("subtitle");
-                    var tags = post.Value<IEnumerable<string>>("tags") ?? Enumerable.Empty<string>();
-
-                    <article class="card-glass group flex h-full flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1">
-                        <a href="@post.Url()" class="flex h-full flex-col">
-                            @if (teaserImage is not null)
-                            {
-                                <div class="relative h-52 overflow-hidden">
-                                    <img src="@teaserImage.Url()?width=900&height=520&mode=crop"
-                                         alt="@teaserImage.Name"
-                                         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                </div>
-                            }
-
-                            <div class="flex flex-1 flex-col gap-4 p-6 lg:p-8">
-                                <div class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-300">
-                                    @if (publishDate is DateTime date)
-                                    {
-                                        <time datetime="@date:yyyy-MM-dd" class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-800/70 dark:text-slate-200">
-                                            @date.ToString("MMM d, yyyy")
-                                        </time>
-                                    }
-
-                                    @foreach (var tag in tags)
-                                    {
-                                        <span class="rounded-full bg-sky-400/10 px-3 py-1 text-sky-500 dark:bg-sky-400/10 dark:text-sky-300">@tag</span>
-                                    }
-                                </div>
-
-                                <h2 class="text-xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white lg:text-2xl">
-                                    @(post.Value<string>("postTitle") ?? post.Name)
-                                </h2>
-
-                                @if (!string.IsNullOrWhiteSpace(subtitle))
-                                {
-                                    <p class="text-sm text-slate-600 dark:text-slate-300">
-                                        @subtitle
-                                    </p>
-                                }
+                    <h1 class="text-5xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-6xl lg:text-7xl" style="letter-spacing: -0.02em;">
+                        <span class="bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                            @pageTitle
+                        </span>
+                    </h1>
+                }
+                
+                @if (!string.IsNullOrWhiteSpace(introduction))
+                {
+                    <div class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300 sm:text-xl">
+                        @Html.Raw(introduction)
+                    </div>
+                }
+                
+                @if (blogPosts.Any())
+                {
+                    <div class="mt-10 flex flex-wrap items-center justify-center gap-8 text-slate-600 dark:text-slate-300">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10">
+                                <svg class="h-6 w-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                </svg>
                             </div>
-                        </a>
-                    </article>
+                            <div class="text-left">
+                                <div class="text-2xl font-bold text-slate-900 dark:text-white">@blogPosts.Count</div>
+                                <div class="text-sm font-medium">Articles</div>
+                            </div>
+                        </div>
+                        
+                        @if (allTags.Any())
+                        {
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10">
+                                    <svg class="h-6 w-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white">@allTags.Count</div>
+                                    <div class="text-sm font-medium">Topics</div>
+                                </div>
+                            </div>
+                        }
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10">
+                                <svg class="h-6 w-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <div class="text-2xl font-bold text-slate-900 dark:text-white">@blogPosts.Sum(p => CalculateReadingTime(p))</div>
+                                <div class="text-sm font-medium">Min Read</div>
+                            </div>
+                        </div>
+                    </div>
                 }
             </div>
-        }
-        else
-        {
-            <div class="glass-panel p-8 text-center lg:p-12">
-                <h2 class="text-heading-3">Blog posts are coming soon</h2>
-                <p class="mt-4 text-slate-600 dark:text-slate-300">
-                    Add some Blog Post pages under this Blog List to showcase the latest insights from the Nubis Digital studio.
-                </p>
-            </div>
-        }
         </div>
     </section>
+
+    @if (blogPosts.Any())
+    {
+        <!-- Filter Section -->
+        @if (allTags.Any())
+        {
+            <section class="py-12 sm:py-16">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="rounded-2xl bg-white/95 p-8 shadow-xl ring-1 ring-slate-900/10 backdrop-blur-xl dark:bg-slate-900/60 dark:ring-white/10">
+                        <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-indigo-500">
+                                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Filter by Topic</h2>
+                            </div>
+                            <div class="text-sm font-medium text-slate-600 dark:text-slate-400">
+                                <span id="filtered-count">@blogPosts.Count</span> of @blogPosts.Count articles
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <button onclick="filterPosts('all')" 
+                                    class="filter-tag active rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/30 transition-all hover:scale-105">
+                                All Posts
+                            </button>
+                            @foreach (var tag in allTags)
+                            {
+                                <button onclick="filterPosts('@tag')" 
+                                        class="filter-tag rounded-full border-2 border-slate-300 bg-transparent px-5 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:border-sky-500 hover:bg-sky-50 dark:border-slate-600 dark:text-slate-300 dark:hover:border-sky-400 dark:hover:bg-sky-900/20">
+                                    @tag
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- Blog Posts Grid -->
+        <section class="py-20 sm:py-28">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    @foreach (var post in blogPosts)
+                    {
+                        var teaserImage = post.Value<IPublishedContent>("featuredImage");
+                        var publishDate = post.Value<DateTime?>("publicationDate");
+                        var subtitle = post.Value<string>("subtitle");
+                        var tags = post.Value<IEnumerable<string>>("tags") ?? Enumerable.Empty<string>();
+                        var readingTime = CalculateReadingTime(post);
+
+                        <a href="@post.Url()" class="blog-post group block h-full" data-tags="@string.Join(",", tags)">
+                            <article class="flex h-full flex-col overflow-hidden rounded-2xl bg-white/95 shadow-xl shadow-slate-900/10 ring-1 ring-slate-900/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-sky-500/20 hover:ring-sky-500/50 dark:bg-slate-900/60 dark:ring-white/10 dark:hover:ring-sky-400/50">
+                                @if (teaserImage != null)
+                                {
+                                    <div class="relative aspect-[16/10] overflow-hidden">
+                                        <img src="@teaserImage.Url()?width=800&height=500"
+                                             alt="@teaserImage.Name"
+                                             class="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+                                        
+                                        @if (tags.Any())
+                                        {
+                                            <div class="absolute bottom-4 left-4 flex flex-wrap gap-2">
+                                                @foreach (var tag in tags.Take(2))
+                                                {
+                                                    <span class="inline-flex items-center rounded-full bg-sky-500/90 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
+                                                        @tag
+                                                    </span>
+                                                }
+                                            </div>
+                                        }
+                                        
+                                        <div class="absolute top-4 right-4">
+                                            <div class="flex items-center gap-1.5 rounded-full bg-slate-900/80 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                @readingTime min
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="flex flex-1 flex-col p-8">
+                                    <div class="flex items-center gap-3 text-sm">
+                                        @if (publishDate is DateTime date)
+                                        {
+                                            <time class="font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                                @date.ToString("MMMM d, yyyy")
+                                            </time>
+                                        }
+                                    </div>
+
+                                    <h3 class="mt-4 text-2xl font-bold leading-tight text-slate-900 transition-colors duration-200 group-hover:text-sky-500 dark:text-white dark:group-hover:text-sky-400">
+                                        @(post.Value<string>("postTitle") ?? post.Name)
+                                    </h3>
+
+                                    @if (!string.IsNullOrWhiteSpace(subtitle))
+                                    {
+                                        <p class="mt-3 line-clamp-2 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+                                            @subtitle
+                                        </p>
+                                    }
+
+                                    <div class="mt-auto pt-6">
+                                        <span class="inline-flex items-center gap-2 text-sm font-semibold text-sky-700 transition-colors group-hover:text-sky-800 dark:text-sky-400 dark:group-hover:text-sky-300">
+                                            Read article
+                                            <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h9.69L10.22 6.03a.75.75 0 011.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                            </article>
+                        </a>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+    else
+    {
+        <section class="py-20 sm:py-28">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="rounded-2xl bg-white/95 p-12 text-center shadow-xl ring-1 ring-slate-900/10 backdrop-blur-xl dark:bg-slate-900/60 dark:ring-white/10">
+                    <svg class="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
+                    <h2 class="mt-4 text-lg font-semibold text-slate-900 dark:text-white">No Articles Yet</h2>
+                    <p class="mt-2 text-slate-600 dark:text-slate-300">
+                        We're working on creating insightful content about Umbraco development, glassmorphism design, and modern web technologies. Check back soon!
+                    </p>
+                </div>
+            </div>
+        </section>
+    }
 </main>
+
+<script>
+    function filterPosts(tag) {
+        const posts = document.querySelectorAll('.blog-post');
+        const filterButtons = document.querySelectorAll('.filter-tag');
+        const countElement = document.getElementById('filtered-count');
+        let visibleCount = 0;
+        
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active', 'bg-gradient-to-r', 'from-sky-500', 'to-indigo-500', 'text-white', 'shadow-lg', 'shadow-sky-500/30');
+            btn.classList.add('bg-transparent', 'border-slate-300', 'dark:border-slate-600', 'text-slate-700', 'dark:text-slate-300');
+        });
+        
+        event.target.classList.add('active', 'bg-gradient-to-r', 'from-sky-500', 'to-indigo-500', 'text-white', 'shadow-lg', 'shadow-sky-500/30');
+        event.target.classList.remove('bg-transparent', 'border-slate-300', 'dark:border-slate-600', 'text-slate-700', 'dark:text-slate-300');
+        
+        posts.forEach((post, index) => {
+            const postTags = post.dataset.tags.split(',');
+            const shouldShow = tag === 'all' || postTags.includes(tag);
+            
+            if (shouldShow) {
+                visibleCount++;
+                post.style.display = '';
+                post.style.animation = `fadeInUp 0.5s ease-out ${index * 0.05}s both`;
+            } else {
+                post.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => { post.style.display = 'none'; }, 300);
+            }
+        });
+        
+        if (countElement) {
+            countElement.style.animation = 'pulse 0.3s ease-in-out';
+            setTimeout(() => {
+                countElement.textContent = visibleCount;
+                countElement.style.animation = '';
+            }, 150);
+        }
+    }
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @@keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @@keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+        @@keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const posts = document.querySelectorAll('.blog-post');
+        posts.forEach((post, index) => {
+            post.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
+        });
+    });
+</script>

@@ -1,0 +1,237 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+
+@{
+    // Get the current page
+    var currentPage = Model as IPublishedContent;
+    if (currentPage == null) return;
+
+    // Get site root and settings
+    var siteRoot = currentPage.AncestorOrSelf("siteRoot");
+    var siteSettings = siteRoot?.FirstChild(x => x.ContentType.Alias == "siteSettings");
+    var siteTitle = siteSettings?.Value<string>("siteTitle") ?? "Nubis Digital";
+    var siteName = "Nubis Digital";
+
+    // Get page-specific values with fallbacks
+    var pageTitle = currentPage.Value<string>("pageTitle") ?? currentPage.Name;
+    var metaTitle = currentPage.Value<string>("metaTitle");
+    var metaDescription = currentPage.Value<string>("metaDescription");
+    var metaKeywords = currentPage.Value<string>("metaKeywords");
+    var canonicalUrl = currentPage.Value<string>("canonicalUrl");
+    var hideFromSearchEngines = currentPage.Value<bool>("hideFromSearchEngines");
+
+    // Open Graph properties
+    var ogTitle = currentPage.Value<string>("ogTitle");
+    var ogDescription = currentPage.Value<string>("ogDescription");
+    var ogImage = currentPage.Value<IPublishedContent>("ogImage");
+    
+    // Twitter Card properties
+    var twitterCardType = currentPage.Value<string>("twitterCardType") ?? "summary_large_image";
+
+    // Build final meta title
+    var finalMetaTitle = !string.IsNullOrWhiteSpace(metaTitle) 
+        ? metaTitle 
+        : $"{pageTitle} - {siteTitle}";
+
+    // Build final Open Graph title
+    var finalOgTitle = !string.IsNullOrWhiteSpace(ogTitle) 
+        ? ogTitle 
+        : pageTitle;
+
+    // Build final Open Graph description
+    var finalOgDescription = !string.IsNullOrWhiteSpace(ogDescription) 
+        ? ogDescription 
+        : metaDescription;
+
+    // Get featured image for blog posts as fallback for OG image
+    IPublishedContent finalOgImage = ogImage;
+    if (finalOgImage == null && currentPage.ContentType.Alias == "blogPost")
+    {
+        finalOgImage = currentPage.Value<IPublishedContent>("featuredImage");
+    }
+
+    // Build canonical URL
+    var finalCanonicalUrl = !string.IsNullOrWhiteSpace(canonicalUrl) 
+        ? canonicalUrl 
+        : currentPage.Url(mode: UrlMode.Absolute);
+
+    // Get current culture for hreflang
+    var currentCulture = System.Globalization.CultureInfo.CurrentCulture.Name;
+
+    // For blog posts, generate description from content if not provided
+    if (string.IsNullOrWhiteSpace(metaDescription) && currentPage.ContentType.Alias == "blogPost")
+    {
+        var subtitle = currentPage.Value<string>("subtitle");
+        if (!string.IsNullOrWhiteSpace(subtitle))
+        {
+            metaDescription = subtitle.Length > 160 
+                ? subtitle.Substring(0, 157) + "..." 
+                : subtitle;
+        }
+    }
+
+    // For blog posts, generate keywords from tags if not provided
+    if (string.IsNullOrWhiteSpace(metaKeywords) && currentPage.ContentType.Alias == "blogPost")
+    {
+        var tags = currentPage.Value<IEnumerable<string>>("tags");
+        if (tags != null && tags.Any())
+        {
+            metaKeywords = string.Join(", ", tags);
+        }
+    }
+}
+
+@* Basic Meta Tags *@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>@finalMetaTitle</title>
+
+@if (!string.IsNullOrWhiteSpace(metaDescription))
+{
+    <meta name="description" content="@metaDescription" />
+}
+
+@if (!string.IsNullOrWhiteSpace(metaKeywords))
+{
+    <meta name="keywords" content="@metaKeywords" />
+}
+
+@* Canonical URL *@
+<link rel="canonical" href="@finalCanonicalUrl" />
+
+@* Robots Meta Tag *@
+@if (hideFromSearchEngines)
+{
+    <meta name="robots" content="noindex, nofollow" />
+}
+else
+{
+    <meta name="robots" content="index, follow" />
+}
+
+@* Open Graph Meta Tags *@
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="@siteName" />
+<meta property="og:title" content="@finalOgTitle" />
+<meta property="og:url" content="@finalCanonicalUrl" />
+
+@if (!string.IsNullOrWhiteSpace(finalOgDescription))
+{
+    <meta property="og:description" content="@finalOgDescription" />
+}
+
+@if (finalOgImage != null)
+{
+    var ogImageUrl = finalOgImage.Url(mode: UrlMode.Absolute);
+    <meta property="og:image" content="@ogImageUrl" />
+    <meta property="og:image:alt" content="@(finalOgImage.Name)" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+}
+
+@* Twitter Card Meta Tags *@
+<meta name="twitter:card" content="@twitterCardType" />
+<meta name="twitter:title" content="@finalOgTitle" />
+
+@if (!string.IsNullOrWhiteSpace(finalOgDescription))
+{
+    <meta name="twitter:description" content="@finalOgDescription" />
+}
+
+@if (finalOgImage != null)
+{
+    var twitterImageUrl = finalOgImage.Url(mode: UrlMode.Absolute);
+    <meta name="twitter:image" content="@twitterImageUrl" />
+    <meta name="twitter:image:alt" content="@(finalOgImage.Name)" />
+}
+
+@* Additional Meta Tags for Blog Posts *@
+@if (currentPage.ContentType.Alias == "blogPost")
+{
+    var publicationDate = currentPage.Value<DateTime?>("publicationDate");
+    var author = currentPage.Value<string>("author") ?? "Roo, Lead AI Developer";
+    
+    <meta property="article:published_time" content="@publicationDate?.ToString("yyyy-MM-ddTHH:mm:ssZ")" />
+    <meta property="article:author" content="@author" />
+    <meta property="og:type" content="article" />
+    
+    var tags = currentPage.Value<IEnumerable<string>>("tags");
+    if (tags != null && tags.Any())
+    {
+        foreach (var tag in tags)
+        {
+            <meta property="article:tag" content="@tag" />
+        }
+    }
+}
+
+@* Language and Locale *@
+<meta property="og:locale" content="@currentCulture.Replace("-", "_")" />
+
+@* Additional SEO Meta Tags *@
+<meta name="author" content="Nubis Digital" />
+<meta name="generator" content="Umbraco CMS" />
+<meta name="theme-color" content="#0ea5e9" />
+
+@* Structured Data for Blog Posts *@
+@if (currentPage.ContentType.Alias == "blogPost")
+{
+    var publicationDate = currentPage.Value<DateTime?>("publicationDate");
+    var author = currentPage.Value<string>("author") ?? "Roo, Lead AI Developer";
+    var postTitle = currentPage.Value<string>("postTitle") ?? currentPage.Name;
+    var subtitle = currentPage.Value<string>("subtitle");
+    var featuredImage = currentPage.Value<IPublishedContent>("featuredImage");
+    
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "BlogPosting",
+        "headline": "@Html.Raw(System.Text.Json.JsonSerializer.Serialize(postTitle))",
+        @if (!string.IsNullOrWhiteSpace(subtitle))
+        {
+            @:,"description": "@Html.Raw(System.Text.Json.JsonSerializer.Serialize(subtitle))"
+        }
+        @if (featuredImage != null)
+        {
+            @:,"image": "@featuredImage.Url(mode: UrlMode.Absolute)"
+        }
+        @if (publicationDate.HasValue)
+        {
+            @:,"datePublished": "@publicationDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ")"
+        }
+        ,"author": {
+            "@@type": "Person",
+            "name": "@author"
+        },
+        "publisher": {
+            "@@type": "Organization",
+            "name": "@siteName",
+            "logo": {
+                "@@type": "ImageObject",
+                "url": "@(Context.Request.Scheme)://@(Context.Request.Host)/favicon.ico"
+            }
+        },
+        "mainEntityOfPage": {
+            "@@type": "WebPage",
+            "@@id": "@finalCanonicalUrl"
+        }
+    }
+    </script>
+}
+
+@* Structured Data for Organization *@
+@if (currentPage.ContentType.Alias == "homePage")
+{
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Organization",
+        "name": "@siteName",
+        "url": "@(Context.Request.Scheme)://@(Context.Request.Host)",
+        "logo": "@(Context.Request.Scheme)://@(Context.Request.Host)/favicon.ico",
+        "description": "Modern Umbraco CMS development agency specializing in glassmorphism design and cutting-edge web solutions",
+        "sameAs": []
+    }
+    </script>
+}
