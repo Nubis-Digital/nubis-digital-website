@@ -273,6 +273,10 @@
         "check_orientation_lock"
       ]
     },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["chrome-devtools-mcp@latest"]
+    },
     "fetch": {
       "command": "uvx",
       "args": [

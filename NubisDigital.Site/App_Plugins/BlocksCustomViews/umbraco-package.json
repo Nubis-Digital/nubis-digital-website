@@ -86,6 +86,20 @@
       "name": "Hero Slider Custom View",
       "element": "/App_Plugins/BlocksCustomViews/dist/hero-slider-view.js",
       "forContentTypeAlias": "heroSliderElement"
+    },
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.informationalSlider",
+      "name": "Informational Slider Custom View",
+      "element": "/App_Plugins/BlocksCustomViews/dist/informational-slider-view.js",
+      "forContentTypeAlias": "informationalSliderElement"
+    },
+    {
+      "type": "blockEditorCustomView",
+      "alias": "nubis.blockEditorCustomView.quickContactForm",
+      "name": "Quick Contact Form Custom View",
+      "element": "/App_Plugins/BlocksCustomViews/dist/quick-contact-form-view.js",
+      "forContentTypeAlias": "quickContactFormElement"
     }
   ]
 }

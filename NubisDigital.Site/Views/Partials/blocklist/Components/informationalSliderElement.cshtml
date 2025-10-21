@@ -1,0 +1,333 @@
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockListItem>
+
+@{
+    if (Model?.Content == null)
+    {
+        return;
+    }
+
+    var content = Model.Content;
+    var slides = content.Value<IEnumerable<BlockListItem>>("slides");
+    var autoPlay = content.Value<bool>("autoPlay");
+    var autoPlayDelay = content.Value<int>("autoPlayDelay");
+    var sliderVariant = content.Value<string>("sliderVariant") ?? "Fade";
+    
+    // Default to 5000ms if not set
+    if (autoPlayDelay <= 0)
+    {
+        autoPlayDelay = 5000;
+    }
+    
+    var sliderId = $"info-slider-{Guid.NewGuid():N}";
+    var slideCount = slides?.Count() ?? 0;
+}
+
+@if (slides != null && slides.Any())
+{
+    <section class="py-16 sm:py-20 lg:py-24" role="region" aria-label="Informational Slider" aria-roledescription="carousel">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="swiper rounded-3xl" id="@sliderId" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.03) 0%, rgba(129, 140, 248, 0.03) 100%);">
+                <div class="swiper-wrapper">
+                    @{
+                        var slideIndex = 0;
+                    }
+                    @foreach (var slide in slides)
+                    {
+                        var slideContent = slide.Content;
+                        var slideTitle = slideContent.Value<string>("slideTitle");
+                        var slideContentHtml = slideContent.Value("slideContent");
+                        var slideImage = slideContent.Value<IPublishedContent>("slideImage");
+                        var imagePosition = slideContent.Value<string>("imagePosition") ?? "left";
+                        
+                        var hasImage = slideImage != null;
+                        var imageOnRight = imagePosition == "right";
+                        var imageOnLeft = imagePosition == "left" || string.IsNullOrWhiteSpace(imagePosition);
+                        var isFullscreen = imagePosition == "fullscreen";
+                        var hasContent = slideContentHtml != null;
+                        slideIndex++;
+                        
+                        <div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="Slide @slideIndex of @slideCount">
+                            @if (isFullscreen && hasImage)
+                            {
+                                <!-- Fullscreen layout with background image -->
+                                <div class="relative min-h-[500px] lg:min-h-[600px] flex items-center">
+                                    <div class="absolute inset-0 z-0">
+                                        <img src="@slideImage.Url()" alt="@(slideImage.Value<string>("altText") ?? slideTitle)"
+                                             class="w-full h-full object-cover opacity-15 dark:opacity-10"
+                                             loading="@(slideIndex == 1 ? "eager" : "lazy")" />
+                                    </div>
+                                    <div class="absolute inset-0 bg-gradient-to-br from-white/60 via-white/40 to-transparent dark:from-slate-900/60 dark:via-slate-900/40 backdrop-blur-sm"></div>
+                                    <div class="relative z-10 w-full px-8 py-12 lg:px-16 lg:py-20">
+                                        @if (!string.IsNullOrWhiteSpace(slideTitle))
+                                        {
+                                            <h2 class="text-4xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl mb-8" style="letter-spacing: -0.02em;">
+                                                @slideTitle
+                                            </h2>
+                                        }
+                                        @if (hasContent)
+                                        {
+                                            <div class="prose prose-xl prose-slate dark:prose-invert max-w-4xl prose-headings:font-semibold prose-headings:tracking-tight prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-strong:text-slate-900 dark:prose-strong:text-white prose-li:text-slate-600 dark:prose-li:text-slate-300">
+                                                @Html.Raw(slideContentHtml)
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else if (hasImage)
+                            {
+                                <!-- Two-column layout with image -->
+                                <div class="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/30 shadow-xl">
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 @(imageOnRight ? "" : "lg:grid-flow-dense")">
+                                        <!-- Content Column -->
+                                        <div class="@(imageOnRight ? "lg:col-start-1" : "lg:col-start-2") p-8 lg:p-12 xl:p-16 flex flex-col justify-center">
+                                            @if (!string.IsNullOrWhiteSpace(slideTitle))
+                                            {
+                                                <h2 class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl mb-6" style="letter-spacing: -0.02em;">
+                                                    @slideTitle
+                                                </h2>
+                                            }
+                                            @if (hasContent)
+                                            {
+                                                <div class="prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-relaxed prose-strong:text-slate-900 dark:prose-strong:text-white prose-li:text-slate-600 dark:prose-li:text-slate-300">
+                                                    @Html.Raw(slideContentHtml)
+                                                </div>
+                                            }
+                                        </div>
+                                        
+                                        <!-- Image Column -->
+                                        <div class="@(imageOnRight ? "lg:col-start-2" : "lg:col-start-1") relative min-h-[300px] lg:min-h-full">
+                                            <img src="@slideImage.Url()" alt="@(slideImage.Value<string>("altText") ?? slideTitle)"
+                                                 class="absolute inset-0 w-full h-full object-cover"
+                                                 loading="@(slideIndex == 1 ? "eager" : "lazy")" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Content only layout (no image) -->
+                                <div class="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/30 shadow-xl p-8 lg:p-12 xl:p-16">
+                                    @if (!string.IsNullOrWhiteSpace(slideTitle))
+                                    {
+                                        <h2 class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl mb-8" style="letter-spacing: -0.02em;">
+                                            @slideTitle
+                                        </h2>
+                                    }
+                                    @if (hasContent)
+                                    {
+                                        <div class="prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-h4:text-lg prose-h4:mt-5 prose-h4:mb-2 prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-relaxed prose-p:mb-4 prose-strong:text-slate-900 dark:prose-strong:text-white prose-strong:font-semibold prose-li:text-slate-600 dark:prose-li:text-slate-300 prose-ul:my-4 prose-li:my-1">
+                                            @Html.Raw(slideContentHtml)
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                
+                <!-- Pagination with custom styling -->
+                <div class="swiper-pagination !relative !bottom-0 py-6" role="tablist" aria-label="Slide navigation"></div>
+                
+                <!-- Navigation buttons with accessibility -->
+                <button class="swiper-button-next" aria-label="Next slide" type="button"></button>
+                <button class="swiper-button-prev" aria-label="Previous slide" type="button"></button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Initialize Swiper -->
+    <script>
+        (function() {
+            const sliderId = '@sliderId';
+            const container = document.getElementById(sliderId);
+            const autoPlayEnabled = @(autoPlay ? "true" : "false");
+            const autoPlayDelay = @autoPlayDelay;
+            const sliderVariant = '@sliderVariant';
+            
+            // Check for reduced motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            
+            // Configure effect based on variant
+            let effectConfig = {};
+            let swiperEffect = 'slide';
+            
+            if (sliderVariant === 'Fade') {
+                swiperEffect = 'fade';
+                effectConfig = {
+                    fadeEffect: {
+                        crossFade: true
+                    }
+                };
+            } else if (sliderVariant === 'Slide') {
+                swiperEffect = 'slide';
+                effectConfig = {
+                    slidesPerView: 1,
+                    spaceBetween: 0
+                };
+            }
+            
+            const swiper = new Swiper('#' + sliderId, {
+                loop: true,
+                speed: prefersReducedMotion ? 300 : 800,
+                effect: swiperEffect,
+                ...effectConfig,
+                keyboard: {
+                    enabled: true,
+                    onlyInViewport: true,
+                },
+                mousewheel: {
+                    forceToAxis: true,
+                    sensitivity: 1,
+                    releaseOnEdges: true,
+                },
+                pagination: {
+                    el: '#' + sliderId + ' .swiper-pagination',
+                    clickable: true,
+                    renderBullet: function (index, className) {
+                        return '<button class="' + className + '" role="tab" aria-label="Go to slide ' + (index + 1) + '" aria-selected="false"></button>';
+                    },
+                },
+                navigation: {
+                    nextEl: '#' + sliderId + ' .swiper-button-next',
+                    prevEl: '#' + sliderId + ' .swiper-button-prev',
+                },
+                autoplay: autoPlayEnabled && !prefersReducedMotion ? {
+                    delay: autoPlayDelay,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                } : false,
+                a11y: {
+                    enabled: true,
+                    prevSlideMessage: 'Previous slide',
+                    nextSlideMessage: 'Next slide',
+                    firstSlideMessage: 'This is the first slide',
+                    lastSlideMessage: 'This is the last slide',
+                },
+                on: {
+                    init: function() {
+                        updateActiveSlideAria(this);
+                    },
+                    slideChange: function() {
+                        updateActiveSlideAria(this);
+                    },
+                }
+            });
+            
+            // Update ARIA attributes for active slide
+            function updateActiveSlideAria(swiperInstance) {
+                const bullets = container.querySelectorAll('.swiper-pagination-bullet');
+                bullets.forEach((bullet, index) => {
+                    bullet.setAttribute('aria-selected', index === swiperInstance.realIndex ? 'true' : 'false');
+                });
+            }
+            
+            // Pause on focus for accessibility
+            container.addEventListener('focusin', function() {
+                if (swiper.autoplay.running) {
+                    swiper.autoplay.stop();
+                }
+            });
+            
+            container.addEventListener('focusout', function() {
+                if (autoPlayEnabled && !prefersReducedMotion) {
+                    swiper.autoplay.start();
+                }
+            });
+        })();
+    </script>
+    
+    <style>
+        /* Informational Slider Styles */
+        #@sliderId {
+            --swiper-theme-color: #38bdf8;
+            --swiper-navigation-size: 24px;
+        }
+        
+        /* Disable animations on reduced motion */
+        @@media (prefers-reduced-motion: reduce) {
+            #@sliderId .swiper-slide {
+                transition: none !important;
+            }
+        }
+        
+        /* Navigation buttons */
+        #@sliderId .swiper-button-next,
+        #@sliderId .swiper-button-prev {
+            color: var(--text-color);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 9999px;
+            width: 3rem;
+            height: 3rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+        }
+        
+        #@sliderId .swiper-button-next:hover,
+        #@sliderId .swiper-button-prev:hover {
+            background: rgba(56, 189, 248, 0.8);
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+            color: white;
+        }
+        
+        #@sliderId .swiper-button-next:after,
+        #@sliderId .swiper-button-prev:after {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        
+        /* Pagination bullets */
+        #@sliderId .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background-color: var(--text-muted-color);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        #@sliderId .swiper-pagination-bullet:hover {
+            opacity: 0.8;
+            transform: scale(1.2);
+        }
+        
+        #@sliderId .swiper-pagination-bullet-active {
+            opacity: 1;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            border-color: var(--text-color);
+            transform: scale(1.3);
+        }
+        
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            #@sliderId .swiper-button-next,
+            #@sliderId .swiper-button-prev {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            #@sliderId .swiper-button-next:after,
+            #@sliderId .swiper-button-prev:after {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Focus styles for accessibility */
+        #@sliderId .swiper-button-next:focus-visible,
+        #@sliderId .swiper-button-prev:focus-visible,
+        #@sliderId .swiper-pagination-bullet:focus-visible {
+            outline: 3px solid #38bdf8;
+            outline-offset: 3px;
+        }
+    </style>
+}

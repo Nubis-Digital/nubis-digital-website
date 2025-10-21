@@ -1,7 +1,7 @@
 import { html, LitElement, css } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 
-export default class InformationalSectionCustomView extends UmbElementMixin(LitElement) {
+export default class InformationalSliderCustomView extends UmbElementMixin(LitElement) {
 	
 	static properties = {
 		content: { type: Object, attribute: false }
@@ -13,51 +13,49 @@ export default class InformationalSectionCustomView extends UmbElementMixin(LitE
 	}
 
 	render() {
-		const sectionTitle = this.content?.sectionTitle || 'Informational Section';
-		const contentText = this.content?.content || '';
-		const hasImage = this.content?.image;
-		const imagePosition = this.content?.imagePosition || 'left';
+		const slides = this.content?.slides || [];
+		const slideCount = Array.isArray(slides) ? slides.length : 0;
+		const autoPlay = this.content?.autoPlay || false;
+		const autoPlayDelay = this.content?.autoPlayDelay || 5000;
+		const sliderVariant = this.content?.sliderVariant || 'Fade';
 		
-		// Extract text preview from rich text content
-		const textContent = typeof contentText === 'string' 
-			? contentText 
-			: (contentText?.markup || '');
-		const textPreview = textContent.replace(/<[^>]*>/g, '').substring(0, 120);
-		
-		// Determine layout icon based on image position
-		let layoutIcon = '📄';
-		let layoutLabel = 'Content Only';
-		if (hasImage) {
-			if (imagePosition === 'fullscreen') {
-				layoutIcon = '🖼️';
-				layoutLabel = 'Fullscreen';
-			} else if (imagePosition === 'right') {
-				layoutIcon = '📝🖼️';
-				layoutLabel = 'Image Right';
-			} else {
-				layoutIcon = '🖼️📝';
-				layoutLabel = 'Image Left';
-			}
+		// Get first slide title if available
+		let firstSlideTitle = 'No slides';
+		if (slideCount > 0 && slides[0]?.slideTitle) {
+			firstSlideTitle = slides[0].slideTitle;
 		}
 		
 		return html`
 			<div class="block-preview">
 				<div class="block-header">
-					<div class="block-icon">ℹ️</div>
+					<div class="block-icon">🎠</div>
 					<div class="block-title">
-						<h5>Informational Section</h5>
-						<p class="title-text">${sectionTitle}</p>
+						<h5>Informational Slider</h5>
+						<p class="title-text">${firstSlideTitle}</p>
 					</div>
 				</div>
 				
-				${textPreview ? html`
-					<div class="content-preview">${textPreview}${textPreview.length >= 120 ? '...' : ''}</div>
-				` : ''}
+				<div class="slider-info">
+					<div class="info-row">
+						<span class="info-label">Slides:</span>
+						<span class="info-value">${slideCount}</span>
+					</div>
+					<div class="info-row">
+						<span class="info-label">Effect:</span>
+						<span class="info-value">${sliderVariant}</span>
+					</div>
+					${autoPlay ? html`
+						<div class="info-row">
+							<span class="info-label">Auto-play:</span>
+							<span class="info-value">${autoPlayDelay}ms</span>
+						</div>
+					` : ''}
+				</div>
 				
 				<div class="meta">
-					<span class="badge layout-badge">${layoutIcon} ${layoutLabel}</span>
-					${hasImage ? html`<span class="badge image-badge">✓ Has Image</span>` : ''}
-					${textContent ? html`<span class="badge content-badge">✓ Has Content</span>` : ''}
+					<span class="badge count-badge">${slideCount} ${slideCount === 1 ? 'Slide' : 'Slides'}</span>
+					<span class="badge variant-badge">${sliderVariant}</span>
+					${autoPlay ? html`<span class="badge autoplay-badge">▶ Auto-play</span>` : html`<span class="badge manual-badge">⏸ Manual</span>`}
 				</div>
 			</div>
 		`;
@@ -118,20 +116,30 @@ export default class InformationalSectionCustomView extends UmbElementMixin(LitE
 				text-overflow: ellipsis;
 				white-space: nowrap;
 			}
-			.content-preview {
-				font-size: 12px;
-				line-height: 1.5;
-				color: var(--uui-color-text-alt);
+			.slider-info {
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
 				padding: 10px;
 				background: rgba(255, 255, 255, 0.5);
 				backdrop-filter: blur(10px);
 				-webkit-backdrop-filter: blur(10px);
 				border: 1px solid rgba(148, 163, 184, 0.15);
 				border-radius: 8px;
-				overflow: hidden;
-				display: -webkit-box;
-				-webkit-line-clamp: 3;
-				-webkit-box-orient: vertical;
+			}
+			.info-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				font-size: 12px;
+			}
+			.info-label {
+				color: var(--uui-color-text-alt);
+				font-weight: 500;
+			}
+			.info-value {
+				color: var(--uui-color-text);
+				font-weight: 600;
 			}
 			.meta {
 				display: flex;
@@ -154,26 +162,32 @@ export default class InformationalSectionCustomView extends UmbElementMixin(LitE
 				color: var(--uui-color-text);
 				border: 1px solid rgba(148, 163, 184, 0.2);
 			}
-			.layout-badge {
+			.count-badge {
+				background: linear-gradient(135deg, #6366f1, #4f46e5);
+				color: white;
+				border: none;
+				box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+			}
+			.variant-badge {
 				background: linear-gradient(135deg, #818cf8, #6366f1);
 				color: white;
 				border: none;
 				box-shadow: 0 2px 8px rgba(129, 140, 248, 0.3);
 			}
-			.image-badge {
-				background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-				color: white;
-				border: none;
-				box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
-			}
-			.content-badge {
+			.autoplay-badge {
 				background: linear-gradient(135deg, #10b981, #059669);
 				color: white;
 				border: none;
 				box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 			}
+			.manual-badge {
+				background: linear-gradient(135deg, #64748b, #475569);
+				color: white;
+				border: none;
+				box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3);
+			}
 		`,
 	];
 }
 
-customElements.define('informational-section-custom-view', InformationalSectionCustomView);
+customElements.define('informational-slider-custom-view', InformationalSliderCustomView);
