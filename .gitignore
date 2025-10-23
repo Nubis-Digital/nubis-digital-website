@@ -499,3 +499,4 @@ FodyWeavers.xsd
 !.rulesync/.mcp.json
 
 **/.clinerules/
+config.yaml

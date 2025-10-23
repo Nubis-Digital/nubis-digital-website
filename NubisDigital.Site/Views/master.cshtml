@@ -154,6 +154,13 @@
         const mouse = new THREE.Vector2();
         const nodes = [];
         const connections = [];
+        
+        // Expose variables globally for scroll parallax integration
+        window.camera = null;
+        window.neuralNetwork = null;
+        window.connectionLines = null;
+        window.nodes = nodes;
+        window.connections = connections;
 
         function initThree() {
             const container = document.getElementById('three-canvas-container');
@@ -170,19 +177,59 @@
             const color1 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-1').trim());
             const color2 = new THREE.Color(getComputedStyle(document.body).getPropertyValue('--logo-color-2').trim());
 
-            // Create neural network nodes (dense circuitry pattern)
-            const nodeCount = 150;
+            // Create neural network nodes with brain-like structure
+            const nodeCount = 200; // More nodes for better brain structure
             const nodeGeometry = new THREE.BufferGeometry();
             const nodePositions = [];
             const nodeColors = [];
             
-            // Create a dense 3D grid of nodes with some randomness
+            // Create brain-like formation of nodes
             for (let i = 0; i < nodeCount; i++) {
-                const x = (Math.random() - 0.5) * 30;
-                const y = (Math.random() - 0.5) * 20;
-                const z = (Math.random() - 0.5) * 15;
+                let x, y, z;
                 
-                nodes.push({ x, y, z, vx: (Math.random() - 0.5) * 0.02, vy: (Math.random() - 0.5) * 0.02, vz: (Math.random() - 0.5) * 0.01 });
+                if (i < nodeCount * 0.7) {
+                    // Main brain mass - ellipsoid shape
+                    const theta = Math.random() * Math.PI * 2;
+                    const phi = Math.random() * Math.PI;
+                    const radius = Math.random() * 5 + 10;
+                    
+                    // Brain is wider than tall, and slightly flattened at top/bottom
+                    x = Math.sin(phi) * Math.cos(theta) * (radius * 1.2);
+                    y = Math.sin(phi) * Math.sin(theta) * radius;
+                    z = Math.cos(phi) * (radius * 0.9);
+                    
+                    // Add more randomness to brain surface
+                    const surfaceRandomness = Math.random() * 2;
+                    x += (Math.random() - 0.5) * surfaceRandomness;
+                    y += (Math.random() - 0.5) * surfaceRandomness;
+                    z += (Math.random() - 0.5) * surfaceRandomness;
+                    
+                    // Create hemispheres by adding a slight gap in the middle
+                    if (x > 0) x += 1;
+                    if (x < 0) x -= 1;
+                } else {
+                    // Neurons extending from brain
+                    const baseX = (Math.random() - 0.5) * 25;
+                    const baseY = (Math.random() - 0.5) * 15;
+                    const baseZ = (Math.random() - 0.5) * 20;
+                    
+                    // Add directionality to neural extensions
+                    x = baseX * 1.5; // Extend more horizontally
+                    y = baseY;
+                    z = baseZ * 1.2;
+                }
+                
+                nodes.push({
+                    x, y, z,
+                    // Store original position for brain formation restoration
+                    originalX: x,
+                    originalY: y,
+                    originalZ: z,
+                    // More gentle movement for brain structure
+                    vx: (Math.random() - 0.5) * 0.01,
+                    vy: (Math.random() - 0.5) * 0.01,
+                    vz: (Math.random() - 0.5) * 0.005
+                });
                 nodePositions.push(x, y, z);
                 
                 // Gradient color based on position
@@ -206,10 +253,13 @@
             neuralNetwork = new THREE.Points(nodeGeometry, nodeMaterial);
             scene.add(neuralNetwork);
             
+            // Expose globally for scroll parallax
+            window.neuralNetwork = neuralNetwork;
+            
             // Create connection lines between nearby nodes
             const linePositions = [];
             const lineColors = [];
-            const maxDistance = 5; // Maximum distance to connect nodes
+            const maxDistance = 6; // Slightly increased for better brain connectivity
             
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
@@ -247,12 +297,19 @@
             
             connectionLines = new THREE.LineSegments(lineGeometry, lineMaterial);
             scene.add(connectionLines);
+            
+            // Expose globally for scroll parallax
+            window.connectionLines = connectionLines;
 
             // Add subtle ambient lighting
             scene.add(new THREE.AmbientLight(0xffffff, 0.3));
             
-            // Set initial camera position
-            camera.position.set(0, 0, 25);
+            // Set initial camera position - slightly further away to see whole brain
+            camera.position.set(0, 0, 30);
+            
+            // Expose globally for scroll parallax
+            window.camera = camera;
+            
             setTheme(document.documentElement.dataset.theme);
             
             // Start the animation loop
@@ -268,6 +325,10 @@
                 // Animate node positions (gentle floating motion)
                 const positions = neuralNetwork.geometry.attributes.position.array;
                 
+                // Calculate brain formation factor based on scroll depth
+                // 0 = full brain formation, 1 = full neuron scatter
+                const brainFormation = Math.max(0, 1 - (window.getScrollProgress ? window.getScrollProgress() * 2 : 0));
+                
                 for (let i = 0; i < nodes.length; i++) {
                     // Update velocities with slight random changes
                     nodes[i].vx += (Math.random() - 0.5) * 0.0005;
@@ -279,15 +340,29 @@
                     nodes[i].vy *= 0.98;
                     nodes[i].vz *= 0.98;
                     
+                    // Interpolate between brain formation and scattered neurons
+                    const targetX = nodes[i].originalX * brainFormation + (nodes[i].originalX * 2 * (1 - brainFormation));
+                    const targetY = nodes[i].originalY * brainFormation + (nodes[i].originalY * 2 * (1 - brainFormation));
+                    const targetZ = nodes[i].originalZ * brainFormation + (nodes[i].originalZ * 2 * (1 - brainFormation));
+                    
+                    // Apply forces toward target position (brain formation or scattered)
+                    nodes[i].vx += (targetX - nodes[i].x) * 0.001;
+                    nodes[i].vy += (targetY - nodes[i].y) * 0.001;
+                    nodes[i].vz += (targetZ - nodes[i].z) * 0.001;
+                    
                     // Update positions
                     nodes[i].x += nodes[i].vx;
                     nodes[i].y += nodes[i].vy;
                     nodes[i].z += nodes[i].vz;
                     
-                    // Boundary constraints (keep in view)
-                    if (Math.abs(nodes[i].x) > 15) nodes[i].vx *= -0.5;
-                    if (Math.abs(nodes[i].y) > 10) nodes[i].vy *= -0.5;
-                    if (Math.abs(nodes[i].z) > 7.5) nodes[i].vz *= -0.5;
+                    // Boundary constraints (looser for neuron mode)
+                    const boundaryX = 15 + (15 * (1 - brainFormation));
+                    const boundaryY = 10 + (10 * (1 - brainFormation));
+                    const boundaryZ = 7.5 + (7.5 * (1 - brainFormation));
+                    
+                    if (Math.abs(nodes[i].x) > boundaryX) nodes[i].vx *= -0.5;
+                    if (Math.abs(nodes[i].y) > boundaryY) nodes[i].vy *= -0.5;
+                    if (Math.abs(nodes[i].z) > boundaryZ) nodes[i].vz *= -0.5;
                     
                     positions[i * 3] = nodes[i].x;
                     positions[i * 3 + 1] = nodes[i].y;
@@ -359,6 +434,9 @@
     
     <!-- Global Liquid Glass Effect for All Interactive Elements -->
     <script src="~/js/global-liquid-glass.js"></script>
+    
+    <!-- 3D Scroll Parallax Integration -->
+    <script src="~/js/scroll-parallax-3d.js"></script>
 
 </body>
 

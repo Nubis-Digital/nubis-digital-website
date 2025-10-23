@@ -13,9 +13,14 @@
     var formSubtitle = content.Value<string>("formSubtitle") ?? "Have a project in mind? Let's talk about it.";
     var submitButtonText = content.Value<string>("submitButtonText") ?? "Send Message";
     var successMessage = content.Value<string>("successMessage") ?? "Thank you! We'll be in touch soon.";
+    
+    // Get settings for section ID
+    var settings = Model.Settings;
+    var friendlyName = settings?.Value<string>("friendlyName");
+    var sectionId = !string.IsNullOrWhiteSpace(friendlyName) ? friendlyName : null;
 }
 
-<section class="relative py-20 sm:py-28 scroll-mt-16 overflow-hidden">
+<section id="@sectionId" class="relative py-20 sm:py-28 scroll-mt-16 overflow-hidden">
     <!-- Decorative gradient orbs -->
     <div class="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div class="absolute top-0 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl animate-pulse-slow"></div>

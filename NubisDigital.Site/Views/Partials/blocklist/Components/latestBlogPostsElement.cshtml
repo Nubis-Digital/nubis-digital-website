@@ -39,9 +39,14 @@
             .Take(postsToTake)
             .ToList() ?? Enumerable.Empty<IPublishedContent>();
     }
+    
+    // Get settings for section ID
+    var settings = Model.Settings;
+    var friendlyName = settings?.Value<string>("friendlyName");
+    var sectionId = !string.IsNullOrWhiteSpace(friendlyName) ? friendlyName : null;
 }
 
-<section class="py-20 sm:py-28">
+<section id="@sectionId" class="py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div class="max-w-2xl">

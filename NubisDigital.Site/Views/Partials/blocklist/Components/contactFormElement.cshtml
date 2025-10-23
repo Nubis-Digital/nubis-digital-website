@@ -13,9 +13,15 @@
     var formDescription = content.Value<string>("formDescription");
     var submitButtonText = content.Value<string>("submitButtonText") ?? "Send Message";
     var successMessage = content.Value<string>("successMessage") ?? "Thank you for your message! We'll get back to you soon.";
+    
+    // Get settings for section ID
+    var settings = Model.Settings;
+    var friendlyName = settings?.Value<string>("friendlyName");
+    // Use friendlyName if provided, otherwise default to "contact"
+    var sectionId = !string.IsNullOrWhiteSpace(friendlyName) ? friendlyName : "contact";
 }
 
-<section id="contact" class="relative py-20 sm:py-28 scroll-mt-16 overflow-hidden">
+<section id="@sectionId" class="relative py-20 sm:py-28 scroll-mt-16 overflow-hidden">
     <!-- Enhanced Decorative gradient orbs with animation -->
     <div class="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div class="absolute top-0 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl animate-pulse-slow"></div>

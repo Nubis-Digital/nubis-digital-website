@@ -16,9 +16,14 @@
     var serviceItems = content.Value<Umbraco.Cms.Core.Models.Blocks.BlockListModel>("serviceItems");
     var servicesStyle = content.Value<string>("servicesStyle") ?? "grid";
     var servicesLink = content.Value<IPublishedContent>("servicesLink");
+    
+    // Get settings for section ID
+    var settings = Model.Settings;
+    var friendlyName = settings?.Value<string>("friendlyName");
+    var sectionId = !string.IsNullOrWhiteSpace(friendlyName) ? friendlyName : null;
 }
 
-<section class="relative py-20 sm:py-28 overflow-hidden">
+<section id="@sectionId" class="relative py-20 sm:py-28 overflow-hidden">
     <!-- Decorative gradient background -->
     <div class="absolute inset-0 -z-10 opacity-30">
         <div class="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl"></div>

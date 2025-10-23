@@ -24,6 +24,11 @@
     var sliderId = $"hero-slider-{Guid.NewGuid():N}";
     var slideCount = slides?.Count() ?? 0;
     
+    // Get settings for section ID
+    var settings = Model.Settings;
+    var friendlyName = settings?.Value<string>("friendlyName");
+    var sectionId = !string.IsNullOrWhiteSpace(friendlyName) ? friendlyName : null;
+    
     // Helper function to extract video ID from YouTube/Vimeo URLs
     string GetVideoEmbedUrl(string videoUrl)
     {
@@ -57,7 +62,7 @@
 
 @if (slides != null && slides.Any())
 {
-    <section class="relative h-screen w-full overflow-hidden" role="region" aria-label="Hero Slider" aria-roledescription="carousel">
+    <section id="@sectionId" class="relative h-screen w-full overflow-hidden" role="region" aria-label="Hero Slider" aria-roledescription="carousel">
         <div class="swiper-container h-full" id="@sliderId">
             <div class="swiper-wrapper">
                 @{
