@@ -14,7 +14,11 @@ export default class CallToActionCustomView extends UmbElementMixin(LitElement) 
 
 	render() {
 		const headline = this.content?.headline || 'Call to Action';
-		const description = this.content?.description || '';
+		const descriptionContent = this.content?.description || '';
+		// Handle description as either string or object with markup property
+		const description = typeof descriptionContent === 'string'
+			? descriptionContent
+			: (descriptionContent?.markup || '');
 		const buttonText = this.content?.buttonText || '';
 		const buttonLink = this.content?.buttonLink;
 		
