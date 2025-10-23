@@ -13,135 +13,485 @@
     var formSubtitle = content.Value<string>("formSubtitle") ?? "Have a project in mind? Let's talk about it.";
     var submitButtonText = content.Value<string>("submitButtonText") ?? "Send Message";
     var successMessage = content.Value<string>("successMessage") ?? "Thank you! We'll be in touch soon.";
-    
+
     // Get settings for section ID
     var settings = Model.Settings;
     var friendlyName = settings?.Value<string>("friendlyName");
     var sectionId = !string.IsNullOrWhiteSpace(friendlyName) ? friendlyName : null;
 }
+<style>
+    /* Enhanced glass form panel */
+    .glass-form-panel {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(30px) saturate(150%);
+        -webkit-backdrop-filter: blur(30px) saturate(150%);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
 
-<section id="@sectionId" class="relative py-20 sm:py-28 scroll-mt-16 overflow-hidden">
-    <!-- Decorative gradient orbs -->
-    <div class="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
-    </div>
+    .dark .glass-form-panel {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    }
 
-    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div class="glass-panel ring-1 ring-slate-200/50 dark:ring-slate-700/50">
-            <!-- Header -->
-            <div class="text-center mb-10">
-                @if (!string.IsNullOrWhiteSpace(formTitle))
-                {
-                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl mb-3">
-                        @formTitle
-                    </h2>
-                }
-                
-                @if (!string.IsNullOrWhiteSpace(formSubtitle))
-                {
-                    <p class="text-base text-slate-600 dark:text-slate-300">
-                        @formSubtitle
-                    </p>
-                }
+    .glass-form-panel:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 12px 40px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    /* Enhanced form inputs */
+    .form-input-glass {
+        width: 100%;
+        padding: 1rem 1rem 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 2px solid rgba(148, 163, 184, 0.2);
+        border-radius: 16px;
+        color: var(--text-color);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .dark .form-input-glass {
+        background: rgba(15, 23, 42, 0.5);
+        border-color: rgba(148, 163, 184, 0.15);
+    }
+
+    .form-input-glass:hover {
+        border-color: rgba(56, 189, 248, 0.3);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dark .form-input-glass:hover {
+        background: rgba(15, 23, 42, 0.6);
+    }
+
+    .form-input-glass:focus {
+        border-color: rgba(56, 189, 248, 0.5);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+    }
+
+    .dark .form-input-glass:focus {
+        background: rgba(15, 23, 42, 0.7);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+    }
+
+    /* Floating labels */
+    .form-label-floating {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted-color);
+        font-size: 1rem;
+        font-weight: 500;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        background: transparent;
+        padding: 0 0.25rem;
+    }
+
+    .form-input-glass:focus~.form-label-floating,
+    .form-input-glass:not(:placeholder-shown)~.form-label-floating {
+        top: -0.5rem;
+        left: 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: rgb(56, 189, 248);
+        background: linear-gradient(to bottom,
+                transparent 0%,
+                transparent 45%,
+                var(--bg-color) 45%,
+                var(--bg-color) 100%);
+        padding: 0 0.5rem;
+    }
+
+    /* Focus indicator line */
+    .form-focus-indicator {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgb(56, 189, 248), transparent);
+        transition: transform 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .form-input-glass:focus~.form-focus-indicator {
+        transform: translateX(-50%) scaleX(1);
+    }
+
+    /* Submit button enhancements */
+    .submit-button-glass {
+        position: relative;
+        width: 100%;
+        border-radius: 9999px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow:
+            0 4px 15px rgba(56, 189, 248, 0.3),
+            0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .submit-button-glass:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow:
+            0 8px 25px rgba(56, 189, 248, 0.4),
+            0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .submit-button-glass:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    .submit-button-glass:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Ripple effect */
+    .button-ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+    }
+
+    /* Message styles */
+    .message-glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dark .message-glass {
+        background: rgba(30, 41, 59, 0.3);
+        border-color: rgba(148, 163, 184, 0.1);
+    }
+
+    .success-message {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05));
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .error-message {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    /* Animations */
+    @@keyframes float-slow {
+
+        0%,
+        100% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+
+        33% {
+            transform: translate(30px, -30px) rotate(120deg);
+        }
+
+        66% {
+            transform: translate(-20px, 20px) rotate(240deg);
+        }
+    }
+
+    @@keyframes float-slow-reverse {
+
+        0%,
+        100% {
+            transform: translate(0, 0) rotate(360deg);
+        }
+
+        33% {
+            transform: translate(-30px, 30px) rotate(240deg);
+        }
+
+        66% {
+            transform: translate(20px, -20px) rotate(120deg);
+        }
+    }
+
+    @@keyframes pulse-slow {
+
+        0%,
+        100% {
+            opacity: 0.1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.2;
+            transform: scale(1.1);
+        }
+    }
+
+    @@keyframes gradient {
+
+        0%,
+        100% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+
+    @@keyframes slide-down {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+
+    .animate-float-slow {
+        animation: float-slow 20s ease-in-out infinite;
+    }
+
+    .animate-float-slow-reverse {
+        animation: float-slow-reverse 25s ease-in-out infinite;
+    }
+
+    .animate-pulse-slow {
+        animation: pulse-slow 8s ease-in-out infinite;
+    }
+
+    .animate-gradient {
+        background-size: 200% 200%;
+        animation: gradient 3s ease infinite;
+    }
+
+    .animate-slide-down {
+        animation: slide-down 0.3s ease-out;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 640px) {
+        .glass-form-panel {
+            padding: 2rem 1.5rem;
+        }
+    }
+</style>
+<section id="@sectionId" class="relative py-24 sm:py-32 scroll-mt-16 overflow-hidden">
+    ß
+
+    <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
+        <!-- Enhanced glass panel with stronger effect -->
+        <div class="relative group">
+            <!-- Glow effect on hover -->
+            <div
+                class="absolute -inset-1 bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 rounded-3xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500">
             </div>
 
-            <!-- Form -->
-            <form id="quick-contact-form" class="space-y-5" novalidate>
-                <!-- Email Field -->
-                <div class="relative">
-                    <input type="email"
-                           name="email"
-                           id="quick-email"
-                           required
-                           autocomplete="email"
-                           class="peer w-full rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-900/50 px-4 pt-6 pb-2 text-slate-900 dark:text-white placeholder-transparent transition-all focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-500/20 hover:border-slate-400 dark:hover:border-slate-500"
-                           placeholder="your.email@example.com"
-                           aria-required="true"
-                           aria-describedby="email-error">
-                    <label for="quick-email" 
-                           class="absolute left-4 top-2 text-xs font-semibold text-slate-600 dark:text-slate-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:font-normal peer-focus:top-2 peer-focus:text-xs peer-focus:font-semibold peer-focus:text-sky-600 dark:peer-focus:text-sky-400">
-                        Email Address <span class="text-red-500">*</span>
-                    </label>
-                    <p id="email-error" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden flex items-center gap-1" role="alert">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Please enter a valid email address</span>
-                    </p>
+            <!-- Main glass panel -->
+            <div class="relative glass-form-panel">
+                <!-- Decorative corner accents -->
+                <div class="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-sky-500/30 rounded-tl-3xl">
+                </div>
+                <div
+                    class="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-indigo-500/30 rounded-br-3xl">
                 </div>
 
-                <!-- Message Field -->
-                <div class="relative">
-                    <textarea name="message"
-                              id="quick-message"
-                              rows="4"
-                              maxlength="500"
-                              class="peer w-full rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-900/50 px-4 pt-6 pb-2 text-slate-900 dark:text-white placeholder-transparent transition-all resize-none focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-500/20 hover:border-slate-400 dark:hover:border-slate-500"
-                              placeholder="Your message..."
-                              aria-describedby="message-counter"></textarea>
-                    <label for="quick-message" 
-                           class="absolute left-4 top-2 text-xs font-semibold text-slate-600 dark:text-slate-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:font-normal peer-focus:top-2 peer-focus:text-xs peer-focus:font-semibold peer-focus:text-sky-600 dark:peer-focus:text-sky-400">
-                        Message (Optional)
-                    </label>
-                    <p id="message-counter" class="mt-2 text-xs text-slate-500 dark:text-slate-400 text-right" aria-live="polite">
-                        <span id="quick-char-count">0</span> / 500
-                    </p>
+                <!-- Header with enhanced typography -->
+                <div class="text-center mb-12">
+                    @if (!string.IsNullOrWhiteSpace(formTitle))
+                    {
+                        <h2
+                            class="text-4xl sm:text-5xl font-black tracking-tight mb-4 bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-600 bg-clip-text text-transparent animate-gradient">
+                            @formTitle
+                        </h2>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(formSubtitle))
+                    {
+                        <p class="text-lg text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+                            @formSubtitle
+                        </p>
+                    }
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit"
-                        class="group relative w-full overflow-hidden rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-sky-500/30 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-sky-500/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.98]"
-                        aria-label="Submit contact form">
-                    <span class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-sky-500 opacity-0 transition-opacity group-hover:opacity-100"></span>
-                    <span class="relative inline-flex items-center justify-center gap-2 w-full">
-                        <span id="quick-button-text">@submitButtonText</span>
-                        <svg id="quick-button-icon" class="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
-                            <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
-                        </svg>
-                        <svg id="quick-button-spinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </span>
-                </button>
-
-                <!-- Success Message -->
-                <div id="quick-success-message" class="hidden rounded-lg bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800" role="alert">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                            </svg>
+                <!-- Form with enhanced styling -->
+                <form id="quick-contact-form" class="space-y-6" novalidate>
+                    <!-- Email Field with floating label -->
+                    <div class="form-field-wrapper">
+                        <div class="relative">
+                            <input type="email" name="email" id="quick-email" required autocomplete="email"
+                                class="peer form-input-glass" placeholder=" " aria-required="true"
+                                aria-describedby="email-error">
+                            <label for="quick-email" class="form-label-floating">
+                                Email Address <span class="text-red-400">*</span>
+                            </label>
+                            <!-- Enhanced focus indicator -->
+                            <div class="form-focus-indicator"></div>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800 dark:text-green-200">
-                                @successMessage
+                        <p id="email-error"
+                            class="mt-2 text-sm text-red-500 dark:text-red-400 hidden flex items-center gap-2 animate-slide-down"
+                            role="alert">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span>Please enter a valid email address</span>
+                        </p>
+                    </div>
+
+                    <!-- Message Field with character counter -->
+                    <div class="form-field-wrapper">
+                        <div class="relative">
+                            <textarea name="message" id="quick-message" rows="4" maxlength="500"
+                                class="peer form-input-glass resize-none" placeholder=" "
+                                aria-describedby="message-counter"></textarea>
+                            <label for="quick-message" class="form-label-floating">
+                                Message (Optional)
+                            </label>
+                            <!-- Enhanced focus indicator -->
+                            <div class="form-focus-indicator"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Share your project details or questions
+                            </p>
+                            <p id="message-counter" class="text-xs text-slate-500 dark:text-slate-400"
+                                aria-live="polite">
+                                <span id="quick-char-count">0</span> / 500
                             </p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Error Message -->
-                <div id="quick-error-message" class="hidden rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800" role="alert">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                    <!-- Enhanced Submit Button -->
+                    <button type="submit" class="submit-button-glass group" aria-label="Submit contact form">
+                        <span
+                            class="absolute inset-0 bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 rounded-full"></span>
+                        <span
+                            class="absolute inset-0 bg-gradient-to-r from-purple-500 via-indigo-500 to-sky-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                        <span class="relative flex items-center justify-center gap-3 px-8 py-4">
+                            <span id="quick-button-text" class="text-lg font-bold text-white">@submitButtonText</span>
+                            <svg id="quick-button-icon"
+                                class="h-5 w-5 text-white transition-transform group-hover:translate-x-1 group-hover:scale-110"
+                                viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                                <path
+                                    d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
                             </svg>
+                            <svg id="quick-button-spinner" class="hidden h-5 w-5 text-white animate-spin"
+                                viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </span>
+                        <!-- Ripple effect on click -->
+                        <span class="button-ripple"></span>
+                    </button>
+
+                    <!-- Enhanced Success Message -->
+                    <div id="quick-success-message" class="hidden message-glass success-message" role="alert">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                <svg class="h-6 w-6 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-green-800 dark:text-green-300">Success!</p>
+                                <p class="text-sm text-green-700 dark:text-green-400 mt-1">
+                                    @successMessage
+                                </p>
+                            </div>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800 dark:text-red-200">
-                                Something went wrong. Please try again.
-                            </p>
+                    </div>
+
+                    <!-- Enhanced Error Message -->
+                    <div id="quick-error-message" class="hidden message-glass error-message" role="alert">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                                <svg class="h-6 w-6 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-red-800 dark:text-red-300">Error</p>
+                                <p class="text-sm text-red-700 dark:text-red-400 mt-1">
+                                    Something went wrong. Please try again.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Trust indicators -->
+                <div class="mt-8 pt-8 border-t border-slate-200/20 dark:border-slate-700/20">
+                    <div class="flex items-center justify-center gap-6 text-xs text-slate-500 dark:text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span>Secure & Private</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span>Quick Response</span>
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </section>
+
 
 <script>
     (() => {
@@ -158,82 +508,131 @@
         const errorMessage = document.getElementById('quick-error-message');
         const charCount = document.getElementById('quick-char-count');
 
-        // Character counter
+        // Character counter with enhanced visual feedback
         messageInput.addEventListener('input', () => {
             const count = messageInput.value.length;
             charCount.textContent = count;
-            
+
             const counter = document.getElementById('message-counter');
             if (count > 450) {
-                counter.classList.add('text-red-600', 'dark:text-red-400');
+                counter.classList.add('text-orange-500', 'dark:text-orange-400');
                 counter.classList.remove('text-slate-500', 'dark:text-slate-400');
+            } else if (count === 500) {
+                counter.classList.add('text-red-500', 'dark:text-red-400');
+                counter.classList.remove('text-orange-500', 'dark:text-orange-400');
             } else {
-                counter.classList.remove('text-red-600', 'dark:text-red-400');
+                counter.classList.remove('text-orange-500', 'dark:text-orange-400', 'text-red-500', 'dark:text-red-400');
                 counter.classList.add('text-slate-500', 'dark:text-slate-400');
             }
         });
 
-        // Email validation
+        // Enhanced email validation with real-time feedback
         const validateEmail = () => {
             const emailError = document.getElementById('email-error');
             const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
-            
-            if (!emailInput.value.trim() || !emailRegex.test(emailInput.value)) {
+
+            if (!emailInput.value.trim()) {
+                emailError.classList.add('hidden');
+                return false;
+            }
+
+            if (!emailRegex.test(emailInput.value)) {
                 emailError.classList.remove('hidden');
-                emailInput.classList.add('border-red-500', 'dark:border-red-500');
-                emailInput.classList.remove('border-slate-300', 'dark:border-slate-600');
+                emailInput.style.borderColor = 'rgba(239, 68, 68, 0.5)';
                 emailInput.setAttribute('aria-invalid', 'true');
                 return false;
             }
-            
+
             emailError.classList.add('hidden');
-            emailInput.classList.remove('border-red-500', 'dark:border-red-500');
-            emailInput.classList.add('border-slate-300', 'dark:border-slate-600');
+            emailInput.style.borderColor = '';
             emailInput.setAttribute('aria-invalid', 'false');
             return true;
         };
 
+        // Validate on blur and input
         emailInput.addEventListener('blur', validateEmail);
         emailInput.addEventListener('input', () => {
             if (emailInput.value.trim()) {
-                document.getElementById('email-error').classList.add('hidden');
-                emailInput.classList.remove('border-red-500', 'dark:border-red-500');
-                emailInput.classList.add('border-slate-300', 'dark:border-slate-600');
+                const emailError = document.getElementById('email-error');
+                if (!emailError.classList.contains('hidden')) {
+                    validateEmail();
+                }
             }
         });
 
-        // Form submission
+        // Ripple effect on button click
+        submitButton.addEventListener('click', function (e) {
+            const ripple = document.querySelector('.button-ripple');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.remove('animate');
+
+            // Trigger reflow
+            void ripple.offsetWidth;
+
+            ripple.classList.add('animate');
+        });
+
+        // Form submission with enhanced UX
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Validate email
+            if (!emailInput.value.trim()) {
+                emailInput.focus();
+                emailInput.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+                document.getElementById('email-error').classList.remove('hidden');
+                return;
+            }
 
             if (!validateEmail()) {
                 emailInput.focus();
                 return;
             }
 
+            // Hide any existing messages
             successMessage.classList.add('hidden');
             errorMessage.classList.add('hidden');
 
+            // Update button state
             submitButton.disabled = true;
             buttonText.textContent = 'Sending...';
             buttonIcon.classList.add('hidden');
             buttonSpinner.classList.remove('hidden');
 
-            try {
-                await new Promise(resolve => setTimeout(resolve, 1500));
+            // Add loading state to form
+            form.classList.add('opacity-75', 'pointer-events-none');
 
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Show success message with animation
                 successMessage.classList.remove('hidden');
-                successMessage.style.animation = 'slideIn 0.3s ease-out';
+                successMessage.style.animation = 'slide-down 0.4s ease-out';
+
+                // Reset form
                 form.reset();
                 charCount.textContent = '0';
 
+                // Restore button state
                 buttonText.textContent = '@submitButtonText';
                 buttonIcon.classList.remove('hidden');
                 buttonSpinner.classList.add('hidden');
                 submitButton.disabled = false;
 
+                // Remove loading state
+                form.classList.remove('opacity-75', 'pointer-events-none');
+
+                // Auto-hide success message after 5 seconds
                 setTimeout(() => {
-                    successMessage.style.animation = 'slideOut 0.3s ease-in';
+                    successMessage.style.animation = 'slide-down 0.3s ease-out reverse';
                     setTimeout(() => {
                         successMessage.classList.add('hidden');
                         successMessage.style.animation = '';
@@ -241,16 +640,22 @@
                 }, 5000);
 
             } catch (error) {
+                // Show error message
                 errorMessage.classList.remove('hidden');
-                errorMessage.style.animation = 'slideIn 0.3s ease-out';
+                errorMessage.style.animation = 'slide-down 0.4s ease-out';
 
+                // Restore button state
                 buttonText.textContent = '@submitButtonText';
                 buttonIcon.classList.remove('hidden');
                 buttonSpinner.classList.add('hidden');
                 submitButton.disabled = false;
 
+                // Remove loading state
+                form.classList.remove('opacity-75', 'pointer-events-none');
+
+                // Auto-hide error message after 5 seconds
                 setTimeout(() => {
-                    errorMessage.style.animation = 'slideOut 0.3s ease-in';
+                    errorMessage.style.animation = 'slide-down 0.3s ease-out reverse';
                     setTimeout(() => {
                         errorMessage.classList.add('hidden');
                         errorMessage.style.animation = '';
@@ -259,43 +664,23 @@
             }
         });
 
-        // Animation keyframes
-        const style = document.createElement('style');
-        style.textContent = `
-            @@keyframes slideIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
+        // Add hover effect to form fields
+        const formFields = form.querySelectorAll('.form-input-glass');
+        formFields.forEach(field => {
+            field.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-1px)';
+            });
+            field.addEventListener('mouseleave', function () {
+                if (this !== document.activeElement) {
+                    this.style.transform = '';
                 }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            @@keyframes slideOut {
-                from {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-                to {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-            }
-            @@keyframes pulse-slow {
-                0%, 100% {
-                    opacity: 0.1;
-                    transform: scale(1);
-                }
-                50% {
-                    opacity: 0.15;
-                    transform: scale(1.05);
-                }
-            }
-            .animate-pulse-slow {
-                animation: pulse-slow 8s ease-in-out infinite;
-            }
-        `;
-        document.head.appendChild(style);
+            });
+            field.addEventListener('focus', function () {
+                this.style.transform = 'translateY(-2px)';
+            });
+            field.addEventListener('blur', function () {
+                this.style.transform = '';
+            });
+        });
     })();
 </script>

@@ -1,0 +1,9 @@
+/**
+ * Tailwind CSS Configuration
+ * Sets up Tailwind with dark mode support
+ */
+
+window.tailwind = window.tailwind || {};
+window.tailwind.config = {
+    darkMode: 'class'
+};
