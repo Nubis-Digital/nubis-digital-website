@@ -1,0 +1,16 @@
+{
+  "name": "nubis-digital-site",
+  "version": "1.0.0",
+  "description": "Nubis Digital website with 3D parallax effects",
+  "private": true,
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
+    "clean": "rm -f wwwroot/js/scroll-parallax-3d.bundle.js wwwroot/js/scroll-parallax-3d.bundle.js.map"
+  },
+  "devDependencies": {
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
