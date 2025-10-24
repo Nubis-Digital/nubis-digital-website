@@ -2,13 +2,15 @@
   "mcpServers": {
     "umbraco-mcp": {
       "command": "npx",
-      "args": ["@umbraco-cms/mcp-dev@beta"],
+      "args": [
+        "@umbraco-cms/mcp-dev@beta"
+      ],
       "env": {
         "NODE_TLS_REJECT_UNAUTHORIZED": "0",
         "UMBRACO_CLIENT_ID": "umbraco-back-office-mcp",
         "UMBRACO_CLIENT_SECRET": "1234567890",
         "UMBRACO_BASE_URL": "https://localhost:44348",
-        "UMBRACO_INCLUDE_TOOL_COLLECTIONS": "document-type,document,media,property-type,partial-view,static-file,stylesheet,temporary-file,imaging,template,data-type"
+        "UMBRACO_INCLUDE_TOOL_COLLECTIONS": "document-type,document,media,property-type,partial-view,static-file,stylesheet,temporary-file,imaging,template"
       },
       "alwaysAllow": [
         "get-culture",
@@ -60,7 +62,6 @@
         "create-element-type",
         "get-icons",
         "get-document-type-allowed-children",
-        "get-all-document-types",
         "create-document-type-folder",
         "delete-document-type-folder",
         "get-document-type-folder",
@@ -217,7 +218,10 @@
         "get-template-ancestors",
         "get-template-children",
         "get-template-root",
-        "create-media-multiple"
+        "create-media-multiple",
+        "access_mcp_resource",
+        "get-document-type-search",
+        "get-all-document-types"
       ]
     },
     "git": {
@@ -255,10 +259,13 @@
         "browser_close",
         "browser_take_screenshot",
         "browser_click",
-        "browser_network_requests"
+        "browser_network_requests",
+        "browser_wait_for",
+        "browser_hover",
+        "browser_snapshot"
       ]
-     },
-      "a11y-accessibility": {
+    },
+    "a11y-accessibility": {
       "command": "npx",
       "args": [
         "-y",
@@ -272,10 +279,6 @@
         "check_aria_attributes",
         "check_orientation_lock"
       ]
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["chrome-devtools-mcp@latest"]
     },
     "fetch": {
       "command": "uvx",

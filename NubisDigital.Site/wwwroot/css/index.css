@@ -14,7 +14,7 @@
   --glass-shadow: rgba(0, 0, 0, 0.3);
   --logo-color-1: #38bdf8;
   --logo-color-2: #818cf8;
-  --nav-bg: rgba(15, 23, 42, 0.8);
+  --nav-bg: rgba(15, 23, 42, 0.75);
 }
 
 /* Light theme variables */
@@ -28,7 +28,7 @@
   --glass-shadow: rgba(0, 0, 0, 0.08);
   --logo-color-1: #0ea5e9;
   --logo-color-2: #6366f1;
-  --nav-bg: rgba(255, 255, 255, 0.90);
+  --nav-bg: rgba(255, 255, 255, 0.85);
 }
 
 /* Custom Component Classes */

@@ -23,7 +23,9 @@
     var availableCultures = Model?.Cultures?.Keys?.ToList() ?? new List<string>();
 }
 
-<nav class="nav-enhanced sticky top-0 z-50 w-full border-b transition-all duration-300" aria-label="Primary site navigation" style="background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-color: var(--glass-border);">
+<nav class="nav-enhanced sticky top-0 z-50 w-full border-b transition-all duration-500" aria-label="Primary site navigation" style="background: var(--nav-bg); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); border-color: var(--glass-border);">
+    <!-- Liquid glass overlay for depth -->
+    <div class="nav-liquid-overlay"></div>
     <!-- Progress bar for scroll depth -->
     <div id="scroll-progress" class="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-sky-400 to-indigo-500 transition-all duration-150" style="width: 0%;"></div>
     
@@ -339,13 +341,118 @@
 </nav>
 
 <style>
-    /* Enhanced Navigation Styles */
+    /* Enhanced Liquid Glassmorphism Navigation */
     .nav-enhanced {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow:
+            0 8px 32px rgba(31, 38, 135, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+        background: linear-gradient(
+            to bottom,
+            var(--nav-bg),
+            color-mix(in srgb, var(--nav-bg) 98%, transparent)
+        );
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform, box-shadow;
     }
-    
+
+    /* Liquid glass overlay for water-like depth */
+    .nav-liquid-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(
+                ellipse 800px 200px at 50% -50px,
+                rgba(56, 189, 248, 0.08) 0%,
+                rgba(129, 140, 248, 0.06) 25%,
+                rgba(236, 72, 153, 0.04) 50%,
+                transparent 100%
+            );
+        opacity: 0.6;
+        mix-blend-mode: screen;
+        animation: liquidShimmer 8s ease-in-out infinite;
+    }
+
+    .dark .nav-liquid-overlay {
+        background:
+            radial-gradient(
+                ellipse 800px 200px at 50% -50px,
+                rgba(56, 189, 248, 0.12) 0%,
+                rgba(129, 140, 248, 0.10) 25%,
+                rgba(236, 72, 153, 0.08) 50%,
+                transparent 100%
+            );
+        opacity: 0.8;
+    }
+
+    @@keyframes liquidShimmer {
+        0%, 100% {
+            transform: translateX(0) translateY(0);
+            opacity: 0.6;
+        }
+        25% {
+            transform: translateX(-20px) translateY(-5px);
+            opacity: 0.7;
+        }
+        50% {
+            transform: translateX(20px) translateY(-3px);
+            opacity: 0.5;
+        }
+        75% {
+            transform: translateX(-10px) translateY(-7px);
+            opacity: 0.65;
+        }
+    }
+
     .nav-enhanced.scrolled {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        box-shadow:
+            0 20px 40px rgba(31, 38, 135, 0.12),
+            0 10px 20px rgba(56, 189, 248, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+        background: linear-gradient(
+            to bottom,
+            color-mix(in srgb, var(--nav-bg) 95%, var(--logo-color-1) 5%),
+            var(--nav-bg)
+        );
+    }
+
+    /* Smooth water ripple effect on scroll */
+    .nav-enhanced::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(56, 189, 248, 0.05) 20%,
+            rgba(129, 140, 248, 0.05) 40%,
+            rgba(236, 72, 153, 0.05) 60%,
+            rgba(56, 189, 248, 0.05) 80%,
+            transparent 100%
+        );
+        transform: translateX(-100%);
+        animation: waterFlow 15s linear infinite;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .nav-enhanced.scrolled::before {
+        opacity: 1;
+    }
+
+    @@keyframes waterFlow {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
     }
     
     /* Animated Hamburger Menu */
@@ -393,9 +500,10 @@
         --tracker-y: 0px;
         --tracker-width: 0px;
         --tracker-opacity: 0;
+        --tracker-scale: 1;
     }
-    
-    /* Shared Glass Tracker - follows mouse across all nav links */
+
+    /* Ultra-smooth Liquid Glass Tracker */
     .nav-glass-tracker {
         position: absolute;
         left: var(--tracker-x);
@@ -405,86 +513,113 @@
         opacity: var(--tracker-opacity);
         pointer-events: none;
         z-index: 0;
+        transform: scaleX(var(--tracker-scale));
         transition:
-            left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-            width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-            opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: left, width, opacity;
+            left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+            width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+            opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+            transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: left, width, opacity, transform;
     }
-    
-    /* Morphing liquid blob background */
+
+    /* Multi-layered liquid effect for depth */
     .nav-glass-tracker::before {
         content: '';
         position: absolute;
-        inset: -8px;
+        inset: -12px;
         background:
             radial-gradient(
-                ellipse 120% 80% at 50% 50%,
-                rgba(236, 72, 153, 0.4) 0%,
-                rgba(168, 85, 247, 0.35) 20%,
-                rgba(99, 102, 241, 0.3) 35%,
-                rgba(59, 130, 246, 0.25) 50%,
-                rgba(56, 189, 248, 0.2) 65%,
-                transparent 80%
+                ellipse 150% 100% at 50% 50%,
+                rgba(56, 189, 248, 0.35) 0%,
+                rgba(99, 102, 241, 0.30) 15%,
+                rgba(168, 85, 247, 0.25) 30%,
+                rgba(236, 72, 153, 0.20) 45%,
+                rgba(59, 130, 246, 0.15) 60%,
+                rgba(56, 189, 248, 0.10) 75%,
+                transparent 90%
             );
-        border-radius: 50% 40% 60% 50% / 60% 50% 50% 40%;
-        filter: blur(20px) saturate(1.5);
-        animation: liquidMorph 3s ease-in-out infinite;
+        border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+        filter: blur(25px) saturate(1.8) brightness(1.1);
+        animation:
+            liquidMorph 4s ease-in-out infinite,
+            liquidPulse 2s ease-in-out infinite alternate;
         mix-blend-mode: screen;
+        transform: scale(1.1);
     }
-    
-    /* Glass overlay */
+
+    /* Glass refraction layer */
     .nav-glass-tracker::after {
         content: '';
         position: absolute;
-        inset: 0;
+        inset: -2px;
         background:
-            radial-gradient(
-                circle at 50% 50%,
-                rgba(255, 255, 255, 0.25) 0%,
-                rgba(168, 85, 247, 0.15) 30%,
-                rgba(56, 189, 248, 0.12) 60%,
-                transparent 100%
+            linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0.1) 20%,
+                transparent 40%,
+                rgba(168, 85, 247, 0.1) 60%,
+                rgba(56, 189, 248, 0.15) 80%,
+                rgba(255, 255, 255, 0.2) 100%
             );
-        border-radius: 12px;
-        backdrop-filter: blur(12px) saturate(1.8);
-        -webkit-backdrop-filter: blur(12px) saturate(1.8);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        backdrop-filter: blur(15px) saturate(2) contrast(1.1);
+        -webkit-backdrop-filter: blur(15px) saturate(2) contrast(1.1);
+        /* Removed border to eliminate visible border on hover */
+        /* border: 1px solid; */
+        /* border-image: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.4),
+            rgba(168, 85, 247, 0.3),
+            rgba(56, 189, 248, 0.3),
+            rgba(255, 255, 255, 0.4)
+        ) 1; */
         box-shadow:
-            inset 0 1px 2px rgba(255, 255, 255, 0.4),
-            inset 0 -1px 2px rgba(168, 85, 247, 0.2);
+            inset 0 2px 4px rgba(255, 255, 255, 0.5),
+            inset 0 -2px 4px rgba(168, 85, 247, 0.3),
+            0 4px 12px rgba(56, 189, 248, 0.2);
     }
     
-    /* Dark mode tracker */
+    /* Dark mode tracker - more vibrant */
     .dark .nav-glass-tracker::before {
         background:
             radial-gradient(
-                ellipse 120% 80% at 50% 50%,
-                rgba(236, 72, 153, 0.5) 0%,
-                rgba(168, 85, 247, 0.45) 20%,
-                rgba(99, 102, 241, 0.4) 35%,
-                rgba(59, 130, 246, 0.35) 50%,
-                rgba(56, 189, 248, 0.3) 65%,
-                transparent 80%
+                ellipse 150% 100% at 50% 50%,
+                rgba(56, 189, 248, 0.45) 0%,
+                rgba(99, 102, 241, 0.40) 15%,
+                rgba(168, 85, 247, 0.35) 30%,
+                rgba(236, 72, 153, 0.30) 45%,
+                rgba(59, 130, 246, 0.25) 60%,
+                rgba(56, 189, 248, 0.20) 75%,
+                transparent 90%
             );
-        filter: blur(20px) saturate(2);
+        filter: blur(25px) saturate(2.2) brightness(1.3);
     }
-    
+
     .dark .nav-glass-tracker::after {
         background:
-            radial-gradient(
-                circle at 50% 50%,
-                rgba(168, 85, 247, 0.25) 0%,
-                rgba(99, 102, 241, 0.2) 30%,
-                rgba(56, 189, 248, 0.18) 60%,
-                transparent 100%
+            linear-gradient(
+                135deg,
+                rgba(168, 85, 247, 0.4) 0%,
+                rgba(99, 102, 241, 0.3) 20%,
+                transparent 40%,
+                rgba(56, 189, 248, 0.2) 60%,
+                rgba(236, 72, 153, 0.25) 80%,
+                rgba(168, 85, 247, 0.3) 100%
             );
-        border: 1px solid rgba(168, 85, 247, 0.4);
+        /* Removed border-image to eliminate visible border on hover in dark mode */
+        /* border-image: linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.5),
+            rgba(56, 189, 248, 0.4),
+            rgba(236, 72, 153, 0.4),
+            rgba(168, 85, 247, 0.5)
+        ) 1; */
         box-shadow:
-            inset 0 1px 2px rgba(168, 85, 247, 0.5),
-            inset 0 -1px 2px rgba(56, 189, 248, 0.3),
-            0 4px 20px rgba(168, 85, 247, 0.3),
-            0 2px 8px rgba(56, 189, 248, 0.2);
+            inset 0 2px 4px rgba(168, 85, 247, 0.6),
+            inset 0 -2px 4px rgba(56, 189, 248, 0.4),
+            0 6px 20px rgba(168, 85, 247, 0.4),
+            0 3px 10px rgba(56, 189, 248, 0.3);
     }
     
     /* Apple-style Liquid Morphing Blob Effect */
@@ -522,24 +657,39 @@
     
     @@keyframes liquidMorph {
         0%, 100% {
-            border-radius: 50% 40% 60% 50% / 60% 50% 50% 40%;
-            filter: blur(20px) saturate(1.5);
-            transform: scale(1) rotate(0deg);
+            border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+            transform: scale(1.1) rotate(0deg) translateZ(0);
         }
-        25% {
-            border-radius: 40% 60% 50% 40% / 50% 60% 40% 60%;
-            filter: blur(22px) saturate(1.7);
-            transform: scale(1.05) rotate(2deg);
+        20% {
+            border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
+            transform: scale(1.15) rotate(1deg) translateZ(0);
+        }
+        40% {
+            border-radius: 50% 50% 40% 60% / 40% 60% 50% 60%;
+            transform: scale(1.08) rotate(-1deg) translateZ(0);
+        }
+        60% {
+            border-radius: 60% 40% 50% 50% / 50% 40% 60% 50%;
+            transform: scale(1.12) rotate(0.5deg) translateZ(0);
+        }
+        80% {
+            border-radius: 40% 60% 40% 60% / 60% 50% 50% 40%;
+            transform: scale(1.1) rotate(-0.5deg) translateZ(0);
+        }
+    }
+
+    @@keyframes liquidPulse {
+        0% {
+            opacity: 0.8;
+            filter: blur(25px) saturate(1.8) brightness(1.1);
         }
         50% {
-            border-radius: 60% 50% 40% 60% / 40% 50% 60% 50%;
-            filter: blur(24px) saturate(1.8);
-            transform: scale(1.08) rotate(-2deg);
+            opacity: 1;
+            filter: blur(22px) saturate(2) brightness(1.2);
         }
-        75% {
-            border-radius: 50% 60% 40% 50% / 60% 40% 50% 60%;
-            filter: blur(22px) saturate(1.6);
-            transform: scale(1.05) rotate(1deg);
+        100% {
+            opacity: 0.9;
+            filter: blur(28px) saturate(1.6) brightness(1.05);
         }
     }
     
