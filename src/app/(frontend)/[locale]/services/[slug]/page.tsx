@@ -2,40 +2,33 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Metadata } from 'next'
+import { locales, type Locale } from '@/i18n'
 import ServiceDetail from '../../../components/ServiceDetail'
 
 type Args = {
-  params: Promise<{ slug: string }>
+  params: Promise<{ locale: Locale; slug: string }>
 }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config })
-  const services = await payload.find({
-    collection: 'services',
-    limit: 100,
-    select: { slug: true },
-  })
-
-  return services.docs.map((service) => ({
-    slug: service.slug,
-  }))
+export function generateStaticParams() {
+  return locales.flatMap((locale) =>
+    ['payload', 'umbraco', 'wordpress'].map((slug) => ({ locale, slug })),
+  )
 }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
-  const { slug } = await params
+  const { slug, locale } = await params
   const payload = await getPayload({ config })
 
   const result = await payload.find({
     collection: 'services',
     where: { slug: { equals: slug } },
+    locale,
     limit: 1,
   })
 
   const service = result.docs[0]
 
-  if (!service) {
-    return { title: 'Service Not Found | Nubis Digital' }
-  }
+  if (!service) return { title: 'Service Not Found | Nubis Digital' }
 
   return {
     title: `${service.label} — ${service.title} | Nubis Digital`,
@@ -44,20 +37,19 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 }
 
 export default async function ServicePage({ params }: Args) {
-  const { slug } = await params
+  const { slug, locale } = await params
   const payload = await getPayload({ config })
 
   const result = await payload.find({
     collection: 'services',
     where: { slug: { equals: slug } },
+    locale,
     limit: 1,
   })
 
   const service = result.docs[0]
 
-  if (!service) {
-    notFound()
-  }
+  if (!service) notFound()
 
-  return <ServiceDetail service={service} />
+  return <ServiceDetail service={service} locale={locale} />
 }
