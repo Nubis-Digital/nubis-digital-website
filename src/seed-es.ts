@@ -192,18 +192,18 @@ async function seedSpanish() {
     },
     umbraco: {
       label: 'Umbraco',
-      title: 'Sinergia Empresarial y Migraci\u00f3n',
-      subtitle: 'Seguridad robusta e integraci\u00f3n fluida con sistemas internos.',
-      description: 'Transformamos arquitecturas monol\u00edticas abultadas en entornos Umbraco optimizados alojados en Azure. Nuestros plugins de LoB conectan tu sitio de marketing con ERPs internos complejos, asegurando integridad absoluta de datos.',
-      agenticEdge: 'Nuestros agentes de migraci\u00f3n automatizan transiciones legacy-a-Umbraco inyectando estructura legible por agentes, para que tu hub empresarial sea descubrible por IA desde el lanzamiento.',
+      title: 'Actualizaci\u00f3n y Recuperaci\u00f3n de Rendimiento',
+      subtitle: 'De v7/v8/v10 a Umbraco 14 LTS \u2014 sin tiempo de inactividad, mediblemente m\u00e1s r\u00e1pido.',
+      description: '\u00bfEjecutas Umbraco 7, 8 o 10? Los tres superaron su fin de vida \u00fatil: sin parches de seguridad, vulnerabilidades acumuladas y cuellos de botella de rendimiento que no puedes superar. Realizamos una auditor\u00eda completa de rendimiento, mapeamos cada dependencia de paquetes personalizada y ejecutamos una migraci\u00f3n estructurada a Umbraco 14 LTS sin tiempo de inactividad. Los clientes consistentemente ven una mejora de 2\u20134\u00d7 en los tiempos de carga post-actualizaci\u00f3n.',
+      agenticEdge: 'Tras la actualizaci\u00f3n, inyectamos esquemas de contenido estructurado y configuraci\u00f3n agent.txt para que tu sitio Umbraco aparezca inmediatamente en b\u00fasquedas impulsadas por IA y pipelines RAG \u2014 convirtiendo tu inversi\u00f3n en migraci\u00f3n en un motor de crecimiento compuesto.',
       specs: [
-        { label: 'Despliegue', value: 'Microsoft Azure Core' },
-        { label: 'Seguridad', value: 'Grado Empresarial / SSO' },
+        { label: 'Versi\u00f3n Objetivo', value: 'Umbraco 14 LTS' },
+        { label: 'Ganancia de Rendimiento', value: '2\u20134\u00d7 m\u00e1s r\u00e1pido' },
       ],
       plugins: [
-        { text: 'Sincronizaci\u00f3n Bidireccional ERP / CRM' },
-        { text: 'Integraci\u00f3n Azure Active Directory (SSO)' },
-        { text: 'Mapeadores Autom\u00e1ticos de Datos Legados' },
+        { text: 'Migraci\u00f3n sin inactividad (v7/v8/v10 \u2192 v14)' },
+        { text: 'Resoluci\u00f3n de conflictos de paquetes y modernizaci\u00f3n' },
+        { text: 'Perfilado de rendimiento y optimizaci\u00f3n de carga' },
       ],
     },
     wordpress: {

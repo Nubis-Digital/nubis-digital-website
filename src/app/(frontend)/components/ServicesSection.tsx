@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { ArrowRight, Cpu } from 'lucide-react'
+import { useState, useRef, useEffect, Fragment } from 'react'
+import { ArrowRight, Cpu, AlertTriangle } from 'lucide-react'
 import type {
   Service,
   ServicesSection as ServicesSectionType,
@@ -121,7 +121,7 @@ export default function ServicesSection({ sectionData, services, locale }: Props
             <div className="mb-4 flex items-center gap-3">
               <div className="h-[1px] w-12 bg-[#101417]" />
               <span className="font-sans text-xs uppercase tracking-widest text-[#101417]/50">
-                Architecture Profile
+                {t['services.architectureProfile']}
               </span>
             </div>
 
@@ -132,6 +132,24 @@ export default function ServicesSection({ sectionData, services, locale }: Props
               {activeService.subtitle}
             </h4>
 
+            {/* Umbraco: pain signal tags */}
+            {activeService.slug === 'umbraco' && (
+              <div className="flex flex-wrap gap-2 mb-8 -mt-2">
+                {(locale === 'es'
+                  ? ['Umbraco v7/v8/v10: fin de vida', 'Carga > 4 segundos', 'Sin parches de seguridad']
+                  : ['Umbraco v7/v8/v10 end-of-life', 'Page load > 4 seconds', 'No security patches']
+                ).map((signal) => (
+                  <span
+                    key={signal}
+                    className="inline-flex items-center gap-1.5 border border-orange-500/30 bg-orange-500/5 text-orange-600 font-mono text-[10px] px-2.5 py-1 uppercase tracking-wider"
+                  >
+                    <AlertTriangle size={9} />
+                    {signal}
+                  </span>
+                ))}
+              </div>
+            )}
+
             <p className="font-sans text-[#101417]/80 text-lg leading-relaxed mb-10 max-w-2xl">
               {activeService.description}
             </p>
@@ -139,7 +157,7 @@ export default function ServicesSection({ sectionData, services, locale }: Props
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 w-full max-w-3xl">
               <div className="border border-[#101417] p-6 bg-white/50 backdrop-blur-sm">
                 <h5 className="font-sans text-xs uppercase tracking-widest text-[#101417]/50 mb-4 border-b border-[#101417]/20 pb-2">
-                  Deployment Specs
+                  {t['services.deploymentSpecs']}
                 </h5>
                 <div className="space-y-4">
                   {activeService.specs?.map((spec, idx) => (
@@ -166,7 +184,7 @@ export default function ServicesSection({ sectionData, services, locale }: Props
                     className="animate-pulse"
                     style={{ animationDuration: '3s' }}
                   />
-                  The Agentic Edge
+                  {t['services.agenticEdge']}
                 </h5>
                 <p className="font-sans text-sm leading-relaxed text-[#F0EEE9]/80">
                   {activeService.agenticEdge}
@@ -176,7 +194,7 @@ export default function ServicesSection({ sectionData, services, locale }: Props
 
             <div className="border-t border-[#101417] pt-8 opacity-60 group-hover:opacity-100 transition-opacity duration-700">
               <h5 className="font-sans text-sm uppercase tracking-widest text-[#101417] mb-4 font-semibold">
-                Bespoke Plugins & Integrations
+                {t['services.pluginsTitle']}
               </h5>
               <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {activeService.plugins?.map((plugin, idx) => (
@@ -191,12 +209,33 @@ export default function ServicesSection({ sectionData, services, locale }: Props
               </ul>
             </div>
 
+            {/* Umbraco: version migration path */}
+            {activeService.slug === 'umbraco' && (
+              <div className="mt-6 mb-2 border border-[#101417]/10 bg-[#101417]/[0.02] px-6 py-4">
+                <p className="font-sans text-[10px] uppercase tracking-widest text-[#101417]/30 mb-3">
+                  {locale === 'es' ? 'Ruta de migración' : 'Migration path'}
+                </p>
+                <div className="flex items-center gap-3 font-mono text-sm">
+                  {['v7', 'v8', 'v10'].map((v) => (
+                    <Fragment key={v}>
+                      <span className="line-through text-[#101417]/25">{v}</span>
+                      <span className="text-[#101417]/15 text-xs">→</span>
+                    </Fragment>
+                  ))}
+                  <span className="font-bold text-[#00F5D4] flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#00F5D4] inline-block" />
+                    v14 LTS
+                  </span>
+                </div>
+              </div>
+            )}
+
             <div className="mt-8 pt-6 border-t border-[#101417]/20">
               <a
                 href={`/services/${activeService.slug}`}
                 className="inline-flex items-center gap-2 font-sans text-sm uppercase tracking-widest text-[#00F5D4] bg-[#101417] px-6 py-3 hover:bg-[#B9A7FF] hover:text-[#101417] transition-all duration-500"
               >
-                Learn More
+                {t['services.learnMore']}
                 <ArrowRight size={14} />
               </a>
             </div>
