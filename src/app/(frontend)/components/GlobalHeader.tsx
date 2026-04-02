@@ -3,6 +3,7 @@ import type { Locale } from '@/i18n'
 import OversightToggle from './OversightToggle'
 import MobileMenu from './MobileMenu'
 import LanguageSwitcher from './LanguageSwitcher'
+import HeaderCtaButton from './HeaderCtaButton'
 
 function getNavHref(link: NonNullable<Header['navLinks']>[number], locale: Locale): string {
   if (link.linkType === 'page' && link.page) {
@@ -53,9 +54,10 @@ export default function GlobalHeader({ data, locale }: Props) {
             locale={locale}
           />
         </div>
-        <button className="hidden md:block bg-[#101417] text-[#F0EEE9] hover:bg-[#00F5D4] hover:text-[#101417] transition-all duration-500 font-sans text-sm px-6 py-3 tracking-wide">
-          {data.ctaButtonText}
-        </button>
+        <HeaderCtaButton
+          text={data.ctaButtonText}
+          className="hidden md:block bg-[#101417] text-[#F0EEE9] hover:bg-[#00F5D4] hover:text-[#101417] transition-all duration-500 font-sans text-sm px-6 py-3 tracking-wide"
+        />
         <MobileMenu
           navLinks={data.navLinks}
           ctaButtonText={data.ctaButtonText}

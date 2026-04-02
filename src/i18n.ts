@@ -4,6 +4,9 @@ export const defaultLocale: Locale = 'en'
 
 export const uiStrings: Record<Locale, Record<string, string>> = {
   en: {
+    'startProject.sectionLabel': 'New Project',
+    'startProject.headline': 'Start Your Project',
+    'startProject.subheadline': "Tell us what you're building — we'll respond within 24 hours.",
     'contact.sectionLabel': 'Get In Touch',
     'contact.headline': 'Start a Conversation',
     'contact.subheadline': "Tell us about your project — we'll get back within 24 hours.",
@@ -24,8 +27,18 @@ export const uiStrings: Record<Locale, Record<string, string>> = {
     'oversight.heroBadge': 'Generative art — refined by design director',
     'oversight.servicesBadge': 'Content curated by senior architects',
     'process.label': 'Our Process',
+    'whyAgentic.label': 'Why Agentic',
+    'agenticAdvantage.label': 'The Advantage',
+    'services.architectureProfile': 'Architecture Profile',
+    'services.deploymentSpecs': 'Deployment Specs',
+    'services.agenticEdge': 'The Agentic Edge',
+    'services.pluginsTitle': 'Bespoke Plugins & Integrations',
+    'services.learnMore': 'Learn More',
   },
   es: {
+    'startProject.sectionLabel': 'Nuevo Proyecto',
+    'startProject.headline': 'Inicia Tu Proyecto',
+    'startProject.subheadline': 'Cuéntanos qué estás construyendo — te responderemos en 24 horas.',
     'contact.sectionLabel': 'Contáctanos',
     'contact.headline': 'Inicia una Conversación',
     'contact.subheadline': 'Cuéntanos sobre tu proyecto — te responderemos en 24 horas.',
@@ -46,5 +59,12 @@ export const uiStrings: Record<Locale, Record<string, string>> = {
     'oversight.heroBadge': 'Arte generativo — refinado por el director de diseño',
     'oversight.servicesBadge': 'Contenido curado por arquitectos senior',
     'process.label': 'Nuestro Proceso',
+    'whyAgentic.label': 'Por Qué Agéntico',
+    'agenticAdvantage.label': 'La Ventaja',
+    'services.architectureProfile': 'Perfil de Arquitectura',
+    'services.deploymentSpecs': 'Especificaciones de Despliegue',
+    'services.agenticEdge': 'La Ventaja Agéntica',
+    'services.pluginsTitle': 'Plugins e Integraciones a Medida',
+    'services.learnMore': 'Saber Más',
   },
 }

@@ -9,6 +9,14 @@ export default function ThreePrism() {
   useEffect(() => {
     if (!mountRef.current) return
 
+    const html = document.documentElement
+    const isLowBandwidth = html.classList.contains('nubis-low-bandwidth')
+    const isReducedMotion = html.classList.contains('nubis-reduced-motion')
+    const isBatterySaver = html.classList.contains('nubis-battery-saver')
+
+    // Skip Three.js entirely on low-bandwidth — show static fallback
+    if (isLowBandwidth) return
+
     const container = mountRef.current
     const width = container.clientWidth
     const height = container.clientHeight
@@ -56,6 +64,22 @@ export default function ThreePrism() {
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.5))
 
+    // Render a single static frame if reduced motion is active
+    if (isReducedMotion) {
+      renderer.render(scene, camera)
+      return () => {
+        if (container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement)
+        }
+        renderer.dispose()
+      }
+    }
+
+    // Battery saver: cap at ~20fps instead of 60fps
+    const fpsCap = isBatterySaver ? 20 : 60
+    const frameInterval = 1000 / fpsCap
+    let lastFrame = 0
+
     let mouseX = 0
     let mouseY = 0
     const handleMouseMove = (e: MouseEvent) => {
@@ -65,7 +89,11 @@ export default function ThreePrism() {
     window.addEventListener('mousemove', handleMouseMove)
 
     let animId: number
-    const animate = () => {
+    const animate = (now: number) => {
+      animId = requestAnimationFrame(animate)
+      if (now - lastFrame < frameInterval) return
+      lastFrame = now
+
       const targetX = mouseX * 0.001
       const targetY = mouseY * 0.001
       prism.rotation.y += 0.005 + (targetX - prism.rotation.y) * 0.05
@@ -73,9 +101,8 @@ export default function ThreePrism() {
       wireframe.rotation.y = prism.rotation.y
       wireframe.rotation.x = prism.rotation.x
       renderer.render(scene, camera)
-      animId = requestAnimationFrame(animate)
     }
-    animate()
+    animId = requestAnimationFrame(animate)
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)

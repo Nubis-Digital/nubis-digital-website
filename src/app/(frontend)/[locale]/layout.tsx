@@ -6,6 +6,9 @@ import { type Locale } from '@/i18n'
 import GlobalHeader from '../components/GlobalHeader'
 import Footer from '../components/Footer'
 import { OversightProvider } from '../components/OversightContext'
+import { StartProjectModalProvider } from '../components/StartProjectModalContext'
+import { DeviceOptimizerProvider } from '../components/DeviceOptimizerContext'
+import OptimizationLogPanel from '../components/OptimizationLogPanel'
 import '../globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
@@ -35,11 +38,16 @@ export default async function FrontendLayout({ children, params }: Props) {
       <body
         className={`${inter.variable} ${playfair.variable} min-h-screen bg-[#F0EEE9] text-[#101417] selection:bg-[#00F5D4] selection:text-[#101417] antialiased`}
       >
-        <OversightProvider>
-          <GlobalHeader data={header} locale={locale} />
-          {children}
-          <Footer data={footer} />
-        </OversightProvider>
+        <DeviceOptimizerProvider locale={locale}>
+          <StartProjectModalProvider locale={locale}>
+            <OversightProvider>
+              <GlobalHeader data={header} locale={locale} />
+              {children}
+              <Footer data={footer} />
+            </OversightProvider>
+          </StartProjectModalProvider>
+          <OptimizationLogPanel locale={locale} />
+        </DeviceOptimizerProvider>
       </body>
     </html>
   )

@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 import type { Header, Page } from '@/payload-types'
 import type { Locale } from '@/i18n'
+import { useStartProjectModal } from './StartProjectModalContext'
 
 function getNavHref(link: NonNullable<Header['navLinks']>[number], locale: Locale): string {
   if (link.linkType === 'page' && link.page) {
@@ -28,6 +29,7 @@ export default function MobileMenu({ navLinks, ctaButtonText, locale }: Props) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
+  const { openModal } = useStartProjectModal()
 
   const otherLocale: Locale = locale === 'en' ? 'es' : 'en'
 
@@ -97,7 +99,7 @@ export default function MobileMenu({ navLinks, ctaButtonText, locale }: Props) {
         style={{ transitionDelay: open ? '400ms' : '0ms' }}
       >
         <button
-          onClick={() => setOpen(false)}
+          onClick={() => { openModal(); setOpen(false) }}
           className="bg-[#00F5D4] text-[#101417] font-sans text-sm px-8 py-4 tracking-wider uppercase font-semibold hover:bg-[#F0EEE9] transition-colors duration-300"
         >
           {ctaButtonText}

@@ -97,16 +97,20 @@ export interface Config {
     header: Header;
     'transparency-panel': TransparencyPanel;
     hero: Hero;
+    'why-agentic-section': WhyAgenticSection;
     'services-section': ServicesSection;
     'process-section': ProcessSection;
+    'agentic-advantage-section': AgenticAdvantageSection;
     footer: Footer;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     'transparency-panel': TransparencyPanelSelect<false> | TransparencyPanelSelect<true>;
     hero: HeroSelect<false> | HeroSelect<true>;
+    'why-agentic-section': WhyAgenticSectionSelect<false> | WhyAgenticSectionSelect<true>;
     'services-section': ServicesSectionSelect<false> | ServicesSectionSelect<true>;
     'process-section': ProcessSectionSelect<false> | ProcessSectionSelect<true>;
+    'agentic-advantage-section': AgenticAdvantageSectionSelect<false> | AgenticAdvantageSectionSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
   locale: 'en' | 'es';
@@ -728,6 +732,27 @@ export interface Hero {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-agentic-section".
+ */
+export interface WhyAgenticSection {
+  id: number;
+  headline: string;
+  headlineEmphasis: string;
+  introText: string;
+  benefits: {
+    /**
+     * Lucide icon name
+     */
+    icon: string;
+    title: string;
+    description: string;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "services-section".
  */
 export interface ServicesSection {
@@ -762,6 +787,30 @@ export interface ProcessSection {
     icon: string;
     id?: string | null;
   }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agentic-advantage-section".
+ */
+export interface AgenticAdvantageSection {
+  id: number;
+  headline: string;
+  headlineEmphasis: string;
+  metrics: {
+    /**
+     * The metric value, e.g. "3x", "60%", "< 200ms"
+     */
+    value: string;
+    label: string;
+    description: string;
+    id?: string | null;
+  }[];
+  governanceHeadline: string;
+  governanceBody: string;
+  ctaText: string;
+  ctaUrl: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -837,6 +886,26 @@ export interface HeroSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-agentic-section_select".
+ */
+export interface WhyAgenticSectionSelect<T extends boolean = true> {
+  headline?: T;
+  headlineEmphasis?: T;
+  introText?: T;
+  benefits?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "services-section_select".
  */
 export interface ServicesSectionSelect<T extends boolean = true> {
@@ -863,6 +932,29 @@ export interface ProcessSectionSelect<T extends boolean = true> {
         icon?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agentic-advantage-section_select".
+ */
+export interface AgenticAdvantageSectionSelect<T extends boolean = true> {
+  headline?: T;
+  headlineEmphasis?: T;
+  metrics?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        description?: T;
+        id?: T;
+      };
+  governanceHeadline?: T;
+  governanceBody?: T;
+  ctaText?: T;
+  ctaUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

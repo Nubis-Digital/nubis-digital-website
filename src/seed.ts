@@ -9,9 +9,9 @@ async function seed() {
     slug: 'transparency-panel',
     data: {
       message:
-        'Agentic Insight: Our internal AI optimized this layout in 12ms to prioritize readability based on your device metrics.',
-      linkText: '[View Optimization Log]',
-      linkUrl: '#',
+        'Live Agentic Signal: This site runs on agent.txt and RAG-ready APIs \u2014 the same architecture we build for our clients.',
+      linkText: '[Explore Our Stack]',
+      linkUrl: '#services',
     },
   })
 
@@ -19,12 +19,43 @@ async function seed() {
   await payload.updateGlobal({
     slug: 'hero',
     data: {
-      headlinePart1: 'Architectural Resilience for the',
-      headlineEmphasis: 'Agentic Web.',
+      headlinePart1: 'We Make Your Website Work for',
+      headlineEmphasis: 'AI Agents.',
       bodyText:
-        'We engineer Digital Content Hubs where human intent and AI execution meet seamlessly. Moving beyond static pages into dynamic, RAG-ready ecosystems.',
-      ctaButtonText: 'See How We Work',
-      ctaButtonUrl: '#',
+        'AI agents are rewriting how customers find, evaluate, and choose businesses. We build websites that AI can read, recommend, and act on \u2014 turning your digital presence into a competitive advantage in the agentic era.',
+      ctaButtonText: 'See What Agentic Means',
+      ctaButtonUrl: '#why-agentic',
+    },
+  })
+
+  console.log('Seeding Why Agentic Section global...')
+  await payload.updateGlobal({
+    slug: 'why-agentic-section',
+    data: {
+      headline: 'Why Agentic Matters',
+      headlineEmphasis: 'AI agents are becoming your most important visitors.',
+      introText:
+        'Search engines, voice assistants, and AI copilots increasingly use autonomous agents to crawl, interpret, and recommend websites. If your site isn\u2019t optimized for agents, you\u2019re invisible to the fastest-growing channel on the web.',
+      benefits: [
+        {
+          icon: 'Cpu',
+          title: 'Agent Discovery',
+          description:
+            'AI agents like ChatGPT, Perplexity, and Claude actively search the web for answers. Sites with agent.txt and structured endpoints get retrieved first.',
+        },
+        {
+          icon: 'Sparkles',
+          title: 'Structured for LLMs',
+          description:
+            'When an AI summarizes your services, clean semantic data wins. We build content schemas that LLMs parse accurately \u2014 no hallucination, no misrepresentation.',
+        },
+        {
+          icon: 'ShieldCheck',
+          title: 'Human Oversight Built In',
+          description:
+            'Every AI workflow we deploy is governed by human architects. Your brand voice, your data, your rules \u2014 always under your control.',
+        },
+      ],
     },
   })
 
@@ -32,10 +63,10 @@ async function seed() {
   await payload.updateGlobal({
     slug: 'services-section',
     data: {
-      sectionHeadlinePart1: "We don't just build websites.",
-      sectionHeadlineEmphasis: 'We train Digital Hubs.',
+      sectionHeadlinePart1: 'Three Platforms.',
+      sectionHeadlineEmphasis: 'All Agent-Ready.',
       sectionIntroText:
-        'Select an infrastructure paradigm below to view our architectural approach and custom plugin capabilities.',
+        'Every platform we deploy is optimized for AI discovery, structured for LLM consumption, and wired with agent.txt endpoints. Choose your foundation.',
     },
   })
 
@@ -43,38 +74,72 @@ async function seed() {
   await payload.updateGlobal({
     slug: 'process-section',
     data: {
-      headline: 'How We Work',
-      headlineEmphasis: 'Human intent meets AI execution.',
+      headline: 'From Audit to Agentic',
+      headlineEmphasis: 'Four steps to an AI-ready website.',
       steps: [
         {
           number: '01',
-          title: 'Discovery',
+          title: 'Agentic Audit',
           description:
-            'We audit your existing digital infrastructure, map content workflows, and identify architectural bottlenecks before writing a single line of code.',
+            'We analyze how AI agents currently see your site \u2014 crawlability, structured data, agent.txt compliance \u2014 and map the gaps between your content and AI discoverability.',
           icon: 'Search',
         },
         {
           number: '02',
-          title: 'AI-Assisted Design',
+          title: 'Architecture & Schema',
           description:
-            'Our AI tools generate structural prototypes and content schemas, accelerating the design phase while our architects validate every decision.',
+            'We design your content schema for dual audiences: humans who browse and AI agents that retrieve. Every field, endpoint, and taxonomy is optimized for both.',
           icon: 'Sparkles',
         },
         {
           number: '03',
-          title: 'Human-Led Development',
+          title: 'Build & Integrate',
           description:
-            'Senior engineers build your digital hub with full test coverage, accessibility compliance, and performance budgets baked into every sprint.',
+            'Senior engineers build your hub with agent.txt endpoints, RAG-ready APIs, and full test coverage. Every AI integration is validated by human architects before launch.',
           icon: 'Users',
         },
         {
           number: '04',
-          title: 'Launch & Evolve',
+          title: 'Launch & Monitor',
           description:
-            'We deploy to edge networks with zero-downtime rollouts, then continuously optimize through AI-driven analytics and quarterly architecture reviews.',
+            'We deploy to edge networks, activate AI monitoring, and track how agents interact with your content \u2014 optimizing quarterly based on real agentic traffic data.',
           icon: 'Rocket',
         },
       ],
+    },
+  })
+
+  console.log('Seeding Agentic Advantage Section global...')
+  await payload.updateGlobal({
+    slug: 'agentic-advantage-section',
+    data: {
+      headline: 'The Agentic Advantage',
+      headlineEmphasis: 'What agent-ready architecture delivers.',
+      metrics: [
+        {
+          value: '3x',
+          label: 'Agent Retrieval Rate',
+          description:
+            'Sites with agent.txt and structured JSON APIs are retrieved 3x more often by AI agents compared to standard web pages.',
+        },
+        {
+          value: '60%',
+          label: 'Faster Content Delivery',
+          description:
+            'Edge-deployed architectures with semantic caching deliver content to both humans and AI crawlers up to 60% faster.',
+        },
+        {
+          value: '< 200ms',
+          label: 'API Response Time',
+          description:
+            'Our RAG-ready endpoints respond in under 200ms, meeting the latency requirements of real-time AI agent workflows.',
+        },
+      ],
+      governanceHeadline: '100% Human-Governed. Zero Concessions.',
+      governanceBody:
+        'We believe AI should amplify your team, not replace its judgment. Our architecture ensures you have the final say, always.',
+      ctaText: 'Start Your Agentic Project',
+      ctaUrl: '#contact',
     },
   })
 
@@ -84,7 +149,7 @@ async function seed() {
     data: {
       logoText: 'Nubis',
       logoAccent: '.',
-      tagline: 'Architectural Resilience \u2022 2026',
+      tagline: 'Making the Web Agentic \u2022 2026',
       footerLinks: [
         { label: 'Privacy & Data Governance', href: '#' },
         { label: 'AI Ethics Statement', href: '#' },
@@ -105,25 +170,25 @@ async function seed() {
         title: 'About',
         slug: 'about',
         meta: {
-          metaTitle: 'About Nubis Digital \u2014 Architectural Resilience',
+          metaTitle: 'About Nubis Digital \u2014 Making the Web Agentic',
           metaDescription:
-            'Learn how Nubis Digital engineers AI-ready digital ecosystems with human oversight at every layer.',
+            'Learn how Nubis Digital builds websites that AI agents can see, understand, and recommend.',
         },
         layout: [
           {
             blockType: 'hero-block',
-            heading: 'We Build the Nervous System of Your Digital Presence.',
-            body: 'Nubis Digital engineers content hubs where human creativity and AI execution converge \u2014 producing resilient, RAG-ready architectures that scale with your ambition.',
+            heading: 'We Build Websites That AI Agents Can See, Understand, and Recommend.',
+            body: 'Nubis Digital engineers websites optimized for the agentic era \u2014 where AI agents discover, evaluate, and recommend businesses. We make your digital presence work for both humans and machines.',
             ctaText: 'View Our Services',
             ctaLink: '/#services',
             showPrism: false,
           },
           {
             blockType: 'cta-block',
-            heading: 'Ready to Build Something Resilient?',
-            body: 'Let us engineer your next digital content hub with AI-native architecture and human oversight built in.',
+            heading: 'Ready to Go Agentic?',
+            body: 'Let us build your next website with agent.txt, RAG-ready APIs, and human oversight built in.',
             buttonText: 'Start Your Project',
-            buttonLink: '#',
+            buttonLink: '#contact',
             style: 'dark',
           },
         ],
@@ -202,7 +267,7 @@ async function seed() {
         },
       ],
       agenticEdge:
-        'Our custom AI plugins automate real-time SEO taxonomy, multilingual translation at the edge, and auto-generate structured schema for instant crawler ingestion.',
+        'Your Payload site ships with agent.txt, LLM-friendly JSON endpoints, and automated semantic markup \u2014 making it discoverable by AI agents from day one.',
       plugins: [
         { text: 'LLM Crawler Endpoints (Agent.txt ready)' },
         { text: 'Edge-Cached Personalization Middleware' },
@@ -237,7 +302,7 @@ async function seed() {
         },
       ],
       agenticEdge:
-        'Proprietary AI migration agents map legacy SQL databases to Umbraco nodes automatically, reducing structural migration timelines by up to 60%.',
+        'Our migration agents automate legacy-to-Umbraco transitions while injecting agent-readable structure, so your enterprise hub is AI-discoverable from launch.',
       plugins: [
         { text: 'ERP / CRM Bi-directional Sync' },
         { text: 'Azure Active Directory (SSO) Integration' },
@@ -272,7 +337,7 @@ async function seed() {
         },
       ],
       agenticEdge:
-        'Real-time AI optimization analyzes traffic patterns to pre-render the most heavily accessed conversion paths before a user even clicks.',
+        'AI-driven pre-rendering and agent.txt integration ensure both human visitors and AI agents reach your highest-value pages instantly.',
       plugins: [
         { text: 'Headless GraphQL API Bridge' },
         { text: 'Dynamic Block Serialization' },

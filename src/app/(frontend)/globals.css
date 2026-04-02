@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Nubis Device Optimizer ──────────────────────────────────────────────── */
+
+/* Motion accessibility — zeroes all transitions & animations */
+.nubis-reduced-motion *,
+.nubis-reduced-motion *::before,
+.nubis-reduced-motion *::after {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+  animation-delay: 0ms !important;
+}
+
+/* Battery saver — slows down CSS animations (JS handles Three.js fps) */
+.nubis-battery-saver * {
+  animation-duration: 3s !important;
+  transition-duration: 600ms !important;
+}
+
+/* High contrast — removes opacity layering, full opacity on text and borders */
+.nubis-high-contrast {
+  --tw-text-opacity: 1;
+  --tw-border-opacity: 1;
+}
+.nubis-high-contrast [class*='opacity-'] {
+  opacity: 1 !important;
+}
+
+/* Touch — minimum tap target size on interactive elements */
+.nubis-touch button,
+.nubis-touch a {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

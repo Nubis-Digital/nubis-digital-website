@@ -17,6 +17,8 @@ import { Hero } from './globals/Hero'
 import { ServicesSection } from './globals/ServicesSection'
 import { Footer } from './globals/Footer'
 import { ProcessSection } from './globals/ProcessSection'
+import { WhyAgenticSection } from './globals/WhyAgenticSection'
+import { AgenticAdvantageSection } from './globals/AgenticAdvantageSection'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -37,7 +39,7 @@ export default buildConfig({
     fallback: true,
   },
   collections: [Users, Media, Services, Pages, Inquiries],
-  globals: [Header, TransparencyPanel, Hero, ServicesSection, ProcessSection, Footer],
+  globals: [Header, TransparencyPanel, Hero, WhyAgenticSection, ServicesSection, ProcessSection, AgenticAdvantageSection, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

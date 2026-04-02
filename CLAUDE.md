@@ -32,7 +32,10 @@ src/
     Header.ts                    # Nav links, oversight toggle, CTA
     TransparencyPanel.ts         # Typewriter message bar
     Hero.ts                      # Split headline, body, CTA
+    WhyAgenticSection.ts         # Why agentic matters — headline, intro, benefits[]
     ServicesSection.ts            # Section headline + intro
+    ProcessSection.ts            # Process steps — headline, steps[]
+    AgenticAdvantageSection.ts   # Metrics[], governance callout, CTA
     Footer.ts                    # Logo, tagline, footer links
   app/
     (payload)/                   # ⚠️ AUTO-GENERATED — never edit these files
@@ -51,8 +54,13 @@ src/
         Footer.tsx               # Server component
         TransparencyPanel.tsx    # Client — typewriter effect
         Hero.tsx                 # Client — dynamically imports ThreePrism
-        ServicesSection.tsx      # Client — tab navigation
+        WhyAgenticSection.tsx    # Client — 3-col benefits grid (dark bg)
+        ServicesSection.tsx      # Client — tab navigation (i18n keys)
+        ProcessSection.tsx       # Client — 4-step process grid
+        AgenticAdvantageSection.tsx # Client — metrics + governance callout
+        ContactSection.tsx       # Client — contact form with validation
         ThreePrism.tsx           # Client — Three.js IcosahedronGeometry
+        ScrollReveal.tsx         # Client — intersection observer animations
         OversightToggle.tsx      # Client — toggle + tooltip
         icons.tsx                # Lucide icon map
 ```
@@ -63,7 +71,8 @@ src/
 |---------|---------|
 | `docker compose up -d` | Start PostgreSQL |
 | `npm run dev` | Dev server on port 3000 |
-| `npm run seed` | Seed database with content |
+| `npm run seed` | Seed database with EN content |
+| `npx payload run ./src/seed-es.ts` | Seed database with ES content |
 | `npm run generate:types` | Regenerate payload-types.ts after schema changes |
 | `npm run generate:importmap` | Regenerate importMap.js after admin component changes |
 | `npm run build` | Production build |
@@ -73,4 +82,24 @@ src/
 1. `docker compose up -d` — wait for PostgreSQL healthcheck
 2. `npm run dev` — Payload auto-runs DB migrations
 3. Create admin user at `http://localhost:3000/admin` (or already exists: `admin@nubis.digital` / `admin12345`)
-4. `npm run seed` — populates globals and services
+4. `npm run seed` — populates EN globals and services
+5. `npx payload run ./src/seed-es.ts` — populates ES translations
+
+## Homepage Section Order
+
+1. **TransparencyPanel** — live agentic signal banner
+2. **Hero** — "We Make Your Website Work for AI Agents" + Three.js prism
+3. **WhyAgenticSection** — why agentic matters (3 benefits grid)
+4. **ServicesSection** — three platforms, all agent-ready (Payload, Umbraco, WordPress)
+5. **ProcessSection** — from audit to agentic (4 steps)
+6. **AgenticAdvantageSection** — metrics (3x, 60%, <200ms) + governance callout + CTA
+7. **ContactSection** — contact form
+8. **Footer** — links + tagline
+
+## i18n
+
+- Locales: `en`, `es` (default: `en`)
+- UI strings: `src/i18n.ts` — static labels, form text, section labels
+- Content localization: handled by Payload CMS `localized: true` fields
+- Locale routing: `src/middleware.ts` → `/(frontend)/[locale]/`
+- Seed files: `src/seed.ts` (EN), `src/seed-es.ts` (ES)
