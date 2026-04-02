@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from './ScrollReveal'
+import { useAutoGrowTextarea } from '@/hooks/useAutoGrowTextarea'
 import { uiStrings, type Locale } from '@/i18n'
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
@@ -15,6 +16,8 @@ export default function ContactSection({ locale }: Props) {
   const t = uiStrings[locale]
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [messageValue, setMessageValue] = useState('')
+  const { ref: textareaRef, height: textareaHeight } = useAutoGrowTextarea(messageValue)
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -45,6 +48,7 @@ export default function ContactSection({ locale }: Props) {
       }
 
       setStatus('success')
+      setMessageValue('')
       form.reset()
     } catch (err) {
       setStatus('error')
@@ -55,7 +59,7 @@ export default function ContactSection({ locale }: Props) {
   }
 
   return (
-    <section className="bg-[#F0EEE9] border-b border-[#101417] py-20 md:py-28 px-8 md:px-16">
+    <section id="contact" className="bg-[#F0EEE9] border-b border-[#101417] py-20 md:py-28 px-8 md:px-16">
       <div className="max-w-3xl mx-auto">
         <ScrollReveal>
           <div className="mb-4 flex items-center gap-3">
@@ -132,12 +136,16 @@ export default function ContactSection({ locale }: Props) {
                   {t['contact.message']}
                 </label>
                 <textarea
+                  ref={textareaRef}
                   id="message"
                   name="message"
                   required
                   maxLength={2000}
                   rows={5}
-                  className="w-full bg-transparent border border-[#101417] px-4 py-3 font-sans text-sm text-[#101417] placeholder:text-[#101417]/30 focus:outline-none focus:border-[#00F5D4] transition-colors resize-none"
+                  value={messageValue}
+                  onChange={(e) => setMessageValue(e.target.value)}
+                  style={textareaHeight ? { height: textareaHeight } : undefined}
+                  className="w-full bg-transparent border border-[#101417] px-4 py-3 font-sans text-sm text-[#101417] placeholder:text-[#101417]/30 focus:outline-none focus:border-[#00F5D4] transition-[height,border-color] duration-150 resize-none overflow-hidden"
                   placeholder={t['contact.messagePlaceholder']}
                 />
               </div>

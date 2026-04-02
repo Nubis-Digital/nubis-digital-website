@@ -13,6 +13,7 @@
     "seed": "payload run ./src/seed.ts"
   },
   "dependencies": {
+    "@chenglou/pretext": "^0.0.4",
     "@payloadcms/db-postgres": "^3.77.0",
     "@payloadcms/next": "^3.77.0",
     "@payloadcms/richtext-lexical": "^3.77.0",

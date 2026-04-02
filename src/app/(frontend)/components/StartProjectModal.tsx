@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowRight, X } from 'lucide-react'
 import { useStartProjectModal } from './StartProjectModalContext'
+import { useAutoGrowTextarea } from '@/hooks/useAutoGrowTextarea'
 import { uiStrings, type Locale } from '@/i18n'
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
@@ -18,6 +19,8 @@ export default function StartProjectModal({ locale }: Props) {
   const [mounted, setMounted] = useState(false)
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [messageValue, setMessageValue] = useState('')
+  const { ref: textareaRef, height: textareaHeight } = useAutoGrowTextarea(messageValue)
 
   useEffect(() => {
     setMounted(true)
@@ -69,6 +72,7 @@ export default function StartProjectModal({ locale }: Props) {
       }
 
       setStatus('success')
+      setMessageValue('')
       form.reset()
     } catch (err) {
       setStatus('error')
@@ -179,12 +183,16 @@ export default function StartProjectModal({ locale }: Props) {
                   {t['contact.message']}
                 </label>
                 <textarea
+                  ref={textareaRef}
                   id="modal-message"
                   name="message"
                   required
                   maxLength={2000}
                   rows={4}
-                  className="w-full bg-transparent border border-[#101417] px-4 py-3 font-sans text-sm text-[#101417] placeholder:text-[#101417]/30 focus:outline-none focus:border-[#00F5D4] transition-colors resize-none"
+                  value={messageValue}
+                  onChange={(e) => setMessageValue(e.target.value)}
+                  style={textareaHeight ? { height: textareaHeight } : undefined}
+                  className="w-full bg-transparent border border-[#101417] px-4 py-3 font-sans text-sm text-[#101417] placeholder:text-[#101417]/30 focus:outline-none focus:border-[#00F5D4] transition-[height,border-color] duration-150 resize-none overflow-hidden"
                   placeholder={t['contact.messagePlaceholder']}
                 />
               </div>

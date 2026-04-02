@@ -1,10 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import type { TransparencyPanel as TransparencyPanelType } from '@/payload-types'
 import { useDeviceOptimizer } from './DeviceOptimizerContext'
+import { useTextMeasure } from '@/hooks/useTextMeasure'
 import type { Locale } from '@/i18n'
+
+// font-sans text-xs tracking-wide — matches the <p> below
+const FONT = '12px Inter, ui-sans-serif, system-ui, sans-serif'
+// py-2.5 × 2 = 10px × 2 — vertical padding of the <aside>
+const ASIDE_PADDING_Y = 20
 
 interface Props {
   data: TransparencyPanelType
@@ -13,11 +19,13 @@ interface Props {
 
 export default function TransparencyPanel({ data, locale }: Props) {
   const { result, openLog } = useDeviceOptimizer()
+  const asideRef = useRef<HTMLElement>(null)
   const [text, setText] = useState('')
   const [dismissed, setDismissed] = useState(false)
   const [doneTyping, setDoneTyping] = useState(false)
+  const [textWidth, setTextWidth] = useState(0)
 
-  // Once the audit result arrives, generate the dynamic message
+  // Dynamic message once device audit completes
   const dynamicMessage = result
     ? locale === 'es'
       ? `Sistema Nubis: Auditoría de dispositivo completada en ${result.duration}ms — ${result.optimizations.filter((o) => o.applied).length} optimizaciones aplicadas.`
@@ -25,9 +33,19 @@ export default function TransparencyPanel({ data, locale }: Props) {
     : null
 
   const dynamicLinkText = locale === 'es' ? '[Ver Registro]' : '[View Log]'
-
-  // Source message: dynamic when ready, CMS otherwise
   const sourceMessage = dynamicMessage ?? data.message
+
+  // Measure available text width after first paint so pretext has a real number.
+  // dot(4) + gap(16) + gap(16) + dismissButton(24) + gap(16) + px-6(48) = ~124px overhead
+  useEffect(() => {
+    if (!asideRef.current) return
+    setTextWidth(Math.max(asideRef.current.offsetWidth - 124, 100))
+  }, [])
+
+  // Pre-measure the full message — reserves the correct min-height before
+  // the typewriter starts, preventing a height jump if the text wraps.
+  const { height: measuredHeight } = useTextMeasure(sourceMessage, FONT, textWidth, 20)
+  const minHeight = measuredHeight > 0 ? measuredHeight + ASIDE_PADDING_Y : undefined
 
   // Restart the typewriter whenever the source message changes
   useEffect(() => {
@@ -35,7 +53,7 @@ export default function TransparencyPanel({ data, locale }: Props) {
     setDoneTyping(false)
 
     let i = 0
-    const delay = dynamicMessage ? 10 : 20 // faster for the shorter dynamic message
+    const delay = dynamicMessage ? 10 : 20
     const interval = setInterval(() => {
       if (i < sourceMessage.length) {
         setText(sourceMessage.slice(0, i + 1))
@@ -53,7 +71,9 @@ export default function TransparencyPanel({ data, locale }: Props) {
 
   return (
     <aside
-      className={`w-full border-b border-[#101417]/10 bg-[#F0EEE9] py-2.5 px-6 flex items-center gap-4 mt-[73px] transition-opacity duration-500 ${
+      ref={asideRef}
+      style={{ minHeight }}
+      className={`w-full border-b border-[#101417]/10 bg-[#F0EEE9] py-2.5 px-6 flex items-center gap-4 mt-[73px] transition-[opacity,min-height] duration-500 ${
         doneTyping ? 'opacity-70 hover:opacity-100' : 'opacity-100'
       }`}
     >
