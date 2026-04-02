@@ -3,6 +3,7 @@
 import type { WhyAgenticSection as WhyAgenticSectionType } from '@/payload-types'
 import { Icon } from './icons'
 import ScrollReveal from './ScrollReveal'
+import CharReveal from './CharReveal'
 import { uiStrings, type Locale } from '@/i18n'
 
 interface Props {
@@ -25,7 +26,7 @@ export default function WhyAgenticSection({ data, locale }: Props) {
           </div>
 
           <h2 className="font-serif text-3xl md:text-5xl text-[#F0EEE9] mb-3 leading-tight">
-            {data.headline}
+            <CharReveal text={data.headline} delay={100} stagger={7} />
           </h2>
           <p className="font-serif text-xl md:text-2xl italic text-[#F0EEE9]/50 mb-8 max-w-2xl">
             {data.headlineEmphasis}

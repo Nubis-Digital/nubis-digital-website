@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { ArrowRight } from 'lucide-react'
+import { useRef, useState, useEffect, type MouseEvent } from 'react'
 import type { Hero as HeroType } from '@/payload-types'
 import { uiStrings, type Locale } from '@/i18n'
 import OversightBadge from './OversightBadge'
@@ -15,6 +16,30 @@ interface Props {
 
 export default function Hero({ data, locale }: Props) {
   const t = uiStrings[locale]
+  const ctaRef = useRef<HTMLAnchorElement>(null)
+  const [ctaTranslate, setCtaTranslate] = useState({ x: 0, y: 0 })
+  const reducedMotion = useRef(false)
+
+  useEffect(() => {
+    reducedMotion.current =
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      document.documentElement.classList.contains('nubis-reduced-motion')
+  }, [])
+
+  function handleCtaMouseMove(e: MouseEvent<HTMLAnchorElement>) {
+    if (reducedMotion.current || !ctaRef.current) return
+    const rect = ctaRef.current.getBoundingClientRect()
+    const dx = e.clientX - (rect.left + rect.width / 2)
+    const dy = e.clientY - (rect.top + rect.height / 2)
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    if (dist < 80) {
+      setCtaTranslate({ x: dx * 0.22, y: dy * 0.22 })
+    }
+  }
+
+  function handleCtaMouseLeave() {
+    setCtaTranslate({ x: 0, y: 0 })
+  }
 
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 min-h-[75vh] border-b border-[#101417]">
@@ -28,8 +53,17 @@ export default function Hero({ data, locale }: Props) {
         </p>
         <div className="flex items-center gap-6">
           <a
+            ref={ctaRef}
             href={data.ctaButtonUrl}
-            className="bg-[#101417] text-[#00F5D4] hover:bg-[#00F5D4] hover:text-[#101417] transition-all duration-500 font-sans text-sm px-8 py-4 tracking-wider uppercase font-semibold flex items-center gap-3"
+            onMouseMove={handleCtaMouseMove}
+            onMouseLeave={handleCtaMouseLeave}
+            style={{
+              transform: `translate(${ctaTranslate.x}px, ${ctaTranslate.y}px)`,
+              transition: ctaTranslate.x === 0 && ctaTranslate.y === 0
+                ? 'transform 300ms ease-out, background-color 500ms, color 500ms'
+                : 'background-color 500ms, color 500ms',
+            }}
+            className="bg-[#101417] text-[#00F5D4] hover:bg-[#00F5D4] hover:text-[#101417] font-sans text-sm px-8 py-4 tracking-wider uppercase font-semibold flex items-center gap-3"
           >
             {data.ctaButtonText}
             <ArrowRight size={16} />
@@ -38,6 +72,7 @@ export default function Hero({ data, locale }: Props) {
       </div>
 
       <div className="relative h-[50vh] md:h-auto overflow-hidden bg-gradient-to-br from-[#F0EEE9] to-[#F0EEE9]/50">
+        {/* Architectural grid */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -46,6 +81,18 @@ export default function Hero({ data, locale }: Props) {
             backgroundSize: '40px 40px',
           }}
         />
+
+        {/* Scan line A */}
+        <div
+          className="absolute inset-x-0 top-0 h-px bg-[#00F5D4] opacity-[0.35] pointer-events-none"
+          style={{ animation: 'nubis-scan 7s linear infinite' }}
+        />
+        {/* Scan line B (offset by 3.5s = half cycle) */}
+        <div
+          className="absolute inset-x-0 top-0 h-px bg-[#00F5D4] opacity-[0.18] pointer-events-none"
+          style={{ animation: 'nubis-scan 7s linear infinite', animationDelay: '-3.5s' }}
+        />
+
         <ThreePrism />
         <OversightBadge
           note={t['oversight.heroBadge']}

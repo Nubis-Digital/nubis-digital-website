@@ -1,10 +1,57 @@
 'use client'
 
+import { useRef, useState, useEffect } from 'react'
 import { ArrowRight, ShieldCheck } from 'lucide-react'
 import type { AgenticAdvantageSection as AgenticAdvantageSectionType } from '@/payload-types'
 import ScrollReveal from './ScrollReveal'
+import CharReveal from './CharReveal'
+import { useCountUp, parseMetricValue } from '@/hooks/useCountUp'
 import { uiStrings, type Locale } from '@/i18n'
 import { useStartProjectModal } from './StartProjectModalContext'
+
+interface MetricCardProps {
+  value: string
+  label: string
+  description: string
+  delay: number
+}
+
+function MetricCard({ value, label, description, delay }: MetricCardProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  const { prefix, value: numTarget, suffix } = parseMetricValue(value)
+  const counted = useCountUp(numTarget, 1400, inView)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.unobserve(el) } },
+      { threshold: 0.3 },
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  return (
+    <ScrollReveal delay={delay}>
+      <div
+        ref={ref}
+        className="border border-[#101417] p-8 group hover:bg-[#101417] hover:text-[#F0EEE9] transition-all duration-500 h-full"
+      >
+        <span className="block font-mono text-4xl md:text-5xl font-bold text-[#00F5D4] mb-4 group-hover:text-[#00F5D4]">
+          {prefix}{counted}{suffix}
+        </span>
+        <h3 className="font-sans text-sm uppercase tracking-widest font-semibold text-[#101417] mb-3 group-hover:text-[#F0EEE9] transition-colors duration-500">
+          {label}
+        </h3>
+        <p className="font-sans text-sm text-[#101417]/60 leading-relaxed group-hover:text-[#F0EEE9]/60 transition-colors duration-500">
+          {description}
+        </p>
+      </div>
+    </ScrollReveal>
+  )
+}
 
 interface Props {
   data: AgenticAdvantageSectionType
@@ -28,7 +75,7 @@ export default function AgenticAdvantageSection({ data, locale }: Props) {
             </div>
 
             <h2 className="font-serif text-3xl md:text-5xl text-[#101417] mb-3 leading-tight">
-              {data.headline}
+              <CharReveal text={data.headline} stagger={6} />
             </h2>
             <p className="font-serif text-xl md:text-2xl italic text-[#101417]/50 mb-16 max-w-xl">
               {data.headlineEmphasis}
@@ -37,25 +84,19 @@ export default function AgenticAdvantageSection({ data, locale }: Props) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0 mb-16">
             {data.metrics?.map((metric, idx) => (
-              <ScrollReveal key={metric.id || idx} delay={idx * 150}>
-                <div className="border border-[#101417] p-8 group hover:bg-[#101417] hover:text-[#F0EEE9] transition-all duration-500 h-full">
-                  <span className="block font-mono text-4xl md:text-5xl font-bold text-[#00F5D4] mb-4 group-hover:text-[#00F5D4]">
-                    {metric.value}
-                  </span>
-                  <h3 className="font-sans text-sm uppercase tracking-widest font-semibold text-[#101417] mb-3 group-hover:text-[#F0EEE9] transition-colors duration-500">
-                    {metric.label}
-                  </h3>
-                  <p className="font-sans text-sm text-[#101417]/60 leading-relaxed group-hover:text-[#F0EEE9]/60 transition-colors duration-500">
-                    {metric.description}
-                  </p>
-                </div>
-              </ScrollReveal>
+              <MetricCard
+                key={metric.id || idx}
+                value={metric.value}
+                label={metric.label}
+                description={metric.description}
+                delay={idx * 150}
+              />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Governance Callout — full-width dark banner */}
+      {/* Governance Callout */}
       <ScrollReveal>
         <div className="bg-[#101417] text-[#F0EEE9] px-8 md:px-16 py-12 md:py-16">
           <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-start md:items-center gap-8">

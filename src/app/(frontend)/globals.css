@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Scan line (Hero grid background) ────────────────────────────────────── */
+
+@keyframes nubis-scan {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
+/* ── Ink-fill tab sweep (ServicesSection) ────────────────────────────────── */
+
+.tab-ink-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-ink-fill__bg {
+  position: absolute;
+  inset: 0;
+  background: #101417;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 380ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.tab-ink-fill--active .tab-ink-fill__bg {
+  clip-path: inset(0 0% 0 0);
+}
+
 /* ── Nubis Device Optimizer ──────────────────────────────────────────────── */
 
 /* Motion accessibility — zeroes all transitions & animations */

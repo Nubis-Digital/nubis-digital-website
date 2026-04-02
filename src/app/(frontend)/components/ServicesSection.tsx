@@ -76,31 +76,33 @@ export default function ServicesSection({ sectionData, services, locale }: Props
           </p>
 
           <div className="flex flex-col gap-0 border-t border-l border-r border-[#101417]">
-            {services.map((service) => (
-              <button
-                key={service.slug}
-                onClick={() => setActiveSlug(service.slug)}
-                className={`p-5 flex items-center justify-between border-b border-[#101417] font-sans text-sm transition-all duration-300 uppercase tracking-wider font-semibold
-                  ${
-                    activeSlug === service.slug
-                      ? 'bg-[#101417] text-[#F0EEE9]'
-                      : 'bg-[#F0EEE9] text-[#101417] hover:bg-[#B9A7FF]/10'
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon name={service.icon} size={18} />
-                  {service.label}
-                </div>
-                <ArrowRight
-                  size={16}
-                  className={`transition-all duration-300 ${
-                    activeSlug === service.slug
-                      ? 'text-[#00F5D4] opacity-100 translate-x-0'
-                      : 'opacity-0 -translate-x-2'
-                  }`}
-                />
-              </button>
-            ))}
+            {services.map((service) => {
+              const isActive = activeSlug === service.slug
+              return (
+                <button
+                  key={service.slug}
+                  onClick={() => setActiveSlug(service.slug)}
+                  className={`tab-ink-fill${isActive ? ' tab-ink-fill--active' : ''} p-5 flex items-center justify-between border-b border-[#101417] font-sans text-sm uppercase tracking-wider font-semibold`}
+                  style={{ color: isActive ? '#F0EEE9' : '#101417' }}
+                >
+                  {/* Ink fill layer */}
+                  <span className="tab-ink-fill__bg" />
+                  {/* Content above fill */}
+                  <span className="relative z-10 flex items-center gap-3 transition-colors duration-100">
+                    <Icon name={service.icon} size={18} />
+                    {service.label}
+                  </span>
+                  <ArrowRight
+                    size={16}
+                    className={`relative z-10 transition-all duration-300 ${
+                      isActive
+                        ? 'text-[#00F5D4] opacity-100 translate-x-0'
+                        : 'opacity-0 -translate-x-2'
+                    }`}
+                  />
+                </button>
+              )
+            })}
           </div>
         </div>
 

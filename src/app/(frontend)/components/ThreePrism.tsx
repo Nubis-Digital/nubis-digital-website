@@ -14,7 +14,6 @@ export default function ThreePrism() {
     const isReducedMotion = html.classList.contains('nubis-reduced-motion')
     const isBatterySaver = html.classList.contains('nubis-battery-saver')
 
-    // Skip Three.js entirely on low-bandwidth — show static fallback
     if (isLowBandwidth) return
 
     const container = mountRef.current
@@ -54,28 +53,26 @@ export default function ThreePrism() {
     const prism = new THREE.Mesh(geometry, material)
     scene.add(prism)
 
+    // Teal light — primary
     const light1 = new THREE.PointLight(0x00f5d4, 2, 10)
     light1.position.set(2, 2, 2)
     scene.add(light1)
 
+    // Lilac light — counter-phase
     const light2 = new THREE.PointLight(0xb9a7ff, 2, 10)
     light2.position.set(-2, -2, 2)
     scene.add(light2)
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.5))
 
-    // Render a single static frame if reduced motion is active
     if (isReducedMotion) {
       renderer.render(scene, camera)
       return () => {
-        if (container.contains(renderer.domElement)) {
-          container.removeChild(renderer.domElement)
-        }
+        if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement)
         renderer.dispose()
       }
     }
 
-    // Battery saver: cap at ~20fps instead of 60fps
     const fpsCap = isBatterySaver ? 20 : 60
     const frameInterval = 1000 / fpsCap
     let lastFrame = 0
@@ -94,6 +91,12 @@ export default function ThreePrism() {
       if (now - lastFrame < frameInterval) return
       lastFrame = now
 
+      // Breathing lights — teal and lilac trade intensity on a 3s sine cycle
+      const t = now * 0.001
+      const breathe = Math.sin((t * Math.PI * 2) / 3)
+      light1.intensity = 2 + breathe * 0.8
+      light2.intensity = 2 - breathe * 0.8
+
       const targetX = mouseX * 0.001
       const targetY = mouseY * 0.001
       prism.rotation.y += 0.005 + (targetX - prism.rotation.y) * 0.05
@@ -107,9 +110,7 @@ export default function ThreePrism() {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
       cancelAnimationFrame(animId)
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement)
-      }
+      if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement)
       renderer.dispose()
     }
   }, [])
