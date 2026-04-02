@@ -1,13 +1,18 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import { ArrowRight, ShieldCheck } from 'lucide-react'
 import type { AgenticAdvantageSection as AgenticAdvantageSectionType } from '@/payload-types'
 import ScrollReveal from './ScrollReveal'
 import CharReveal from './CharReveal'
-import { useCountUp, parseMetricValue } from '@/hooks/useCountUp'
+import { parseMetricValue } from '@/hooks/useCountUp'
 import { uiStrings, type Locale } from '@/i18n'
 import { useStartProjectModal } from './StartProjectModalContext'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 interface MetricCardProps {
   value: string
@@ -18,38 +23,60 @@ interface MetricCardProps {
 
 function MetricCard({ value, label, description, delay }: MetricCardProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const [inView, setInView] = useState(false)
   const { prefix, value: numTarget, suffix } = parseMetricValue(value)
-  const counted = useCountUp(numTarget, 1400, inView)
+  const [displayed, setDisplayed] = useState(0)
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.unobserve(el) } },
-      { threshold: 0.3 },
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
+  useGSAP(
+    () => {
+      const el = ref.current
+      if (!el) return
+
+      const obj = { val: 0 }
+      gsap.to(obj, {
+        val: numTarget,
+        duration: 1.4,
+        ease: 'power2.out',
+        onUpdate() {
+          setDisplayed(Math.round(obj.val))
+        },
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+      })
+
+      gsap.from(el, {
+        opacity: 0,
+        y: 28,
+        duration: 0.7,
+        delay: delay / 1000,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+        },
+      })
+    },
+    { scope: ref },
+  )
 
   return (
-    <ScrollReveal delay={delay}>
-      <div
-        ref={ref}
-        className="border border-[#101417] p-8 group hover:bg-[#101417] hover:text-[#F0EEE9] transition-all duration-500 h-full"
-      >
-        <span className="block font-mono text-4xl md:text-5xl font-bold text-[#00F5D4] mb-4 group-hover:text-[#00F5D4]">
-          {prefix}{counted}{suffix}
-        </span>
-        <h3 className="font-sans text-sm uppercase tracking-widest font-semibold text-[#101417] mb-3 group-hover:text-[#F0EEE9] transition-colors duration-500">
-          {label}
-        </h3>
-        <p className="font-sans text-sm text-[#101417]/60 leading-relaxed group-hover:text-[#F0EEE9]/60 transition-colors duration-500">
-          {description}
-        </p>
-      </div>
-    </ScrollReveal>
+    <div
+      ref={ref}
+      className="border border-[#101417] p-8 group hover:bg-[#101417] hover:text-[#F0EEE9] transition-all duration-500 h-full"
+    >
+      <span className="block font-mono text-4xl md:text-5xl font-bold text-[#00F5D4] mb-4 group-hover:text-[#00F5D4]">
+        {prefix}{displayed}{suffix}
+      </span>
+      <h3 className="font-sans text-sm uppercase tracking-widest font-semibold text-[#101417] mb-3 group-hover:text-[#F0EEE9] transition-colors duration-500">
+        {label}
+      </h3>
+      <p className="font-sans text-sm text-[#101417]/60 leading-relaxed group-hover:text-[#F0EEE9]/60 transition-colors duration-500">
+        {description}
+      </p>
+    </div>
   )
 }
 

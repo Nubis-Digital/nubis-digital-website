@@ -9,6 +9,11 @@ import type {
 import { Icon } from './icons'
 import OversightBadge from './OversightBadge'
 import { uiStrings, type Locale } from '@/i18n'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const ACCENT_COLOR_MAP: Record<string, string> = {
   'deep-ink': 'text-[#101417]',
@@ -28,6 +33,7 @@ export default function ServicesSection({ sectionData, services, locale }: Props
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [displayedSlug, setDisplayedSlug] = useState(activeSlug)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+  const sectionRef = useRef<HTMLElement>(null)
 
   const activeService =
     services.find((s) => s.slug === displayedSlug) ?? services[0]
@@ -48,10 +54,45 @@ export default function ServicesSection({ sectionData, services, locale }: Props
     }
   }, [activeSlug, displayedSlug])
 
+  // Desktop-only pin: auto-advance tabs as user scrolls through 3×100vh
+  useGSAP(
+    () => {
+      const section = sectionRef.current
+      if (!section || services.length < 2) return
+
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+        const segmentHeight = window.innerHeight
+        const totalScroll = segmentHeight * services.length
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: `+=${totalScroll}`,
+          pin: true,
+          anticipatePin: 1,
+          onUpdate(self) {
+            const progress = self.progress
+            const idx = Math.min(
+              Math.floor(progress * services.length),
+              services.length - 1,
+            )
+            const slug = services[idx]?.slug
+            if (slug) setActiveSlug(slug)
+          },
+        })
+      })
+
+      return () => mm.revert()
+    },
+    { scope: sectionRef, dependencies: [services] },
+  )
+
   if (!activeService) return null
 
   return (
     <section
+      ref={sectionRef}
       id="services"
       className="bg-[#F0EEE9] border-b border-[#101417] relative"
     >

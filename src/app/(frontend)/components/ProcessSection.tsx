@@ -1,11 +1,16 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import type { ProcessSection as ProcessSectionType } from '@/payload-types'
 import { Icon } from './icons'
 import ScrollReveal from './ScrollReveal'
 import CharReveal from './CharReveal'
 import { uiStrings, type Locale } from '@/i18n'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 interface StepCardProps {
   step: NonNullable<ProcessSectionType['steps']>[number]
@@ -15,39 +20,60 @@ interface StepCardProps {
 
 function StepCard({ step, idx, total }: StepCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const [inView, setInView] = useState(false)
 
-  useEffect(() => {
-    const el = cardRef.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.unobserve(el) } },
-      { threshold: 0.2 },
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
+  useGSAP(
+    () => {
+      const el = cardRef.current
+      if (!el) return
+
+      // Card entry animation
+      gsap.from(el, {
+        opacity: 0,
+        y: 32,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+        },
+      })
+
+      // Connector line scrub
+      if (idx < total - 1) {
+        const line = el.querySelector<HTMLElement>('[data-connector]')
+        if (line) {
+          gsap.fromTo(
+            line,
+            { scaleX: 0 },
+            {
+              scaleX: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 80%',
+                end: 'top 40%',
+                scrub: 0.6,
+              },
+            },
+          )
+        }
+      }
+    },
+    { scope: cardRef },
+  )
 
   return (
     <div
       ref={cardRef}
       className="relative border border-[#F0EEE9]/10 p-8 group hover:bg-[#F0EEE9]/5 transition-all duration-500 h-full"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(32px)',
-        transition: `opacity 700ms ease-out ${idx * 150}ms, transform 700ms ease-out ${idx * 150}ms`,
-      }}
     >
-      {/* Connector line — draws from left to right after card enters view */}
+      {/* Connector line — scrubs from left to right as card scrolls into view */}
       {idx < total - 1 && (
         <div
+          data-connector
           className="hidden lg:block absolute top-1/2 -right-px h-px bg-[#00F5D4]/50 z-10"
-          style={{
-            width: '32px',
-            transformOrigin: 'left',
-            transform: inView ? 'scaleX(1)' : 'scaleX(0)',
-            transition: `transform 400ms ease-out ${idx * 150 + 350}ms`,
-          }}
+          style={{ width: '32px', transformOrigin: 'left', transform: 'scaleX(0)' }}
         />
       )}
 
