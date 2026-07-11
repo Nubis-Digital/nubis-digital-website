@@ -1,0 +1,10 @@
+name = "nubis-digital-website"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# Secrets are NOT stored here. Set them in the Cloudflare Pages dashboard
+# (Settings → Environment variables) or via:
+#   npx wrangler pages secret put RESEND_API_KEY
+#   npx wrangler pages secret put AI_API_KEY
+# Non-secret vars (LEAD_TO_EMAIL, AI_PROVIDER, AI_MODEL) can go in the dashboard too.
