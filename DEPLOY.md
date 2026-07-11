@@ -1,7 +1,24 @@
-# Deploying Nubis Digital → Cloudflare Pages
+# Publishing Nubis Digital with OpenAI Sites
 
-Fresh Next.js 15 (App Router) site. **$0 fixed infra.** Two backend features run as
-edge route handlers (Cloudflare Workers): lead capture (Resend) + AI agent proxy.
+The production path is OpenAI Sites. Validate with `npm test`, `npx tsc --noEmit`,
+and `npm run build`; publish the exact validated commit through the Sites connector.
+Runtime values are configured in Sites and are never committed. The Cloudflare Pages
+instructions below are retained only as a legacy/manual fallback.
+
+## Runtime values
+
+Configure these values in OpenAI Sites. Never commit them:
+
+| Var | Purpose |
+|-----|---------|
+| `RESEND_API_KEY` | Resend API key used by `/api/lead` |
+| `LEAD_TO_EMAIL` | Inbox that receives lead notifications |
+| `LEAD_FROM_EMAIL` | Verified Resend sender |
+
+# Legacy/manual fallback: Cloudflare Pages
+
+Fresh Next.js 15 (App Router) site. **$0 fixed infra.** Lead capture runs as an
+edge route handler (Cloudflare Workers) through Resend.
 
 ## Why Cloudflare Pages (not Vercel Hobby)
 Vercel Hobby forbids commercial use — this is a company site. Cloudflare Pages allows
@@ -19,20 +36,16 @@ npm run dev                  # http://localhost:3000
 Set these in **Cloudflare Pages → Settings → Environment variables**, or via CLI:
 ```bash
 npx wrangler pages secret put RESEND_API_KEY
-npx wrangler pages secret put AI_API_KEY
 ```
-Non-secret config (`LEAD_TO_EMAIL`, `LEAD_FROM_EMAIL`, `AI_PROVIDER`, `AI_MODEL`) can be
-plain environment variables in the dashboard. **No secret is ever sent to the browser** —
-both keys are read only inside `src/app/api/*/route.ts` on the edge.
+Non-secret config (`LEAD_TO_EMAIL`, `LEAD_FROM_EMAIL`) can be plain environment variables
+in the dashboard. **No secret is ever sent to the browser** — the key is read only inside
+`src/app/api/lead/route.ts` on the edge.
 
 | Var | Purpose |
 |-----|---------|
 | `RESEND_API_KEY` | Resend API key (free 3k emails/mo) |
 | `LEAD_TO_EMAIL` | Inbox that receives leads |
 | `LEAD_FROM_EMAIL` | Verified Resend sender |
-| `AI_PROVIDER` | `anthropic` (default) or `openai` |
-| `AI_API_KEY` | LLM provider key (server-only) |
-| `AI_MODEL` | optional model override |
 
 ## Build & deploy
 ```bash
@@ -50,6 +63,4 @@ Or connect the GitHub repo in the Cloudflare Pages dashboard with:
 |-------|---------|------|
 | Hosting + Functions | Cloudflare Pages (free, commercial OK) | $0 |
 | Lead email | Resend free tier | $0 |
-| AI proxy infra | edge route handler | $0 |
-| AI tokens | provider usage | variable |
 | Database | none | $0 |
