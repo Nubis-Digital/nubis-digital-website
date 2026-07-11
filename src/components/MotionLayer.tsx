@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { createPortalTimeline } from './portalMotion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -306,67 +307,32 @@ export default function MotionLayer() {
         const mm = gsap.matchMedia()
         cleanups.push(() => mm.revert())
 
-        /* ---- The Dive: pinned zoom through the screen (desktop + motion) ---- */
+        /* ---- Continuous laptop portal (desktop + motion) ---- */
         mm.add(
           '(min-width: 900px) and (prefers-reduced-motion: no-preference)',
           () => {
-            const hero = $<HTMLElement>('.hero')
-            const shot = $<HTMLElement>('.hero-shot')
-            if (!hero || !shot) return
-
-            const copy = $<HTMLElement>('.hero-copy')
+            const hero = $<HTMLElement>('.hero--portal')
+            const shell = $<HTMLElement>('.portal-shell')
+            const laptop = $<HTMLElement>('.portal-laptop')
+            const aperture = $<HTMLElement>('.portal-aperture')
+            const surface = $<HTMLElement>('.portal-surface')
             const cue = $<HTMLElement>('.scroll-cue')
-            const ui = $<HTMLElement>('.dive-ui')
-            const uiSheet = $<HTMLElement>('.dui-sheet')
-            const reveal = $<HTMLElement>('.dive-reveal')
-            const revealMark = $<HTMLElement>('.dive-reveal-mark')
-            const callouts = $$<HTMLElement>('.dive-callout')
-            const fadeOut = [copy, cue, ...callouts].filter(Boolean) as HTMLElement[]
+            if (!hero || !shell || !laptop || !aperture || !surface) return
 
-            hero.classList.add('hero--dive')
-            gsap.set(shot, { transformOrigin: '34% 34%', scale: 1 })
-            if (ui) gsap.set(ui, { opacity: 0 })
-            if (uiSheet) gsap.set(uiSheet, { transformOrigin: '50% 46%', scale: 1.02 })
-            if (reveal) gsap.set(reveal, { opacity: 0 })
-            if (revealMark) gsap.set(revealMark, { opacity: 0, y: 22 })
+            hero.classList.add('hero--portal-active')
+            shell.dataset.portalState = 'screen'
+            gsap.set(shell, { scale: 1 })
+            gsap.set(laptop, { opacity: 1 })
+            gsap.set(aperture, { rotateX: 0.8, rotateY: -0.5 })
+            gsap.set(surface, { scale: 1 })
 
-            const dive = gsap.timeline({
-              defaults: { ease: 'none' },
-              scrollTrigger: {
-                trigger: hero,
-                start: 'top top',
-                end: '+=400%',
-                scrub: 0.6,
-                pin: true,
-                anticipatePin: 1,
-                invalidateOnRefresh: true,
-              },
-            })
-
-            // 0 → .66 : the raster laptop scales through the frame (easeInOutCubic).
-            dive.to(shot, { scale: 14, ease: 'power2.inOut', duration: 0.66 }, 0)
-            // 0 → .14 : eyebrow, scroll cue and blueprint callouts drop away.
-            if (fadeOut.length)
-              dive.to(fadeOut, { opacity: 0, ease: 'power2.in', duration: 0.14 }, 0)
-            // .14 → .34 : the crisp vector console resolves in as you pass the glass,
-            //             pushing toward you (.14 → .55) so it feels part of the dive.
-            if (ui) dive.to(ui, { opacity: 1, ease: 'power2.inOut', duration: 0.2 }, 0.14)
-            if (uiSheet) dive.to(uiSheet, { scale: 1.12, ease: 'power1.out', duration: 0.41 }, 0.14)
-            // .52 → .80 : cream threshold cross-fades over the console (easeInOutCubic).
-            if (reveal)
-              dive.to(reveal, { opacity: 1, ease: 'power2.inOut', duration: 0.28 }, 0.52)
-            // .70 → .98 : the arrival mark settles in the remaining runway.
-            if (revealMark)
-              dive.to(revealMark, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.28 }, 0.7)
+            createPortalTimeline(gsap, { hero, shell, laptop, aperture, surface, cue })
 
             return () => {
-              hero.classList.remove('hero--dive')
-              gsap.set(shot, { clearProps: 'all' })
-              gsap.set(fadeOut, { clearProps: 'opacity' })
-              if (ui) gsap.set(ui, { clearProps: 'opacity' })
-              if (uiSheet) gsap.set(uiSheet, { clearProps: 'transform' })
-              if (reveal) gsap.set(reveal, { clearProps: 'opacity' })
-              if (revealMark) gsap.set(revealMark, { clearProps: 'opacity,transform' })
+              hero.classList.remove('hero--portal-active')
+              shell.dataset.portalState = 'screen'
+              gsap.set([shell, laptop, aperture, surface], { clearProps: 'all' })
+              if (cue) gsap.set(cue, { clearProps: 'opacity' })
             }
           },
         )
