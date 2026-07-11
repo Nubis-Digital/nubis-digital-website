@@ -28,3 +28,12 @@ DONE_WITH_CONCERNS
 ## Skill resolution
 
 `paths-injected`
+
+## Review fixes
+
+- `RELIABILITY-001` — `createPortalTimeline` now consumes `buildPortalSteps`; recording-adapter tests verify the emitted targets, positions, durations, eases, ScrollTrigger configuration/state callbacks, and activation cleanup.
+- `READABILITY-001` — portal child selectors are scoped beneath the selected `.hero--portal` instance.
+- Focused Vitest: 6/6 passed.
+- Full Vitest: 9/9 passed.
+- TypeScript, direct Next build, and `git diff --check`: passed.
+- Fix commit: `681efb2a4e01e808e13bfdf799c7d14c253881db` (`fix: align portal timeline contract`).
