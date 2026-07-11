@@ -40,5 +40,8 @@ it('uses the laptop only as a decorative shell around one live portal', () => {
   expect(container.querySelectorAll('.dive-ui, .dive-reveal, .dive-callout')).toHaveLength(0);
   expect(laptop).toHaveAttribute('alt', '');
   expect(laptop).toHaveAttribute('aria-hidden', 'true');
+  expect(laptop).toHaveAttribute('src', '/assets/laptop-portal.svg');
+  expect(laptop).toHaveAttribute('width', '600');
+  expect(laptop).toHaveAttribute('height', '600');
   expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
 });

@@ -11,11 +11,11 @@ export default function Hero() {
       <div className="portal-shell" data-portal-state="screen">
         <img
           className="portal-laptop"
-          src="/hero-recommend.webp"
+          src="/assets/laptop-portal.svg"
           alt=""
           aria-hidden="true"
-          width={1083}
-          height={974}
+          width={600}
+          height={600}
           loading="eager"
           fetchPriority="high"
           decoding="async"
