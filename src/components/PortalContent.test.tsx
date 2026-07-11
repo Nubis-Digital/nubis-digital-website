@@ -31,8 +31,14 @@ describe('PortalContent', () => {
 
 it('uses the laptop only as a decorative shell around one live portal', () => {
   const { container } = render(<Hero />);
+  const laptop = container.querySelector('.portal-laptop');
+
+  expect(container.querySelectorAll('.portal-shell')).toHaveLength(1);
+  expect(container.querySelectorAll('.portal-aperture')).toHaveLength(1);
   expect(container.querySelectorAll('.portal-surface')).toHaveLength(1);
+  expect(container.querySelectorAll('[data-portal-state="screen"]')).toHaveLength(1);
   expect(container.querySelectorAll('.dive-ui, .dive-reveal, .dive-callout')).toHaveLength(0);
-  expect(screen.getByRole('img', { hidden: true })).toHaveAttribute('alt', '');
+  expect(laptop).toHaveAttribute('alt', '');
+  expect(laptop).toHaveAttribute('aria-hidden', 'true');
   expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
 });
