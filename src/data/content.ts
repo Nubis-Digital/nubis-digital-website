@@ -284,6 +284,30 @@ export const content = {
       },
     ],
   },
+  story: {
+    invitation: {
+      cue: 'Scroll to follow the system from website to governed AI.',
+    },
+    readiness: {
+      eyebrow: 'One governed system',
+      headline: 'Architecture, content, and human oversight move together.',
+      body: 'Readiness is not a chatbot added to a website. It is a platform where trustworthy content, clear rules, and accountable people reinforce one another.',
+    },
+    mobile: {
+      eyebrow: 'The same system, everywhere',
+      headline: 'Continuity does not stop at the desktop.',
+      body: 'The governed experience follows the visitor onto mobile without losing context, clarity, or control.',
+    },
+    agent: {
+      eyebrow: 'Governed recommendation',
+      headline: 'The agent turns trusted knowledge into a useful next step.',
+      body: 'It interprets the visitor need, cites approved site knowledge, and presents a recommendation for human review.',
+      visitorNeed: 'We need to modernize Umbraco without losing editorial control.',
+      recommendation: 'Start with a readiness audit, then sequence the platform migration before adding supervised agent workflows.',
+      oversightLabel: 'Human review required',
+      approvalLabel: 'Recommendation approved',
+    },
+  },
   contact: {
     sectionLabel: 'Get In Touch',
     headline: 'Start a Conversation',
