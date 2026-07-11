@@ -22,6 +22,14 @@ export const buildPortalSteps = () => [
   { at: 0.68, target: 'surface', vars: { scale: 1, duration: 0.2 } },
 ] as const
 
+const portalEases = {
+  shell: 'power2.inOut',
+  cue: 'power2.in',
+  aperture: undefined,
+  laptop: undefined,
+  surface: 'power2.out',
+} as const
+
 export function createPortalTimeline(
   gsapApi: typeof gsap,
   targets: PortalTimelineTargets,
@@ -46,13 +54,33 @@ export function createPortalTimeline(
     },
   })
 
-  portal.to(shell, { scale: 10.5, ease: 'power2.inOut', duration: 0.68 }, 0)
-  if (cue) portal.to(cue, { opacity: 0, ease: 'power2.in', duration: 0.12 }, 0)
-  portal.to(aperture, { rotateX: 0, rotateY: 0, duration: 0.18 }, 0.5)
-  portal.to(laptop, { opacity: 0, duration: 0.06 }, 0.66)
-  portal.to(surface, { scale: 1, ease: 'power2.out', duration: 0.2 }, 0.68)
+  const elements = { shell, cue, aperture, laptop, surface }
+  buildPortalSteps().forEach(({ at, target, vars }) => {
+    const element = elements[target]
+    if (!element) return
+    const ease = portalEases[target]
+    portal.to(element, ease ? { ...vars, ease } : vars, at)
+  })
 
   return portal
+}
+
+export function activatePortalTimeline(gsapApi: typeof gsap, targets: PortalTimelineTargets) {
+  const { hero, shell, laptop, aperture, surface, cue } = targets
+  hero.classList.add('hero--portal-active')
+  shell.dataset.portalState = 'screen'
+  gsapApi.set(shell, { scale: 1 })
+  gsapApi.set(laptop, { opacity: 1 })
+  gsapApi.set(aperture, { rotateX: 0.8, rotateY: -0.5 })
+  gsapApi.set(surface, { scale: 1 })
+  createPortalTimeline(gsapApi, targets)
+
+  return () => {
+    hero.classList.remove('hero--portal-active')
+    shell.dataset.portalState = 'screen'
+    gsapApi.set([shell, laptop, aperture, surface], { clearProps: 'all' })
+    if (cue) gsapApi.set(cue, { clearProps: 'opacity' })
+  }
 }
 
 export function shouldEnablePortalMotion({

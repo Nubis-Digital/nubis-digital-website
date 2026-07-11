@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { createPortalTimeline } from './portalMotion'
+import { activatePortalTimeline } from './portalMotion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -312,28 +312,15 @@ export default function MotionLayer() {
           '(min-width: 900px) and (prefers-reduced-motion: no-preference)',
           () => {
             const hero = $<HTMLElement>('.hero--portal')
-            const shell = $<HTMLElement>('.portal-shell')
-            const laptop = $<HTMLElement>('.portal-laptop')
-            const aperture = $<HTMLElement>('.portal-aperture')
-            const surface = $<HTMLElement>('.portal-surface')
-            const cue = $<HTMLElement>('.scroll-cue')
+            if (!hero) return
+            const shell = hero.querySelector<HTMLElement>('.portal-shell')
+            const laptop = hero.querySelector<HTMLElement>('.portal-laptop')
+            const aperture = hero.querySelector<HTMLElement>('.portal-aperture')
+            const surface = hero.querySelector<HTMLElement>('.portal-surface')
+            const cue = hero.querySelector<HTMLElement>('.scroll-cue')
             if (!hero || !shell || !laptop || !aperture || !surface) return
 
-            hero.classList.add('hero--portal-active')
-            shell.dataset.portalState = 'screen'
-            gsap.set(shell, { scale: 1 })
-            gsap.set(laptop, { opacity: 1 })
-            gsap.set(aperture, { rotateX: 0.8, rotateY: -0.5 })
-            gsap.set(surface, { scale: 1 })
-
-            createPortalTimeline(gsap, { hero, shell, laptop, aperture, surface, cue })
-
-            return () => {
-              hero.classList.remove('hero--portal-active')
-              shell.dataset.portalState = 'screen'
-              gsap.set([shell, laptop, aperture, surface], { clearProps: 'all' })
-              if (cue) gsap.set(cue, { clearProps: 'opacity' })
-            }
+            return activatePortalTimeline(gsap, { hero, shell, laptop, aperture, surface, cue })
           },
         )
 
