@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { content } from '@/data/content';
 
 import PortalContent from './PortalContent';
+import Hero from './Hero';
 
 describe('PortalContent', () => {
   it('renders the authored homepage hero as the single primary heading', () => {
@@ -26,4 +27,12 @@ describe('PortalContent', () => {
       screen.getByRole('link', { name: content.hero.ctaText }),
     ).toHaveAttribute('href', content.hero.ctaUrl);
   });
+});
+
+it('uses the laptop only as a decorative shell around one live portal', () => {
+  const { container } = render(<Hero />);
+  expect(container.querySelectorAll('.portal-surface')).toHaveLength(1);
+  expect(container.querySelectorAll('.dive-ui, .dive-reveal, .dive-callout')).toHaveLength(0);
+  expect(screen.getByRole('img', { hidden: true })).toHaveAttribute('alt', '');
+  expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
 });
