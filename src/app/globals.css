@@ -361,6 +361,75 @@ a { color: inherit; }
 .hero--portal-active .portal-aperture,
 .hero--portal-active .portal-surface { will-change: transform, opacity; }
 
+/* Immersive story devices keep one live content tree inside decorative hardware. */
+.story-device {
+  position: relative;
+  display: block;
+  max-width: 100%;
+}
+.story-device__viewport {
+  overflow: hidden;
+  background: var(--paper);
+}
+.story-laptop {
+  --story-laptop-x: 15.927167%;
+  --story-laptop-y: 21.248333%;
+  --story-laptop-w: 67.609%;
+  --story-laptop-h: 42.128167%;
+  width: min(100%, 600px);
+  aspect-ratio: 1;
+}
+.story-laptop > img {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.story-laptop__viewport {
+  position: absolute;
+  left: var(--story-laptop-x);
+  top: var(--story-laptop-y);
+  width: var(--story-laptop-w);
+  height: var(--story-laptop-h);
+}
+.story-phone {
+  width: min(100%, 270px);
+  aspect-ratio: 9 / 19;
+  overflow: hidden;
+  border: 10px solid var(--ink);
+  border-radius: 2rem;
+  background: var(--ink);
+}
+.story-phone__viewport {
+  width: 100%;
+  height: 100%;
+}
+.story-phone__speaker,
+.story-phone__home {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  display: block;
+  background: var(--ink);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.story-phone__speaker {
+  top: 8px;
+  width: 22%;
+  height: 4px;
+  border-radius: 2px;
+}
+.story-phone__home {
+  bottom: 8px;
+  width: 18%;
+  height: 4px;
+  border-radius: 2px;
+}
+
 @media (max-width: 899px), (prefers-reduced-motion: reduce) {
   .hero--portal { min-height: auto; display: block; padding: 0; overflow: visible; }
   .portal-shell { width: 100%; aspect-ratio: auto; }
@@ -376,6 +445,13 @@ a { color: inherit; }
   .hero-note { display: none; }
   .hero--sheet .hero-copy { border-bottom: 1px solid var(--paper-20); }
   .hero--sheet .hero-prism { border-left: none; border-top: 1px solid var(--paper-20); }
+}
+
+@media (max-width: 360px) {
+  .story-device {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 
