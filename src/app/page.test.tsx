@@ -1,5 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { content } from '@/data/content'
 
 import HomePage from './page'
 
@@ -36,6 +39,7 @@ describe('HomePage', () => {
   })
 
   it('keeps the keyboard sequence unique and ordered across page regions', async () => {
+    const user = userEvent.setup()
     const { container } = render(<HomePage />)
 
     await waitFor(() => expect(screen.getByRole('region', { name: 'Cookie consent' })).toBeVisible())
@@ -50,20 +54,30 @@ describe('HomePage', () => {
     const storyControls = pageFocusables.filter((element) => story.contains(element))
     const contactControls = pageFocusables.filter((element) => contact.contains(element))
     const footerControls = pageFocusables.filter((element) => footer.contains(element))
+    const storyCta = screen.getByRole('link', { name: content.hero.ctaText })
+    const firstContactControl = screen.getByRole('textbox', { name: 'Name' })
+    const firstFooterControl = footerControls[0]
 
     expect(headerControls.length).toBeGreaterThan(0)
-    expect(storyControls).toHaveLength(0)
+    expect(storyControls).toEqual([storyCta])
     expect(contactControls.length).toBeGreaterThan(0)
     expect(footerControls.length).toBeGreaterThan(0)
     expect(new Set(pageFocusables).size).toBe(pageFocusables.length)
     expect(Math.max(...headerControls.map((element) => pageFocusables.indexOf(element))))
-      .toBeLessThan(Math.min(...contactControls.map((element) => pageFocusables.indexOf(element))))
+      .toBeLessThan(pageFocusables.indexOf(storyCta))
+    expect(pageFocusables.indexOf(storyCta)).toBeLessThan(pageFocusables.indexOf(firstContactControl))
     expect(Math.max(...contactControls.map((element) => pageFocusables.indexOf(element))))
       .toBeLessThan(Math.min(...footerControls.map((element) => pageFocusables.indexOf(element))))
 
-    for (const element of [...headerControls, ...storyControls, ...contactControls, ...footerControls]) {
-      element.focus()
-      expect(document.activeElement).toBe(element)
+    const tabSequence: HTMLElement[] = []
+    for (let index = 0; index < pageFocusables.length; index += 1) {
+      await user.tab()
+      tabSequence.push(document.activeElement as HTMLElement)
     }
+
+    expect(tabSequence).toContain(headerControls[0])
+    expect(tabSequence.indexOf(headerControls.at(-1)!)).toBeLessThan(tabSequence.indexOf(storyCta))
+    expect(tabSequence.indexOf(storyCta)).toBeLessThan(tabSequence.indexOf(firstContactControl))
+    expect(tabSequence.indexOf(firstContactControl)).toBeLessThan(tabSequence.indexOf(firstFooterControl))
   })
 })

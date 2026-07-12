@@ -314,6 +314,8 @@ a { color: inherit; }
 .story-invitation h1 { margin: 0; max-width: 16ch; font: 700 clamp(2.75rem, 7vw, 6rem)/1 var(--font-serif); letter-spacing: -0.035em; text-wrap: balance; }
 .story-invitation h1 strong { color: var(--signal); font-weight: 600; }
 .story-invitation p { max-width: 42rem; font: 400 clamp(1rem, 1.8vw, 1.25rem)/1.65 var(--font-sans); color: var(--paper-70); }
+.story-invitation__cta { display: inline-flex; width: fit-content; margin-top: 16px; background: var(--signal); color: var(--ink); }
+.story-invitation__cta:hover { background: var(--paper); color: var(--ink); }
 .story-invitation__cue { margin: 0; font: 600 0.75rem/1.4 var(--font-mono) !important; letter-spacing: 0.12em; text-transform: uppercase; }
 .story-stage { position: relative; min-height: auto; padding: clamp(64px, 8vw, 112px) clamp(24px, 7vw, 96px); }
 .story-device-rail { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 5vw, 72px); margin-bottom: clamp(56px, 8vw, 112px); pointer-events: none; }
