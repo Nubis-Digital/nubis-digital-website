@@ -424,28 +424,30 @@ a { color: inherit; }
   .immersive-story[data-enhanced="true"] .story-stage { position: absolute; inset: 0; height: 100svh; min-height: 560px; padding: 0; overflow: clip; }
   .immersive-story[data-enhanced="true"] .story-device-rail { position: absolute; inset: 0; display: flex; margin: 0; }
   .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); }
-  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="laptop"] { width: min(78vw, 900px); }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="laptop"] { width: min(78vw, 600px); }
   .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] { width: min(22vw, 270px); opacity: 0; }
   .immersive-story[data-enhanced="true"] .story-live-surface {
-    --laptop-size: min(78vw, 900px);
+    --story-laptop-size: min(78vw, 600px);
+    --story-phone-size: min(22vw, 270px);
     position: absolute;
     z-index: 3;
-    left: 50%;
-    top: calc(50% - (var(--laptop-size) * 0.076876));
-    width: calc(var(--laptop-size) * 0.67609);
-    height: calc(var(--laptop-size) * 0.42128167);
+    left: calc(50% - (var(--story-laptop-size) * 0.34072833));
+    top: calc(50% - (var(--story-laptop-size) * 0.28751667));
+    width: calc(var(--story-laptop-size) * 0.67609);
+    height: calc(var(--story-laptop-size) * 0.42128167);
     overflow: hidden;
     background: var(--ink);
     color: var(--paper);
-    transform: translate(-50%, -50%);
+    transform: none;
     transform-origin: center;
     contain: layout paint;
     transition: top 360ms var(--ease-out), width 360ms var(--ease-out), height 360ms var(--ease-out), border-radius 360ms var(--ease-out);
   }
   .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] {
-    top: 50%;
-    width: min(calc(22vw - 20px), 250px);
-    height: min(calc((22vw - 20px) * 2.111), 527px);
+    left: calc(50% - (var(--story-phone-size) / 2) + 10px);
+    top: calc(50% - (var(--story-phone-size) * 1.05555556) + 10px);
+    width: calc(var(--story-phone-size) - 20px);
+    height: calc((var(--story-phone-size) * 2.11111111) - 20px);
     border-radius: 1.3rem;
   }
   .immersive-story[data-enhanced="true"] .story-chapters { position: absolute; inset: 0; display: block; }
