@@ -1069,62 +1069,6 @@ a { color: inherit; }
 }
 .services-bp-inner, .tm-inner { position: relative; z-index: 1; }
 
-/* ============================================================================
-   PAGE LOADER — the drafting sheet that lifts to reveal the page.
-   Server-rendered, pure CSS: plays once per full document load and dismisses
-   on a fixed timeline. Content is rendered underneath; this only overlays it.
-   With reduced motion the global motion-kill below collapses the timeline to
-   0ms, so the sheet's forwards-filled end state (lifted, hidden) applies at
-   once and the splash never shows.
-   ============================================================================ */
-.page-loader {
-  position: fixed; inset: 0; z-index: 100;
-  background: var(--ink);
-  display: grid; place-items: center;
-  overflow: hidden;
-  transform: translateY(0);
-  animation: pl-lift 1.2s var(--ease-out) forwards;
-  will-change: transform;
-}
-
-/* registration frame + cobalt corner ticks — the drafting-sheet edge */
-.pl-frame { position: absolute; inset: clamp(14px, 3vw, 22px); border: 1px solid var(--paper-20); pointer-events: none; }
-.pl-tick { position: absolute; width: 12px; height: 12px; opacity: 0; transform: scale(0.4); animation: pl-tick-in 0.4s var(--ease-out) forwards; }
-.pl-tick::before, .pl-tick::after { content: ""; position: absolute; background: var(--signal); }
-.pl-tick::before { width: 12px; height: 1px; top: 0; left: 0; }
-.pl-tick::after { width: 1px; height: 12px; top: 0; left: 0; }
-.pl-tl { top: -1px; left: -1px; animation-delay: 0.04s; }
-.pl-tr { top: -1px; right: -1px; animation-delay: 0.12s; }
-.pl-tr::before { left: auto; right: 0; }
-.pl-tr::after { left: auto; right: 0; }
-.pl-bl { bottom: -1px; left: -1px; animation-delay: 0.20s; }
-.pl-bl::before { top: auto; bottom: 0; }
-.pl-bl::after { top: auto; bottom: 0; }
-.pl-br { bottom: -1px; right: -1px; animation-delay: 0.28s; }
-.pl-br::before { top: auto; bottom: 0; left: auto; right: 0; }
-.pl-br::after { top: auto; bottom: 0; left: auto; right: 0; }
-
-/* stage: wordmark assembling over a drawn load-path rule */
-.pl-stage { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 24px; position: relative; }
-.pl-wm { font-size: clamp(2.5rem, 8vw, 4rem); line-height: 1; }
-/* draw the integrated N: ink stems then the cobalt beam, via stroke dash */
-.pl-wm .glyphN line, .pl-wm .glyphN path { stroke-dasharray: 170; stroke-dashoffset: 170; animation: pl-draw 0.6s var(--ease-out) forwards; }
-.pl-wm .glyphN line { animation-delay: 0.10s; }
-.pl-wm .glyphN path { animation-delay: 0.30s; }
-/* "ubis" + the cobalt period settle in after the mark */
-.pl-wm .wm-rest, .pl-wm .dot { opacity: 0; transform: translateY(6px); animation: pl-fade-up 0.5s var(--ease-out) forwards; animation-delay: 0.5s; }
-.pl-rule { width: clamp(120px, 30vw, 220px); height: 1px; background: var(--signal); transform: scaleX(0); transform-origin: 0 50%; animation: pl-rule-draw 0.6s var(--ease-out) forwards; animation-delay: 0.32s; }
-.pl-label { font: 600 0.6875rem/1 var(--font-mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--paper-60); opacity: 0; animation: pl-fade-up 0.5s var(--ease-out) forwards; animation-delay: 0.6s; }
-
-@keyframes pl-lift {
-  0%, 66% { transform: translateY(0); visibility: visible; }
-  100% { transform: translateY(-100%); visibility: hidden; }
-}
-@keyframes pl-tick-in { to { opacity: 1; transform: none; } }
-@keyframes pl-draw { to { stroke-dashoffset: 0; } }
-@keyframes pl-rule-draw { to { transform: scaleX(1); } }
-@keyframes pl-fade-up { to { opacity: 1; transform: none; } }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
 }

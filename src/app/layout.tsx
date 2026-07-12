@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import PageLoader from '@/components/PageLoader';
 
 export const metadata: Metadata = {
   title: 'Nubis Digital — Architectural Resilience for the Agentic Web',
@@ -24,7 +23,6 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <PageLoader />
         {children}
       </body>
     </html>
