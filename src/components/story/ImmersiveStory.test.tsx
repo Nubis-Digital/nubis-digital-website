@@ -6,6 +6,7 @@ import { storyChapters } from '@/data/story'
 
 import { ImmersiveStory } from './ImmersiveStory'
 import { resetStoryEnhancement } from './ImmersiveStoryMotion'
+import { setActiveChapter } from './storyMotion'
 import { getChapterAccessibility } from './StoryChapter'
 
 describe('ImmersiveStory', () => {
@@ -57,6 +58,20 @@ describe('ImmersiveStory', () => {
       if (index === 2) return
       expect(article).toHaveAttribute('aria-hidden', 'true')
       expect(article).toHaveAttribute('inert', '')
+    })
+  })
+
+  it('uses the runtime chapter-list state as the enhanced visibility contract', () => {
+    const { container } = render(<ImmersiveStory enhanced />)
+    const root = container.querySelector<HTMLElement>('#immersive-story')!
+
+    storyChapters.forEach((_, index) => {
+      setActiveChapter(root, index)
+      const activeItems = root.querySelectorAll('li[data-story-chapter][data-active="true"]')
+      const visibleArticleTarget = root.querySelector('li[data-story-chapter][data-active="true"] > article')
+
+      expect(activeItems).toHaveLength(1)
+      expect(visibleArticleTarget).toBe(root.querySelectorAll('article')[index])
     })
   })
 

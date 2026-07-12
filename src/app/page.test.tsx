@@ -34,4 +34,36 @@ describe('HomePage', () => {
     expect(story!.compareDocumentPosition(contact!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(main!.compareDocumentPosition(footer!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
+
+  it('keeps the keyboard sequence unique and ordered across page regions', async () => {
+    const { container } = render(<HomePage />)
+
+    await waitFor(() => expect(screen.getByRole('region', { name: 'Cookie consent' })).toBeVisible())
+
+    const header = container.querySelector<HTMLElement>('header')!
+    const story = container.querySelector<HTMLElement>('#immersive-story')!
+    const contact = container.querySelector<HTMLElement>('#contact')!
+    const footer = container.querySelector<HTMLElement>('footer.site-footer')!
+    const selector = 'a[href], button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    const pageFocusables = Array.from(container.querySelectorAll<HTMLElement>(selector))
+    const headerControls = pageFocusables.filter((element) => header.contains(element))
+    const storyControls = pageFocusables.filter((element) => story.contains(element))
+    const contactControls = pageFocusables.filter((element) => contact.contains(element))
+    const footerControls = pageFocusables.filter((element) => footer.contains(element))
+
+    expect(headerControls.length).toBeGreaterThan(0)
+    expect(storyControls).toHaveLength(0)
+    expect(contactControls.length).toBeGreaterThan(0)
+    expect(footerControls.length).toBeGreaterThan(0)
+    expect(new Set(pageFocusables).size).toBe(pageFocusables.length)
+    expect(Math.max(...headerControls.map((element) => pageFocusables.indexOf(element))))
+      .toBeLessThan(Math.min(...contactControls.map((element) => pageFocusables.indexOf(element))))
+    expect(Math.max(...contactControls.map((element) => pageFocusables.indexOf(element))))
+      .toBeLessThan(Math.min(...footerControls.map((element) => pageFocusables.indexOf(element))))
+
+    for (const element of [...headerControls, ...storyControls, ...contactControls, ...footerControls]) {
+      element.focus()
+      expect(document.activeElement).toBe(element)
+    }
+  })
 })

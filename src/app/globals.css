@@ -422,8 +422,8 @@ a { color: inherit; }
   .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 50% auto auto 50%; width: min(48vw, 600px); transform: translate(-50%, -50%); }
   .immersive-story[data-enhanced="true"] .story-chapters { position: absolute; inset: 0; display: block; }
   .immersive-story[data-enhanced="true"] .story-chapters > li { position: absolute; inset: 0; display: grid; align-items: center; padding: clamp(32px, 6vw, 88px); pointer-events: none; }
-  .immersive-story[data-enhanced="true"] .story-chapters article { width: min(38vw, 34rem); margin: 0 0 0 auto; padding: 32px; border: 1px solid var(--paper-20); background: var(--ink); color: var(--paper); opacity: 0; transform: translateY(24px); transition: opacity 260ms var(--ease-out), transform 360ms var(--ease-out); }
-  .immersive-story[data-enhanced="true"] .story-chapters article[data-active="true"] { opacity: 1; transform: none; pointer-events: auto; }
+  .immersive-story[data-enhanced="true"] .story-chapters > li > article { width: min(38vw, 34rem); margin: 0 0 0 auto; padding: 32px; border: 1px solid var(--paper-20); background: var(--ink); color: var(--paper); opacity: 0; transform: translateY(24px); pointer-events: none; transition: opacity 260ms var(--ease-out), transform 360ms var(--ease-out); }
+  .immersive-story[data-enhanced="true"] .story-chapters > li[data-active="true"] > article { opacity: 1; transform: none; pointer-events: auto; }
   .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]),
   .immersive-story[data-enhanced="true"] .story-chapter__detail li span { color: var(--paper-70); }
 }
