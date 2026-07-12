@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { getStoryState, setActiveChapter, STORY_BEATS } from './storyMotion'
+import type { gsap } from 'gsap'
+
+import { createStoryTimeline, getStoryState, setActiveChapter, STORY_BEATS } from './storyMotion'
 
 describe('getStoryState', () => {
   it('maps progress boundaries to deterministic beats and chapters', () => {
@@ -50,5 +52,58 @@ describe('setActiveChapter', () => {
       inert: chapter.hasAttribute('inert'),
     }))).toEqual(expected)
     expect(root.querySelectorAll('[aria-hidden="true"][inert]')).toHaveLength(5)
+  })
+})
+
+function storyRoot() {
+  const root = document.createElement('main')
+  root.innerHTML = `
+    <section class="story-invitation"></section>
+    <div data-story-device="laptop"></div>
+    <div data-story-continuity></div>
+    <div data-story-device="phone"></div>
+    ${Array.from({ length: 6 }, () => '<article data-story-chapter></article>').join('')}
+  `
+  return root
+}
+
+describe('createStoryTimeline', () => {
+  it('creates the pinned reversible sequence and synchronizes DOM state on update', () => {
+    const calls: Array<{ method: string; args: unknown[] }> = []
+    let config: Record<string, unknown> = {}
+    let progress = 0.66
+    const timeline = {
+      addLabel: (...args: unknown[]) => { calls.push({ method: 'addLabel', args }); return timeline },
+      to: (...args: unknown[]) => { calls.push({ method: 'to', args }); return timeline },
+      fromTo: (...args: unknown[]) => { calls.push({ method: 'fromTo', args }); return timeline },
+      progress: () => progress,
+    }
+    const gsapApi = { timeline: (options: Record<string, unknown>) => { config = options; return timeline } } as unknown as typeof gsap
+    const root = storyRoot()
+
+    expect(createStoryTimeline(gsapApi, root)).toBe(timeline)
+    expect(config.scrollTrigger).toEqual(expect.objectContaining({ trigger: root, start: 'top top', end: '+=700%', scrub: 0.6, pin: true, anticipatePin: 1, invalidateOnRefresh: true }))
+    expect(calls.filter(({ method }) => method === 'addLabel').map(({ args }) => args[0])).toEqual([
+      'invitation', 'laptop-1', 'laptop-2', 'laptop-3', 'laptop-4', 'handoff', 'phone-mobile', 'phone-agent', 'release',
+    ])
+    expect(calls.some(({ method, args }) => method === 'fromTo' && args[0] === root.querySelector('[data-story-device="phone"]') && args[3] === 'handoff')).toBe(true)
+    expect(calls.some(({ method, args }) => method === 'to' && Array.isArray(args[0]) && args[2] === 'release')).toBe(true)
+
+    ;(config.onUpdate as () => void)()
+    expect(root).toHaveAttribute('data-beat', 'handoff')
+    expect(root).toHaveAttribute('data-device', 'phone')
+    expect(root.style.getPropertyValue('--story-progress')).toBe('0.66')
+    expect(root.querySelectorAll('[data-story-chapter][aria-hidden="true"][inert]')).toHaveLength(5)
+
+    progress = 0.2
+    ;(config.onUpdate as () => void)()
+    expect(root).toHaveAttribute('data-beat', 'laptop')
+    expect(root.querySelectorAll('[data-story-chapter][data-active="true"]')).toHaveLength(1)
+  })
+
+  it('fails clearly when fixed story markup is missing', () => {
+    const root = storyRoot()
+    root.querySelector('[data-story-continuity]')?.remove()
+    expect(() => createStoryTimeline({} as typeof gsap, root)).toThrow('Immersive story is missing required element: [data-story-continuity]')
   })
 })

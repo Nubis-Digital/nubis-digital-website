@@ -38,12 +38,19 @@ export function setActiveChapter(root: HTMLElement, activeIndex: number): void {
   })
 }
 
+function requireStoryElement(root: HTMLElement, selector: string): HTMLElement {
+  const element = root.querySelector<HTMLElement>(selector)
+  if (!element) throw new Error(`Immersive story is missing required element: ${selector}`)
+  return element
+}
+
 export function createStoryTimeline(gsapApi: typeof gsap, root: HTMLElement): gsap.core.Timeline {
-  const chapters = root.querySelectorAll<HTMLElement>('[data-story-chapter]')
-  const laptop = root.querySelector<HTMLElement>('[data-story-device="laptop"]')
-  const phone = root.querySelector<HTMLElement>('[data-story-device="phone"]')
-  const invitation = root.querySelector<HTMLElement>('.story-invitation')
-  const continuity = root.querySelector<HTMLElement>('[data-story-continuity]')
+  const chapters = Array.from(root.querySelectorAll<HTMLElement>('[data-story-chapter]'))
+  if (chapters.length !== 6) throw new Error(`Immersive story requires 6 chapters; found ${chapters.length}`)
+  const laptop = requireStoryElement(root, '[data-story-device="laptop"]')
+  const phone = requireStoryElement(root, '[data-story-device="phone"]')
+  const invitation = requireStoryElement(root, '.story-invitation')
+  const continuity = requireStoryElement(root, '[data-story-continuity]')
 
   const timeline = gsapApi.timeline({
     defaults: { ease: 'none' },

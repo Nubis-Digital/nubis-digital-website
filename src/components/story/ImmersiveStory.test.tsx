@@ -5,6 +5,7 @@ import { content } from '@/data/content'
 import { storyChapters } from '@/data/story'
 
 import { ImmersiveStory } from './ImmersiveStory'
+import { resetStoryEnhancement } from './ImmersiveStoryMotion'
 import { getChapterAccessibility } from './StoryChapter'
 
 describe('ImmersiveStory', () => {
@@ -34,6 +35,33 @@ describe('ImmersiveStory', () => {
       if (index === 2) return
       expect(article).toHaveAttribute('aria-hidden', 'true')
       expect(article).toHaveAttribute('inert', '')
+    })
+  })
+
+  it('restores progressive content when media eligibility stops matching', () => {
+    const { container } = render(<ImmersiveStory enhanced activeChapterIndex={0} />)
+    const root = container.querySelector<HTMLElement>('#immersive-story')!
+    const chapters = root.querySelectorAll<HTMLElement>('[data-story-chapter]')
+    root.dataset.beat = 'laptop'
+    root.dataset.device = 'laptop'
+    root.style.setProperty('--story-progress', '0.3')
+    chapters.forEach((chapter, index) => {
+      chapter.dataset.active = String(index === 0)
+      chapter.toggleAttribute('inert', index !== 0)
+      if (index !== 0) chapter.setAttribute('aria-hidden', 'true')
+    })
+
+    resetStoryEnhancement(root)
+    resetStoryEnhancement(root)
+
+    expect(root).not.toHaveAttribute('data-enhanced')
+    expect(root).not.toHaveAttribute('data-beat')
+    expect(root).not.toHaveAttribute('data-device')
+    expect(root.style.getPropertyValue('--story-progress')).toBe('')
+    chapters.forEach((chapter) => {
+      expect(chapter).not.toHaveAttribute('aria-hidden')
+      expect(chapter).not.toHaveAttribute('inert')
+      expect(chapter).not.toHaveAttribute('data-active')
     })
   })
 })
