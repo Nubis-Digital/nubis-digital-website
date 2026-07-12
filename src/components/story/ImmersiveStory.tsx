@@ -13,7 +13,7 @@ interface ImmersiveStoryProps {
 
 export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: ImmersiveStoryProps = {}) {
   return (
-    <main id="immersive-story" className="immersive-story" data-enhanced={enhanced ? 'true' : 'false'}>
+    <div id="immersive-story" className="immersive-story" data-enhanced={enhanced ? 'true' : 'false'}>
       <ImmersiveStoryMotion rootId="immersive-story" />
       <section className="story-invitation" aria-labelledby="story-title">
         <div>
@@ -37,6 +37,6 @@ export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: Imm
           ))}
         </ol>
       </section>
-    </main>
+    </div>
   )
 }

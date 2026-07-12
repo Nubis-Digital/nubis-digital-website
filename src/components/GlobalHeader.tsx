@@ -17,6 +17,11 @@ export default function GlobalHeader() {
   const h = content.header;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const storyHref = (href: string) => ({
+    '/#services': '/#story-proposals',
+    '/#projects': '/#story-proof',
+    '/#about': '/#contact',
+  }[href] ?? href);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -60,7 +65,7 @@ export default function GlobalHeader() {
         {h.nav.map((n) => {
           const isUmbraco = n.href === '/umbraco';
           return (
-            <a key={n.href} href={n.href} className={isUmbraco ? 'nav-umb' : undefined}>
+            <a key={n.href} href={storyHref(n.href)} className={isUmbraco ? 'nav-umb' : undefined}>
               {isUmbraco && <UmbracoLogo size={16} className="nav-umb-mark" />}
               {n.label}
             </a>
@@ -99,7 +104,7 @@ export default function GlobalHeader() {
           return (
             <a
               key={n.href}
-              href={n.href}
+              href={storyHref(n.href)}
               className={isUmbraco ? 'nav-umb' : undefined}
               onClick={() => setMenuOpen(false)}
             >

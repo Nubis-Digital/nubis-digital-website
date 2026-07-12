@@ -3,7 +3,6 @@
 import { useEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { activatePortalTimeline } from './portalMotion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -306,23 +305,6 @@ export default function MotionLayer() {
            ============================================================= */
         const mm = gsap.matchMedia()
         cleanups.push(() => mm.revert())
-
-        /* ---- Continuous laptop portal (desktop + motion) ---- */
-        mm.add(
-          '(min-width: 900px) and (prefers-reduced-motion: no-preference)',
-          () => {
-            const hero = $<HTMLElement>('.hero--portal')
-            if (!hero) return
-            const shell = hero.querySelector<HTMLElement>('.portal-shell')
-            const laptop = hero.querySelector<HTMLElement>('.portal-laptop')
-            const aperture = hero.querySelector<HTMLElement>('.portal-aperture')
-            const surface = hero.querySelector<HTMLElement>('.portal-surface')
-            const cue = hero.querySelector<HTMLElement>('.scroll-cue')
-            if (!hero || !shell || !laptop || !aperture || !surface) return
-
-            return activatePortalTimeline(gsap, { hero, shell, laptop, aperture, surface, cue })
-          },
-        )
 
         mm.add(
           '(min-width: 1000px) and (prefers-reduced-motion: no-preference)',
