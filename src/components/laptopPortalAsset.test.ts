@@ -55,9 +55,9 @@ describe('vector laptop portal shell', () => {
       'utf8',
     )
 
-    expect(css).toContain('--portal-x: 15.927167%')
-    expect(css).toContain('--portal-y: 21.248333%')
-    expect(css).toContain('--portal-w: 67.609%')
-    expect(css).toContain('--portal-h: 42.128167%')
+    expect(css).toContain('--story-laptop-x: 15.927167%')
+    expect(css).toContain('--story-laptop-y: 21.248333%')
+    expect(css).toContain('--story-laptop-w: 67.609%')
+    expect(css).toContain('--story-laptop-h: 42.128167%')
   })
 })
