@@ -25,6 +25,23 @@ describe('ImmersiveStory', () => {
     expect(screen.getByText(content.testimonials.empty.body)).toBeVisible()
   })
 
+  it('keeps every chapter readable and exposed without enhancement', () => {
+    const { container } = render(<ImmersiveStory />)
+    const root = container.querySelector('.immersive-story')
+    const articles = Array.from(container.querySelectorAll('article'))
+
+    expect(root).toHaveAttribute('data-enhanced', 'false')
+    expect(articles).toHaveLength(storyChapters.length)
+    storyChapters.forEach((chapter) => {
+      expect(screen.getByRole('heading', { level: 2, name: chapter.headline })).toBeVisible()
+      expect(screen.getByText(chapter.body)).toBeVisible()
+    })
+    articles.forEach((article) => {
+      expect(article).not.toHaveAttribute('aria-hidden')
+      expect(article).not.toHaveAttribute('inert')
+    })
+  })
+
   it('removes inactive enhanced chapters from accessibility and focus', () => {
     const { container } = render(<ImmersiveStory enhanced activeChapterIndex={2} />)
     const articles = container.querySelectorAll('article')
