@@ -54,13 +54,13 @@ describe('HomePage', () => {
     const storyControls = pageFocusables.filter((element) => story.contains(element))
     const contactControls = pageFocusables.filter((element) => contact.contains(element))
     const footerControls = pageFocusables.filter((element) => footer.contains(element))
-    const storyCta = screen.getByRole('link', { name: content.services.cta }) as HTMLAnchorElement
+    const storyCta = screen.getByRole('link', { name: content.services.foundation.cta }) as HTMLAnchorElement
     const firstContactControl = screen.getByRole('textbox', { name: 'Name' })
     const firstFooterControl = footerControls[0]
 
     expect(headerControls.length).toBeGreaterThan(0)
     expect(storyControls).toEqual([storyCta])
-    expect(storyCta).toHaveAttribute('href', content.services.ctaUrl)
+    expect(storyCta).toHaveAttribute('href', content.services.foundation.ctaUrl)
     expect(document.getElementById(storyCta.hash.slice(1))).toBe(contact)
     expect(contactControls.length).toBeGreaterThan(0)
     expect(footerControls.length).toBeGreaterThan(0)

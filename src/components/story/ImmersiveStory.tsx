@@ -19,7 +19,7 @@ export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: Imm
         <div>
           <h1 id="story-title">{content.hero.headlinePart1} <strong>{content.hero.headlineEmphasis}</strong></h1>
           <p>{content.hero.bodyText}</p>
-          <a className="btn-primary story-invitation__cta" href={content.services.ctaUrl}>{content.services.cta}</a>
+          <a className="btn-primary story-invitation__cta" href={content.services.foundation.ctaUrl}>{content.services.foundation.cta}</a>
         </div>
         <p className="story-invitation__cue">{content.story.invitation.cue}</p>
       </section>
