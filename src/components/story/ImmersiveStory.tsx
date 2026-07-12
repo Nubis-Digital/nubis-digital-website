@@ -5,9 +5,14 @@ import { LaptopShell } from './LaptopShell'
 import { PhoneShell } from './PhoneShell'
 import { StoryChapter } from './StoryChapter'
 
-export function ImmersiveStory() {
+interface ImmersiveStoryProps {
+  enhanced?: boolean
+  activeChapterIndex?: number
+}
+
+export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: ImmersiveStoryProps = {}) {
   return (
-    <main className="immersive-story" data-enhanced="false">
+    <main className="immersive-story" data-enhanced={enhanced ? 'true' : 'false'}>
       <section className="story-invitation" aria-labelledby="story-title">
         <div>
           <h1 id="story-title">{content.hero.headlinePart1} <strong>{content.hero.headlineEmphasis}</strong></h1>
@@ -24,7 +29,7 @@ export function ImmersiveStory() {
         <ol className="story-chapters">
           {storyChapters.map((chapter, index) => (
             <li key={chapter.id}>
-              <StoryChapter chapter={chapter} index={index} active={index === 0} enhanced={false} />
+              <StoryChapter chapter={chapter} index={index} active={index === activeChapterIndex} enhanced={enhanced} />
             </li>
           ))}
         </ol>

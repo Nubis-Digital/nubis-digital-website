@@ -10,8 +10,8 @@ export interface StoryChapterProps {
   enhanced: boolean
 }
 
-export function getChapterAccessibility(active: boolean, enhanced: boolean): Pick<HTMLAttributes<HTMLElement>, 'aria-hidden'> & { inert?: true } {
-  return enhanced && !active ? { 'aria-hidden': true, inert: true } : {}
+export function getChapterAccessibility(active: boolean, enhanced: boolean): Pick<HTMLAttributes<HTMLElement>, 'aria-hidden'> & { inert?: '' } {
+  return enhanced && !active ? { 'aria-hidden': true, inert: '' } : {}
 }
 
 function AgentRecommendation() {
@@ -47,7 +47,7 @@ export function StoryChapter({ chapter, index, active, enhanced }: StoryChapterP
       id={`story-${chapter.id}`}
       data-device={chapter.device}
       data-active={active ? 'true' : 'false'}
-      {...getChapterAccessibility(active, enhanced)}
+      {...(getChapterAccessibility(active, enhanced) as HTMLAttributes<HTMLElement>)}
     >
       <p className="story-progress">Chapter {index + 1} of {storyChapters.length}</p>
       <p className="story-chapter__eyebrow">{chapter.eyebrow}</p>

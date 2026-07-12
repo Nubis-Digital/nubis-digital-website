@@ -5,7 +5,7 @@ import { content } from '@/data/content'
 import { storyChapters } from '@/data/story'
 
 import { ImmersiveStory } from './ImmersiveStory'
-import { getChapterAccessibility, StoryChapter } from './StoryChapter'
+import { getChapterAccessibility } from './StoryChapter'
 
 describe('ImmersiveStory', () => {
   it('renders one accessible chapter tree in document order', () => {
@@ -20,17 +20,20 @@ describe('ImmersiveStory', () => {
   })
 
   it('removes inactive enhanced chapters from accessibility and focus', () => {
-    const active = render(<StoryChapter chapter={storyChapters[2]} index={2} active enhanced />)
-    const activeArticle = active.getByRole('article')
+    const { container } = render(<ImmersiveStory enhanced activeChapterIndex={2} />)
+    const articles = container.querySelectorAll('article')
+    const activeArticle = articles[2]
+
+    expect(container.querySelector('.immersive-story')).toHaveAttribute('data-enhanced', 'true')
     expect(getChapterAccessibility(true, true)).toEqual({})
     expect(activeArticle).not.toHaveAttribute('aria-hidden')
     expect(activeArticle).not.toHaveAttribute('inert')
-    active.unmount()
+    expect(getChapterAccessibility(false, true)).toEqual({ 'aria-hidden': true, inert: '' })
 
-    const inactive = render(<StoryChapter chapter={storyChapters[2]} index={2} active={false} enhanced />)
-    const inactiveArticle = inactive.container.querySelector('article')
-    expect(getChapterAccessibility(false, true)).toEqual({ 'aria-hidden': true, inert: true })
-    expect(inactiveArticle).toHaveAttribute('aria-hidden', 'true')
-    expect(inactiveArticle).toHaveAttribute('inert')
+    Array.from(articles).forEach((article, index) => {
+      if (index === 2) return
+      expect(article).toHaveAttribute('aria-hidden', 'true')
+      expect(article).toHaveAttribute('inert', '')
+    })
   })
 })
