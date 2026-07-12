@@ -99,7 +99,7 @@ export function createStoryTimeline(gsapApi: typeof gsap, root: HTMLElement): gs
     .addLabel('handoff', 0.62)
     .to(laptop, { scale: 0.76, xPercent: -20, opacity: 0.45, duration: 0.1 }, 'handoff')
     .to(surface, { opacity: 1, duration: 0.1 }, 'handoff')
-    .fromTo(phone, { scale: 0.78, xPercent: 24, opacity: 0 }, { scale: 1, xPercent: 0, opacity: 1, duration: 0.1 }, 'handoff')
+    .fromTo(phone, { scale: 0.78, xPercent: -26, yPercent: -50, opacity: 0 }, { scale: 1, xPercent: -50, yPercent: -50, opacity: 1, duration: 0.1 }, 'handoff')
     .fromTo(continuity, { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.1 }, 'handoff')
     .addLabel('phone-mobile', 0.72)
     .to(chapters[3], { opacity: 0, yPercent: -8, duration: 0.08 }, 'phone-mobile')

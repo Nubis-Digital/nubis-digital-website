@@ -49,6 +49,7 @@ describe('ImmersiveStory', () => {
     expect(css).toMatch(/width:\s*calc\(var\(--story-laptop-size\) \* 0\.67609\)/)
     expect(css).toMatch(/height:\s*calc\(var\(--story-laptop-size\) \* 0\.42128167\)/)
     expect(css).toMatch(/left:\s*calc\(50% - \(var\(--story-phone-size\) \/ 2\) \+ 10px\)/)
+    expect(css).toMatch(/width:\s*calc\(var\(--story-phone-size\) - 20px\)/)
     expect(css).toMatch(/height:\s*calc\(\(var\(--story-phone-size\) \* 2\.11111111\) - 20px\)/)
     expect(css).not.toMatch(/--story-laptop-size:\s*min\(78vw, 900px\)/)
     expect(css).not.toMatch(/\.story-live-surface\s*\{[^}]*transform:\s*translate\(-50%, -50%\)/s)

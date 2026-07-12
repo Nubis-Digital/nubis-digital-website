@@ -106,6 +106,8 @@ describe('createStoryTimeline', () => {
       'invitation', 'laptop-1', 'laptop-2', 'laptop-3', 'laptop-4', 'handoff', 'phone-mobile', 'phone-agent', 'release',
     ])
     expect(calls.some(({ method, args }) => method === 'fromTo' && args[0] === root.querySelector('[data-story-device="phone"]') && args[3] === 'handoff')).toBe(true)
+    const phoneHandoff = calls.find(({ method, args }) => method === 'fromTo' && args[0] === root.querySelector('[data-story-device="phone"]'))
+    expect(phoneHandoff?.args[2]).toEqual(expect.objectContaining({ xPercent: -50, yPercent: -50, scale: 1, opacity: 1 }))
     expect(calls.some(({ method, args }) => method === 'to' && args[0] === root.querySelector('[data-story-surface]') && args[2] === 'handoff')).toBe(true)
     expect(calls.some(({ method, args }) => method === 'to' && Array.isArray(args[0]) && args[2] === 'release')).toBe(true)
 
