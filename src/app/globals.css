@@ -318,7 +318,7 @@ a { color: inherit; }
 .story-invitation__cta:hover { background: var(--paper); color: var(--ink); }
 .story-invitation__cue { margin: 0; font: 600 0.75rem/1.4 var(--font-mono) !important; letter-spacing: 0.12em; text-transform: uppercase; }
 .story-stage { position: relative; min-height: auto; padding: clamp(64px, 8vw, 112px) clamp(24px, 7vw, 96px); }
-.story-device-rail { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 5vw, 72px); margin-bottom: clamp(56px, 8vw, 112px); pointer-events: none; }
+.story-device-rail { display: none; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 5vw, 72px); margin-bottom: clamp(56px, 8vw, 112px); pointer-events: none; }
 .story-device-rail > [data-story-device] { flex: 1 1 260px; display: grid; place-items: center; max-width: 600px; }
 .story-device-rail [data-story-continuity] { display: none; }
 .story-chapters { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
@@ -419,8 +419,8 @@ a { color: inherit; }
 
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
   .immersive-story[data-enhanced="true"] { min-height: 700vh; }
-  .immersive-story[data-enhanced="true"] .story-stage { position: sticky; top: 73px; height: calc(100svh - 73px); min-height: 560px; padding: 0; overflow: clip; }
-  .immersive-story[data-enhanced="true"] .story-device-rail { position: absolute; inset: 0; margin: 0; }
+  .immersive-story[data-enhanced="true"] .story-stage { position: absolute; inset: 0; height: 100svh; min-height: 560px; padding: 0; overflow: clip; }
+  .immersive-story[data-enhanced="true"] .story-device-rail { position: absolute; inset: 0; display: flex; margin: 0; }
   .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 50% auto auto 50%; width: min(48vw, 600px); transform: translate(-50%, -50%); }
   .immersive-story[data-enhanced="true"] .story-chapters { position: absolute; inset: 0; display: block; }
   .immersive-story[data-enhanced="true"] .story-chapters > li { position: absolute; inset: 0; display: grid; align-items: center; padding: clamp(32px, 6vw, 88px); pointer-events: none; }

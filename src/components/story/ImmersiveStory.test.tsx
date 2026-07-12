@@ -1,4 +1,6 @@
 import { render, screen } from '@testing-library/react'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 import { content } from '@/data/content'
@@ -10,6 +12,15 @@ import { setActiveChapter } from './storyMotion'
 import { getChapterAccessibility } from './StoryChapter'
 
 describe('ImmersiveStory', () => {
+  it('keeps fallback devices out of flow and overlays the enhanced stage', () => {
+    const css = readFileSync(resolve(process.cwd(), 'src/app/globals.css'), 'utf8')
+
+    expect(css).toMatch(/\.story-device-rail\s*\{[^}]*display:\s*none;/s)
+    expect(css).toMatch(/@media \(min-width: 900px\) and \(prefers-reduced-motion: no-preference\)[\s\S]*?\.immersive-story\[data-enhanced="true"\] \.story-stage\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*0;[^}]*height:\s*100svh;/)
+    expect(css).toMatch(/\.immersive-story\[data-enhanced="true"\] \.story-device-rail\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*0;[^}]*display:\s*flex;/s)
+    expect(css).toMatch(/\.immersive-story\[data-enhanced="true"\] \.story-chapters > li\[data-active="true"\] > article/)
+  })
+
   it('renders one accessible chapter tree in document order', () => {
     const { container } = render(<ImmersiveStory />)
 
