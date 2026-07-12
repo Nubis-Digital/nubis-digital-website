@@ -18,6 +18,11 @@ describe('ImmersiveStory', () => {
     expect(container.querySelectorAll('.story-chapters')).toHaveLength(1)
     expect(screen.getByText(content.story.agent.oversightLabel)).toBeVisible()
     expect(screen.getByText(storyChapters[0].headline).compareDocumentPosition(screen.getByText(storyChapters[5].headline)) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.getByText(content.about.stance.byline)).toBeVisible()
+    expect(screen.getByText(content.about.story)).toBeVisible()
+    expect(screen.getByText(content.projects.intro)).toBeVisible()
+    expect(screen.getByText(content.projects.empty.body)).toBeVisible()
+    expect(screen.getByText(content.testimonials.empty.body)).toBeVisible()
   })
 
   it('removes inactive enhanced chapters from accessibility and focus', () => {

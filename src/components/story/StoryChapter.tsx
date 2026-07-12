@@ -28,12 +28,37 @@ function AgentRecommendation() {
   )
 }
 
+function ProofAndTrust() {
+  return (
+    <div className="story-proof">
+      <section aria-labelledby="story-proof-about">
+        <h3 id="story-proof-about">{content.about.headline} {content.about.headlineEmphasis}</h3>
+        <blockquote>
+          <p>{content.about.stance.pre} <em>{content.about.stance.em}</em> {content.about.stance.post}</p>
+          <footer>{content.about.stance.byline}</footer>
+        </blockquote>
+        <p>{content.about.lead}</p>
+        <p>{content.about.story}</p>
+        <ul>{content.about.principles.map((item) => <li key={item.title}><strong>{item.title}</strong><span>{item.text}</span></li>)}</ul>
+      </section>
+      <section aria-labelledby="story-proof-projects">
+        <h3 id="story-proof-projects">{content.projects.empty.title}</h3>
+        <p>{content.projects.empty.body}</p>
+      </section>
+      <section aria-labelledby="story-proof-testimonials">
+        <h3 id="story-proof-testimonials">{content.testimonials.headline} {content.testimonials.headlineEmphasis}</h3>
+        <p>{content.testimonials.empty.body}</p>
+      </section>
+    </div>
+  )
+}
+
 function chapterDetail(visual: StoryVisual): ReactNode {
   const details: Record<StoryVisual, ReactNode> = {
     tension: <ul>{content.whyAgentic.benefits.map((item) => <li key={item.title}><strong>{item.title}</strong><span>{item.description}</span></li>)}</ul>,
     readiness: <ol>{content.process.steps.map((step) => <li key={step.number}><span>{step.number}</span><strong>{step.title}</strong></li>)}</ol>,
     proposal: <ul>{content.services.packages.map((item) => <li key={item.title}><strong>{item.title}</strong><span>{item.description}</span></li>)}</ul>,
-    proof: <ul>{content.about.principles.map((item) => <li key={item.title}><strong>{item.title}</strong><span>{item.text}</span></li>)}</ul>,
+    proof: <ProofAndTrust />,
     mobile: <p>{content.services.foundation.description}</p>,
     agent: <AgentRecommendation />,
   }
