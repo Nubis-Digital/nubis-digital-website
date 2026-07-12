@@ -28,6 +28,8 @@ describe('ImmersiveStory', () => {
     expect(screen.getAllByRole('article')).toHaveLength(6)
     expect(screen.getAllByText(/Chapter \d of 6/)).toHaveLength(6)
     expect(container.querySelectorAll('.story-chapters')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-story-surface]')).toHaveLength(1)
+    expect(container.querySelector('[data-story-surface] > .story-chapters')).not.toBeNull()
     expect(screen.getByText(content.story.agent.oversightLabel)).toBeVisible()
     expect(screen.getByText(storyChapters[0].headline).compareDocumentPosition(screen.getByText(storyChapters[5].headline)) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(screen.getByText(content.about.stance.byline)).toBeVisible()
@@ -35,6 +37,13 @@ describe('ImmersiveStory', () => {
     expect(screen.getByText(content.projects.intro)).toBeVisible()
     expect(screen.getByText(content.projects.empty.body)).toBeVisible()
     expect(screen.getByText(content.testimonials.empty.body)).toBeVisible()
+  })
+
+  it('clips the single live chapter surface to the active device aperture', () => {
+    const css = readFileSync(resolve(process.cwd(), 'src/app/globals.css'), 'utf8')
+    expect(css).toMatch(/\.story-live-surface\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?overflow:\s*hidden;/)
+    expect(css).toMatch(/\.story-live-surface\[data-surface-device="phone"\]\s*\{[\s\S]*?width:[\s\S]*?height:/)
+    expect(css).not.toMatch(/\.story-chapters > li > article\s*\{[^}]*margin:\s*0 0 0 auto;/s)
   })
 
   it('keeps every chapter readable and exposed without enhancement', () => {

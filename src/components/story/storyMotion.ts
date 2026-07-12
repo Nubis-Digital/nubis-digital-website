@@ -58,6 +58,7 @@ export function createStoryTimeline(gsapApi: typeof gsap, root: HTMLElement): gs
   const phone = requireStoryElement(root, '[data-story-device="phone"]')
   const invitation = requireStoryElement(root, '.story-invitation')
   const continuity = requireStoryElement(root, '[data-story-continuity]')
+  const surface = requireStoryElement(root, '[data-story-surface]')
 
   const timeline = gsapApi.timeline({
     defaults: { ease: 'none' },
@@ -76,6 +77,7 @@ export function createStoryTimeline(gsapApi: typeof gsap, root: HTMLElement): gs
       setInvitationAccessibility(root, state.beat === 'invitation')
       root.dataset.beat = state.beat
       root.dataset.device = state.device
+      surface.dataset.surfaceDevice = state.device
       root.style.setProperty('--story-progress', String(timeline.progress()))
     },
   })
@@ -96,6 +98,7 @@ export function createStoryTimeline(gsapApi: typeof gsap, root: HTMLElement): gs
   timeline
     .addLabel('handoff', 0.62)
     .to(laptop, { scale: 0.76, xPercent: -20, opacity: 0.45, duration: 0.1 }, 'handoff')
+    .to(surface, { scale: 0.98, duration: 0.1 }, 'handoff')
     .fromTo(phone, { scale: 0.78, xPercent: 24, opacity: 0 }, { scale: 1, xPercent: 0, opacity: 1, duration: 0.1 }, 'handoff')
     .fromTo(continuity, { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.1 }, 'handoff')
     .addLabel('phone-mobile', 0.72)
@@ -105,7 +108,7 @@ export function createStoryTimeline(gsapApi: typeof gsap, root: HTMLElement): gs
     .to(chapters[4], { opacity: 0, yPercent: -8, duration: 0.08 }, 'phone-agent')
     .fromTo(chapters[5], { opacity: 0, yPercent: 8 }, { opacity: 1, yPercent: 0, duration: 0.08 }, 'phone-agent')
     .addLabel('release', 0.94)
-    .to([laptop, phone, continuity], { opacity: 0, yPercent: -6, duration: 0.06 }, 'release')
+    .to([laptop, phone, continuity, surface], { opacity: 0, yPercent: -6, duration: 0.06 }, 'release')
 
   return timeline
 }

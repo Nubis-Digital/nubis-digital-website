@@ -19,6 +19,7 @@ export function resetStoryEnhancement(root: HTMLElement): void {
     element.removeAttribute('inert')
     element.removeAttribute('data-active')
   })
+  root.querySelector<HTMLElement>('[data-story-surface]')?.setAttribute('data-surface-device', 'laptop')
 }
 
 export function activateStoryEnhancement(root: HTMLElement): () => void {

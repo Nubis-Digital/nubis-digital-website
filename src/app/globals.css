@@ -322,6 +322,7 @@ a { color: inherit; }
 .story-device-rail > [data-story-device] { flex: 1 1 260px; display: grid; place-items: center; max-width: 600px; }
 .story-device-rail [data-story-continuity] { display: none; }
 .story-chapters { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
+.story-live-surface { min-width: 0; }
 .story-chapters > li { min-width: 0; }
 .story-chapter { position: relative; opacity: 1; transform: none; }
 .story-chapters article { max-width: 72rem; margin: 0 auto; padding: clamp(32px, 5vw, 72px) 0; border-top: 1px solid var(--ink-20); }
@@ -414,6 +415,7 @@ a { color: inherit; }
   .story-chapters article { position: relative; opacity: 1; transform: none; }
   .story-device { position: relative; transform: none; pointer-events: none; }
   .story-device__viewport { overflow: visible; }
+  .story-live-surface { position: relative; width: auto; height: auto; overflow: visible; background: transparent; }
   .scroll-cue { display: none; }
 }
 
@@ -421,11 +423,55 @@ a { color: inherit; }
   .immersive-story[data-enhanced="true"] { min-height: 700vh; }
   .immersive-story[data-enhanced="true"] .story-stage { position: absolute; inset: 0; height: 100svh; min-height: 560px; padding: 0; overflow: clip; }
   .immersive-story[data-enhanced="true"] .story-device-rail { position: absolute; inset: 0; display: flex; margin: 0; }
-  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 50% auto auto 50%; width: min(48vw, 600px); transform: translate(-50%, -50%); }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="laptop"] { width: min(78vw, 900px); }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] { width: min(22vw, 270px); opacity: 0; }
+  .immersive-story[data-enhanced="true"] .story-live-surface {
+    --laptop-size: min(78vw, 900px);
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: calc(50% - (var(--laptop-size) * 0.076876));
+    width: calc(var(--laptop-size) * 0.67609);
+    height: calc(var(--laptop-size) * 0.42128167);
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    contain: layout paint;
+    transition: top 360ms var(--ease-out), width 360ms var(--ease-out), height 360ms var(--ease-out), border-radius 360ms var(--ease-out);
+  }
+  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] {
+    top: 50%;
+    width: min(calc(22vw - 20px), 250px);
+    height: min(calc((22vw - 20px) * 2.111), 527px);
+    border-radius: 1.3rem;
+  }
   .immersive-story[data-enhanced="true"] .story-chapters { position: absolute; inset: 0; display: block; }
-  .immersive-story[data-enhanced="true"] .story-chapters > li { position: absolute; inset: 0; display: grid; align-items: center; padding: clamp(32px, 6vw, 88px); pointer-events: none; }
-  .immersive-story[data-enhanced="true"] .story-chapters > li > article { width: min(38vw, 34rem); margin: 0 0 0 auto; padding: 32px; border: 1px solid var(--paper-20); background: var(--ink); color: var(--paper); opacity: 0; transform: translateY(24px); pointer-events: none; transition: opacity 260ms var(--ease-out), transform 360ms var(--ease-out); }
+  .immersive-story[data-enhanced="true"] .story-chapters > li { position: absolute; inset: 0; display: grid; align-items: center; padding: clamp(16px, 2vw, 26px); pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-chapters > li > article { width: 100%; max-height: 100%; margin: 0; padding: 0; border: 0; background: transparent; color: var(--paper); opacity: 0; transform: translateY(18px); pointer-events: none; transition: opacity 260ms var(--ease-out), transform 360ms var(--ease-out); overflow: hidden; }
   .immersive-story[data-enhanced="true"] .story-chapters > li[data-active="true"] > article { opacity: 1; transform: none; pointer-events: auto; }
+  .immersive-story[data-enhanced="true"] .story-progress,
+  .immersive-story[data-enhanced="true"] .story-chapter__eyebrow { font-size: clamp(0.48rem, 0.7vw, 0.65rem); }
+  .immersive-story[data-enhanced="true"] .story-chapters h2 { margin: 4px 0 8px; max-width: 22ch; font-size: clamp(1.25rem, 2.15vw, 2.35rem); line-height: 1; }
+  .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]) { margin: 0; max-width: 58ch; font-size: clamp(0.68rem, 0.9vw, 0.95rem); line-height: 1.35; }
+  .immersive-story[data-enhanced="true"] .story-chapter__detail { margin-top: clamp(8px, 1vw, 14px); font-size: clamp(0.6rem, 0.78vw, 0.82rem); line-height: 1.25; }
+  .immersive-story[data-enhanced="true"] .story-chapter__detail ul,
+  .immersive-story[data-enhanced="true"] .story-chapter__detail ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .immersive-story[data-enhanced="true"] .story-chapter__detail li { margin: 0; }
+  .immersive-story[data-enhanced="true"] .story-proof { grid-template-columns: 1.5fr 1fr 1fr; gap: 12px; font-size: clamp(0.5rem, 0.66vw, 0.7rem); line-height: 1.25; }
+  .immersive-story[data-enhanced="true"] .story-proof h3 { margin: 0 0 4px; font-size: clamp(0.7rem, 0.9vw, 0.95rem); }
+  .immersive-story[data-enhanced="true"] .story-proof p,
+  .immersive-story[data-enhanced="true"] .story-proof blockquote { margin: 4px 0; }
+  .immersive-story[data-enhanced="true"] .story-proof ul { display: none; }
+  .immersive-story[data-enhanced="true"] .story-agent { padding: 12px; }
+  .immersive-story[data-enhanced="true"] .story-agent dl { gap: 8px; }
+  .immersive-story[data-enhanced="true"] .story-agent button { margin-top: 8px; }
+  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapters > li { padding: 24px 18px; }
+  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapters h2 { font-size: clamp(1.05rem, 1.6vw, 1.35rem); }
+  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapter__detail ul,
+  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapter__detail ol { grid-template-columns: 1fr; }
   .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]),
   .immersive-story[data-enhanced="true"] .story-chapter__detail li span { color: var(--paper-70); }
 }

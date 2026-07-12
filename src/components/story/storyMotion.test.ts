@@ -80,6 +80,7 @@ function storyRoot() {
     <div data-story-device="laptop"></div>
     <div data-story-continuity></div>
     <div data-story-device="phone"></div>
+    <div data-story-surface data-surface-device="laptop"></div>
     ${Array.from({ length: 6 }, () => '<article data-story-chapter></article>').join('')}
   `
   return root
@@ -105,11 +106,13 @@ describe('createStoryTimeline', () => {
       'invitation', 'laptop-1', 'laptop-2', 'laptop-3', 'laptop-4', 'handoff', 'phone-mobile', 'phone-agent', 'release',
     ])
     expect(calls.some(({ method, args }) => method === 'fromTo' && args[0] === root.querySelector('[data-story-device="phone"]') && args[3] === 'handoff')).toBe(true)
+    expect(calls.some(({ method, args }) => method === 'to' && args[0] === root.querySelector('[data-story-surface]') && args[2] === 'handoff')).toBe(true)
     expect(calls.some(({ method, args }) => method === 'to' && Array.isArray(args[0]) && args[2] === 'release')).toBe(true)
 
     ;(config.onUpdate as () => void)()
     expect(root).toHaveAttribute('data-beat', 'handoff')
     expect(root).toHaveAttribute('data-device', 'phone')
+    expect(root.querySelector('[data-story-surface]')).toHaveAttribute('data-surface-device', 'phone')
     expect(root.style.getPropertyValue('--story-progress')).toBe('0.66')
     expect(root.querySelectorAll('[data-story-chapter][aria-hidden="true"][inert]')).toHaveLength(5)
     expect(root.querySelector('.story-invitation')).toHaveAttribute('aria-hidden', 'true')

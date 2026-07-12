@@ -30,13 +30,15 @@ export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: Imm
           <div data-story-continuity />
           <div data-story-device="phone"><PhoneShell><span /></PhoneShell></div>
         </div>
-        <ol className="story-chapters">
-          {storyChapters.map((chapter, index) => (
-            <li key={chapter.id} data-story-chapter>
-              <StoryChapter chapter={chapter} index={index} active={index === activeChapterIndex} enhanced={enhanced} />
-            </li>
-          ))}
-        </ol>
+        <div className="story-live-surface" data-story-surface data-surface-device="laptop">
+          <ol className="story-chapters">
+            {storyChapters.map((chapter, index) => (
+              <li key={chapter.id} data-story-chapter>
+                <StoryChapter chapter={chapter} index={index} active={index === activeChapterIndex} enhanced={enhanced} />
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
     </div>
   )
