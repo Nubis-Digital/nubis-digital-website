@@ -38,6 +38,13 @@ export function setActiveChapter(root: HTMLElement, activeIndex: number): void {
   })
 }
 
+export function setInvitationAccessibility(root: HTMLElement, visible: boolean): void {
+  const invitation = requireStoryElement(root, '.story-invitation')
+  invitation.toggleAttribute('inert', !visible)
+  if (visible) invitation.removeAttribute('aria-hidden')
+  else invitation.setAttribute('aria-hidden', 'true')
+}
+
 function requireStoryElement(root: HTMLElement, selector: string): HTMLElement {
   const element = root.querySelector<HTMLElement>(selector)
   if (!element) throw new Error(`Immersive story is missing required element: ${selector}`)
@@ -66,6 +73,7 @@ export function createStoryTimeline(gsapApi: typeof gsap, root: HTMLElement): gs
     onUpdate() {
       const state = getStoryState(timeline.progress())
       setActiveChapter(root, state.chapterIndex)
+      setInvitationAccessibility(root, state.beat === 'invitation')
       root.dataset.beat = state.beat
       root.dataset.device = state.device
       root.style.setProperty('--story-progress', String(timeline.progress()))

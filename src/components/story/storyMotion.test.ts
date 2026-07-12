@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { gsap } from 'gsap'
 
-import { createStoryTimeline, getStoryState, setActiveChapter, STORY_BEATS } from './storyMotion'
+import { createStoryTimeline, getStoryState, setActiveChapter, setInvitationAccessibility, STORY_BEATS } from './storyMotion'
 
 describe('getStoryState', () => {
   it('maps progress boundaries to deterministic beats and chapters', () => {
@@ -55,6 +55,24 @@ describe('setActiveChapter', () => {
   })
 })
 
+describe('setInvitationAccessibility', () => {
+  it('removes and restores the invitation CTA from the accessibility tree', () => {
+    const root = document.createElement('main')
+    root.innerHTML = '<section class="story-invitation"><a href="#contact">Continue</a></section>'
+    const invitation = root.querySelector('.story-invitation')!
+
+    setInvitationAccessibility(root, false)
+    expect(invitation).toHaveAttribute('aria-hidden', 'true')
+    expect(invitation).toHaveAttribute('inert')
+    expect(root.querySelector('a')!.closest('[inert]')).toBe(invitation)
+
+    setInvitationAccessibility(root, true)
+    expect(invitation).not.toHaveAttribute('aria-hidden')
+    expect(invitation).not.toHaveAttribute('inert')
+    expect(root.querySelector('a')!.closest('[inert]')).toBeNull()
+  })
+})
+
 function storyRoot() {
   const root = document.createElement('main')
   root.innerHTML = `
@@ -94,11 +112,15 @@ describe('createStoryTimeline', () => {
     expect(root).toHaveAttribute('data-device', 'phone')
     expect(root.style.getPropertyValue('--story-progress')).toBe('0.66')
     expect(root.querySelectorAll('[data-story-chapter][aria-hidden="true"][inert]')).toHaveLength(5)
+    expect(root.querySelector('.story-invitation')).toHaveAttribute('aria-hidden', 'true')
+    expect(root.querySelector('.story-invitation')).toHaveAttribute('inert')
 
-    progress = 0.2
+    progress = 0
     ;(config.onUpdate as () => void)()
-    expect(root).toHaveAttribute('data-beat', 'laptop')
+    expect(root).toHaveAttribute('data-beat', 'invitation')
     expect(root.querySelectorAll('[data-story-chapter][data-active="true"]')).toHaveLength(1)
+    expect(root.querySelector('.story-invitation')).not.toHaveAttribute('aria-hidden')
+    expect(root.querySelector('.story-invitation')).not.toHaveAttribute('inert')
   })
 
   it('fails clearly when fixed story markup is missing', () => {

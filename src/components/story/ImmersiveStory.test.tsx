@@ -95,6 +95,8 @@ describe('ImmersiveStory', () => {
     expect(root).not.toHaveAttribute('data-beat')
     expect(root).not.toHaveAttribute('data-device')
     expect(root.style.getPropertyValue('--story-progress')).toBe('')
+    expect(root.querySelector('.story-invitation')).not.toHaveAttribute('aria-hidden')
+    expect(root.querySelector('.story-invitation')).not.toHaveAttribute('inert')
     chapters.forEach((chapter) => {
       expect(chapter).not.toHaveAttribute('aria-hidden')
       expect(chapter).not.toHaveAttribute('inert')
