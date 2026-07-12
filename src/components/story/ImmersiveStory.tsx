@@ -4,6 +4,7 @@ import { storyChapters } from '@/data/story'
 import { LaptopShell } from './LaptopShell'
 import { PhoneShell } from './PhoneShell'
 import { StoryChapter } from './StoryChapter'
+import { ImmersiveStoryMotion } from './ImmersiveStoryMotion'
 
 interface ImmersiveStoryProps {
   enhanced?: boolean
@@ -12,7 +13,8 @@ interface ImmersiveStoryProps {
 
 export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: ImmersiveStoryProps = {}) {
   return (
-    <main className="immersive-story" data-enhanced={enhanced ? 'true' : 'false'}>
+    <main id="immersive-story" className="immersive-story" data-enhanced={enhanced ? 'true' : 'false'}>
+      <ImmersiveStoryMotion rootId="immersive-story" />
       <section className="story-invitation" aria-labelledby="story-title">
         <div>
           <h1 id="story-title">{content.hero.headlinePart1} <strong>{content.hero.headlineEmphasis}</strong></h1>
@@ -23,12 +25,13 @@ export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: Imm
 
       <section className="story-stage" aria-label="Nubis transformation story">
         <div className="story-device-rail" aria-hidden="true">
-          <LaptopShell><span /></LaptopShell>
-          <PhoneShell><span /></PhoneShell>
+          <div data-story-device="laptop"><LaptopShell><span /></LaptopShell></div>
+          <div data-story-continuity />
+          <div data-story-device="phone"><PhoneShell><span /></PhoneShell></div>
         </div>
         <ol className="story-chapters">
           {storyChapters.map((chapter, index) => (
-            <li key={chapter.id}>
+            <li key={chapter.id} data-story-chapter>
               <StoryChapter chapter={chapter} index={index} active={index === activeChapterIndex} enhanced={enhanced} />
             </li>
           ))}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getStoryState, STORY_BEATS } from './storyMotion'
+import { getStoryState, setActiveChapter, STORY_BEATS } from './storyMotion'
 
 describe('getStoryState', () => {
   it('maps progress boundaries to deterministic beats and chapters', () => {
@@ -29,5 +29,26 @@ describe('getStoryState', () => {
     const initialState = getStoryState(0.4)
     getStoryState(0.9)
     expect(getStoryState(0.4)).toEqual(initialState)
+  })
+})
+
+describe('setActiveChapter', () => {
+  it('is deterministic across forward and backward activation', () => {
+    const root = document.createElement('main')
+    root.innerHTML = Array.from({ length: 6 }, () => '<article data-story-chapter></article>').join('')
+    setActiveChapter(root, 4)
+    const expected = Array.from(root.querySelectorAll('[data-story-chapter]'), (chapter) => ({
+      active: chapter.getAttribute('data-active'),
+      hidden: chapter.getAttribute('aria-hidden'),
+      inert: chapter.hasAttribute('inert'),
+    }))
+    setActiveChapter(root, 1)
+    setActiveChapter(root, 4)
+    expect(Array.from(root.querySelectorAll('[data-story-chapter]'), (chapter) => ({
+      active: chapter.getAttribute('data-active'),
+      hidden: chapter.getAttribute('aria-hidden'),
+      inert: chapter.hasAttribute('inert'),
+    }))).toEqual(expected)
+    expect(root.querySelectorAll('[aria-hidden="true"][inert]')).toHaveLength(5)
   })
 })
