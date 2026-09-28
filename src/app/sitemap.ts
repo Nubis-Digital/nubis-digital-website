@@ -1,12 +1,11 @@
 import type { MetadataRoute } from 'next'
 
-import { SITE_URL } from '@/data/machineReadable'
+import { SITE_URL, SITE_URLS } from '@/data/machineReadable'
 
 export const dynamic = 'force-static'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: `${SITE_URL}/`, changeFrequency: 'weekly', priority: 1 },
-    { url: `${SITE_URL}/umbraco`, changeFrequency: 'monthly', priority: 0.7 },
-  ]
+  // Static export: "last modified" is the build that published it.
+  const lastModified = new Date()
+  return SITE_URLS.map(({ path, priority, changeFrequency }) => ({ url: `${SITE_URL}${path}`, lastModified, changeFrequency, priority }))
 }

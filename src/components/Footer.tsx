@@ -19,6 +19,14 @@ export default function Footer() {
           </a>
         ))}
       </nav>
+      <nav className="f-links f-links--ai" aria-label={f.aiLabel}>
+        <span className="f-ai-label">{f.aiLabel}</span>
+        {f.aiLinks.map((link) => (
+          <a key={link.href} href={link.href}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
     </footer>
   );
 }

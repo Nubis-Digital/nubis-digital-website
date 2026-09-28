@@ -13,6 +13,36 @@ const { hero, whyAgentic, services, process, about, projects, contact, umbraco, 
 const bullets = (items: readonly { title: string; description?: string; text?: string }[]) =>
   items.map((item) => `- **${item.title}** — ${item.description ?? item.text ?? ''}`).join('\n')
 
+/**
+ * AI crawlers and assistant fetchers, named one by one so each gets an
+ * explicit welcome instead of relying on the `*` fallback. Being read and
+ * cited by these is the whole point of the site.
+ */
+export const AI_CRAWLERS = [
+  // OpenAI — training, ChatGPT search, and live fetches on a user's behalf
+  'GPTBot', 'OAI-SearchBot', 'ChatGPT-User',
+  // Anthropic
+  'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'anthropic-ai',
+  // Perplexity
+  'PerplexityBot', 'Perplexity-User',
+  // Google (Gemini / AI Overviews) and Microsoft (Copilot / Bing)
+  'Googlebot', 'Google-Extended', 'Bingbot',
+  // Apple Intelligence / Siri
+  'Applebot', 'Applebot-Extended',
+  // Other assistants and open datasets
+  'Amazonbot', 'Meta-ExternalAgent', 'Meta-ExternalFetcher', 'DuckAssistBot', 'MistralAI-User', 'cohere-ai', 'YouBot', 'CCBot',
+] as const
+
+/** Every URL the site publishes, human and machine-readable, in sitemap order. */
+export const SITE_URLS = [
+  { path: '/', priority: 1, changeFrequency: 'weekly' },
+  { path: '/umbraco', priority: 0.8, changeFrequency: 'monthly' },
+  { path: '/llms.txt', priority: 0.9, changeFrequency: 'weekly' },
+  { path: '/llms-full.txt', priority: 0.7, changeFrequency: 'weekly' },
+  { path: '/index.md', priority: 0.7, changeFrequency: 'weekly' },
+  { path: '/umbraco.md', priority: 0.6, changeFrequency: 'monthly' },
+] as const
+
 export const MARKDOWN_PAGES = [
   { path: '/index.md', htmlPath: '/', title: `${SITE_NAME} — ${hero.headlinePart1} ${hero.headlineEmphasis}` },
   { path: '/umbraco.md', htmlPath: '/umbraco', title: `Umbraco — the platform we build on | ${SITE_NAME}` },

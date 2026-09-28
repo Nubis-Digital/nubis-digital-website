@@ -45,3 +45,22 @@ describe('mailto fallback', () => {
     expect(decodeURIComponent(href.split('body=')[1])).toBe('Need help & more\n\n— Ana\nana@x.com')
   })
 })
+
+describe('AI-first discovery', () => {
+  it('robots.txt names and allows the major AI crawlers, and points at the sitemap', async () => {
+    const { default: robots } = await import('@/app/robots')
+    const result = robots()
+    const rules = Array.isArray(result.rules) ? result.rules : [result.rules]
+    const aiRule = rules.find((rule) => Array.isArray(rule.userAgent) && rule.userAgent.includes('GPTBot'))
+    expect(aiRule?.allow).toBe('/')
+    ;['ClaudeBot', 'OAI-SearchBot', 'PerplexityBot', 'Google-Extended', 'Applebot-Extended'].forEach((bot) => expect(aiRule?.userAgent).toContain(bot))
+    expect(result.sitemap).toBe('https://www.nubisdigital.com/sitemap.xml')
+  })
+
+  it('the sitemap lists the machine-readable twins next to the HTML', async () => {
+    const { default: sitemap } = await import('@/app/sitemap')
+    const urls = sitemap().map((entry) => entry.url)
+    ;['/', '/umbraco', '/llms.txt', '/llms-full.txt', '/index.md', '/umbraco.md'].forEach((path) => expect(urls).toContain(`https://www.nubisdigital.com${path}`))
+    sitemap().forEach((entry) => expect(entry.lastModified).toBeInstanceOf(Date))
+  })
+})

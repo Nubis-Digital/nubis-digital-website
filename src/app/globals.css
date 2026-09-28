@@ -963,6 +963,9 @@ a { color: inherit; }
 @media (min-width: 768px) { .f-links { flex-direction: row; gap: 24px; } }
 .f-links a { font: 400 0.875rem var(--font-sans); color: var(--paper-70); text-decoration: none; transition: color var(--dur) var(--ease); }
 .f-links a:hover { color: var(--signal); }
+.f-links--ai { align-items: baseline; }
+.f-links--ai a, .f-ai-label { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; }
+.f-ai-label { text-transform: uppercase; color: var(--signal); }
 
 /* ---- Oversight badge (positioned) ---- */
 .ob-wrap { position: absolute; z-index: 20; transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease); }

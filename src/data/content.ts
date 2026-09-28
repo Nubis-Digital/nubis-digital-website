@@ -327,6 +327,13 @@ export const content = {
     logoAccent: '.',
     tagline: 'Helping businesses win with AI',
     pageLinks: [{ label: 'Umbraco', href: '/umbraco' }],
+    // Built for AI first: the machine-readable versions of this site, in plain view.
+    aiLabel: 'For AI assistants',
+    aiLinks: [
+      { label: 'llms.txt', href: '/llms.txt' },
+      { label: 'Markdown', href: '/index.md' },
+      { label: 'Sitemap', href: '/sitemap.xml' },
+    ],
   },
   umbraco: {
     hero: {
