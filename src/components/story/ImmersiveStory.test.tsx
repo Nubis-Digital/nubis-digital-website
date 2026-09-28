@@ -52,7 +52,7 @@ describe('ImmersiveStory', () => {
     expect(css).not.toMatch(/left:\s*72%/)
     expect(css).not.toMatch(/width:\s*min\(78vw, 600px\)/)
     expect(css).toMatch(/\.immersive-story\[data-enhanced="true"\] \.story-device-rail > \[data-story-device\]\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*0;[^}]*display:\s*grid;[^}]*place-items:\s*center;/s)
-    expect(css).not.toMatch(/\.immersive-story\[data-enhanced="true"\] \.story-laptop > img\s*\{[^}]*filter:/s)
+    expect(css).not.toMatch(/\.immersive-story\[data-enhanced="true"\] \.story-laptop__art\s*\{[^}]*filter:/s)
   })
 
   it('keeps the dock slot and the device stage in one measurable coordinate space', () => {

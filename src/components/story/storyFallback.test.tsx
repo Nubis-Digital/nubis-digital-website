@@ -135,7 +135,7 @@ describe('un-enhanced layout contract', () => {
     // longer be blanket-hidden — the mount itself is what gets silenced, and
     // only the hardware decoration stays out of the accessibility tree.
     expect(container.querySelector('[data-story-device="phone"]')).not.toHaveAttribute('aria-hidden')
-    expect(container.querySelector('.story-laptop > img')).toHaveAttribute('aria-hidden', 'true')
+    expect(container.querySelector('.story-laptop > .story-laptop__art')).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelector('.story-phone__speaker')).toHaveAttribute('aria-hidden', 'true')
   })
 })

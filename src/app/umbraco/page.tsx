@@ -9,7 +9,7 @@ import UmbracoMigration from '@/components/umbraco/UmbracoMigration';
 import UmbracoCTA from '@/components/umbraco/UmbracoCTA';
 import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
-import MotionLayer from '@/components/MotionLayer';
+import { LazyMotionLayer } from '@/components/LazyMotion';
 import { jsonLdScript, umbracoJsonLd } from '@/data/machineReadable';
 
 export const metadata: Metadata = {
@@ -36,7 +36,7 @@ export default function UmbracoPage() {
       </main>
       <Footer />
       <CookieConsent />
-      <MotionLayer />
+      <LazyMotionLayer />
     </>
   );
 }

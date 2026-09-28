@@ -33,7 +33,7 @@ jobs:
       - name: Test
         run: npx vitest run
       - name: Build
-        run: npx next build
+        run: npm run build
         env:
           # Where contact-form leads go. Set these as repository variables.
           NEXT_PUBLIC_LEAD_ENDPOINT: ${{ vars.NEXT_PUBLIC_LEAD_ENDPOINT }}

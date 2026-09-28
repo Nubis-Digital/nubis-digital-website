@@ -2,7 +2,7 @@ import GlobalHeader from '@/components/GlobalHeader';
 import LoadPathSpine from '@/components/LoadPathSpine';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
-import MotionLayer from '@/components/MotionLayer';
+import { LazyMotionLayer } from '@/components/LazyMotion';
 import CookieConsent from '@/components/CookieConsent';
 import { ImmersiveStory } from '@/components/story/ImmersiveStory';
 import { homeJsonLd, jsonLdScript } from '@/data/machineReadable';
@@ -19,7 +19,7 @@ export default function HomePage() {
       </main>
       <Footer />
       <LoadPathSpine />
-      <MotionLayer />
+      <LazyMotionLayer />
       <CookieConsent />
     </>
   );

@@ -1,4 +1,22 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { ReactNode } from 'react';
+
+/**
+ * The laptop drawing is inlined at build time rather than loaded as <img>:
+ * inline SVG is never a Largest Contentful Paint candidate, so the lid that
+ * swings open after hydration can't push LCP past the hero copy. Server-only.
+ */
+const drawing = (name: string, prefix: string) =>
+  readFileSync(join(process.cwd(), 'public/assets', name), 'utf8')
+    .replace(/<\?xml[^>]*>\s*/, '')
+    .replace(/<!--[\s\S]*?-->\s*/g, '')
+    // Both drawings share ids (e.g. "objects"); scope them so the page has no duplicates.
+    .replace(/\bid="([^"]+)"/g, `id="${prefix}-$1"`)
+    .replace(/url\(#([^)]+)\)/g, `url(#${prefix}-$1)`)
+    .replace(/href="#([^"]+)"/g, `href="#${prefix}-$1"`);
+const LAPTOP_BASE_SVG = drawing('laptop-base.svg', 'laptop-base');
+const LAPTOP_LID_SVG = drawing('laptop-lid.svg', 'laptop-lid');
 
 interface DeviceShellProps {
   children: ReactNode;
@@ -39,22 +57,9 @@ export function LaptopShell({ children, className = '' }: DeviceShellProps) {
     >
       {/* Two layers of one 600×600 drawing, so the lid can hinge over the base.
           The lid carries the screen; its transform origin is the hinge line. */}
-      <img
-        className="story-laptop__base"
-        src="/assets/laptop-base.svg"
-        alt=""
-        aria-hidden="true"
-        width={600}
-        height={600}
-      />
+      <span className="story-laptop__art story-laptop__base" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LAPTOP_BASE_SVG }} />
       <div className="story-laptop__lid" data-story-lid>
-        <img
-          src="/assets/laptop-lid.svg"
-          alt=""
-          aria-hidden="true"
-          width={600}
-          height={600}
-        />
+        <span className="story-laptop__art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LAPTOP_LID_SVG }} />
         <div className="story-device__viewport story-laptop__viewport">
           {children}
           {/* Screen instruments: the render scan line and the story's progress rule. */}

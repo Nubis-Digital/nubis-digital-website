@@ -10,6 +10,7 @@ export function PhoneShell({ children, className = '' }: DeviceShellProps) {
     <div
       className={`story-device story-phone ${className}`.trim()}
       data-device="phone"
+      role="group"
       aria-label="Mobile experience"
     >
       <span className="story-phone__speaker" aria-hidden="true" />

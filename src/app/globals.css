@@ -12,9 +12,9 @@
 
 :root {
   /* === TYPE FAMILIES === */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* === CORE PALETTE === */
   --paper:   #F0EEE9;
@@ -399,7 +399,7 @@ a { color: inherit; }
   --story-laptop-w: 67.609%;
   --story-laptop-h: 42.128167%;
 }
-.story-laptop img { display: none; }
+.story-laptop__art { display: none; }
 /* Without the stage the lid wrapper is layout-transparent: the screen's chapter
    tree stays in normal document flow. */
 .story-laptop__lid { display: contents; }
@@ -451,7 +451,7 @@ a { color: inherit; }
 /* Fallback polish, JS-opt-in only (`data-reveal="on"`): no-JS and reduced
    motion never get it, so they always see every chapter at full opacity. */
 @media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
-  .immersive-story[data-reveal="on"] .story-rail { position: sticky; z-index: 2; top: 73px; display: flex; gap: 12px; margin: 0 0 var(--space-6); padding: 10px 0; list-style: none; background: var(--paper); border-bottom: 1px solid var(--ink-20); font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.1em; color: var(--ink-50); }
+  .immersive-story[data-reveal="on"] .story-rail { position: sticky; z-index: 2; top: 73px; display: flex; gap: 12px; margin: 0 0 var(--space-6); padding: 10px 0; list-style: none; background: var(--paper); border-bottom: 1px solid var(--ink-20); font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.1em; color: var(--ink-70); }
   .immersive-story[data-reveal="on"] .story-rail [data-current="true"] { color: var(--signal-ink); }
   .immersive-story[data-reveal="on"] [data-story-chapter] > article { transition: opacity 480ms var(--ease), transform 480ms var(--ease); }
   .immersive-story[data-reveal="on"] [data-story-chapter]:not([data-revealed]) > article { opacity: 0; transform: translateY(24px); }
@@ -488,11 +488,12 @@ a { color: inherit; }
      paper hairline draw the hardware the way the laptop asset does. */
   .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] .story-phone { width: auto; height: 78svh; border-color: #262d33; box-shadow: 0 0 0 1px var(--paper-20); }
   /* Hardware is enhancement-only decoration. */
-  .immersive-story[data-enhanced="true"] .story-laptop img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-laptop__art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-laptop__art > svg { display: block; width: 100%; height: 100%; }
   .immersive-story[data-enhanced="true"] .story-laptop__base { z-index: 1; }
   /* The lid hinges on the base: its origin is the hinge line (y 396.567 of 600). */
   .immersive-story[data-enhanced="true"] .story-laptop__lid { position: absolute; z-index: 2; inset: 0; display: block; transform-origin: 50% 66.0945%; backface-visibility: hidden; }
-  .immersive-story[data-enhanced="true"] .story-laptop__lid > img { z-index: 2; }
+  .immersive-story[data-enhanced="true"] .story-laptop__lid > .story-laptop__art { z-index: 2; }
   /* The screen. Geometry comes from the shell's own aperture vars — there is no
      second formula to drift, so nothing needs re-syncing on resize. */
   .immersive-story[data-enhanced="true"] .story-laptop__viewport {
@@ -1246,8 +1247,6 @@ a { color: inherit; }
 @media (min-width: 560px) { .umb-logos { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 900px) { .umb-logos { grid-template-columns: repeat(5, 1fr); } }
 .umb-logo { background: var(--paper); display: flex; align-items: center; justify-content: center; text-align: center; padding: 28px 16px; min-height: 92px; }
-.umb-logo-img { max-height: 38px; max-width: 80%; width: auto; height: auto; object-fit: contain; filter: grayscale(1); opacity: 0.7; transition: filter var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease); }
-.umb-logo:hover .umb-logo-img { filter: grayscale(0); opacity: 1; }
 .umb-logo-name { font: 600 1.0625rem/1.2 var(--font-serif); letter-spacing: -0.01em; color: var(--umb-blue); }
 .umb-source { margin: 18px 0 0; font: 400 0.75rem/1.5 var(--font-sans); color: var(--ink-70); }
 
@@ -1275,7 +1274,7 @@ a { color: inherit; }
 .umb-cta-inner { position: relative; max-width: 760px; margin: 0 auto; }
 .umb-cta-h2 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(2rem, 4.4vw, 3.25rem); line-height: 1.1; color: var(--paper); margin: 0; text-wrap: balance; }
 .umb-cta-text { margin: 18px auto 32px; max-width: 42rem; font: 400 1.0625rem/1.65 var(--font-sans); color: rgba(255, 255, 255, 0.75); }
-.umb-cta .umb-btn--lg { background: var(--umb-blue-bright); border-color: var(--umb-blue-bright); }
+.umb-cta .umb-btn--lg { background: var(--umb-blue-bright); border-color: var(--umb-blue-bright); color: var(--umb-navy); /* navy on bright blue: 4.75:1 */ }
 .umb-cta .umb-btn--lg:hover { background: #fff; color: var(--umb-navy); border-color: #fff; }
 
 /* comparison → umbraco page link (homepage + umbraco) */

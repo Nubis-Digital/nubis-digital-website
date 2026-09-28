@@ -36,7 +36,7 @@ const TYPE_MAX_SECONDS = 1.5
 /**
  * "The Answer": the hero plays out as an assistant answering. The visitor's
  * question types in, the headline rises line by line as the answer, the cited
- * chip lands, then the body and CTA settle. One-off and time-based, so it only
+ * chip lands. The body and CTA are there from the first frame (largest paint). One-off and time-based, so it only
  * plays from the top of the page in a visible tab — everything is server-
  * rendered visible, and anything that skips the intro simply stays that way.
  * SplitText keeps an `aria-label` on the heading; all of it reverts on teardown.
@@ -51,16 +51,24 @@ export function playHeroIntro(root: HTMLElement, progress: number): () => void {
 
   const caret = root.querySelector<HTMLElement>('[data-story-caret]')
   const citation = root.querySelector<HTMLElement>('[data-story-citation]')
-  const body = Array.from(root.querySelectorAll<HTMLElement>('[data-story-hero-body]'))
   const full = query.textContent ?? ''
   const typing = { chars: 0 }
   const split = SplitText.create(headline, { type: 'lines', mask: 'lines', aria: 'auto' })
+
+  // Hold the question's full height while it types: on a phone it wraps, and
+  // collapsing it to one line would shove the headline up and back (CLS).
+  query.style.minHeight = `${query.getBoundingClientRect().height}px`
+  // The body copy is the page's largest paint on phones, so it is never held
+  // back: it renders with the first frame and only the citation is revealed.
+  const revealed = [citation].filter(Boolean)
 
   const intro = gsap.timeline({ delay: 0.15 })
   intro
     .set(query, { textContent: '' })
     .set(split.lines, { yPercent: 105 })
-    .set([citation, ...body].filter(Boolean), { autoAlpha: 0, y: 10 })
+    // Revealed by clip, not opacity: the copy keeps its real contrast on every
+    // frame, and a clip never moves layout.
+    .set(revealed, { clipPath: 'inset(0 0 100% 0)', y: 10 })
     .to(typing, {
       chars: full.length,
       duration: Math.min(TYPE_MAX_SECONDS, full.length * TYPE_SECONDS_PER_CHAR),
@@ -68,15 +76,15 @@ export function playHeroIntro(root: HTMLElement, progress: number): () => void {
       onUpdate: () => { query.textContent = full.slice(0, Math.round(typing.chars)) },
     })
     .to(split.lines, { yPercent: 0, duration: 1, stagger: 0.09, ease: 'expo.out' }, '+=0.12')
-    .to(citation, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'expo.out' }, '-=0.55')
-    .to(body, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'expo.out' }, '-=0.3')
+    .to(citation, { clipPath: 'inset(0 0 0% 0)', y: 0, duration: 0.5, ease: 'expo.out' }, '-=0.55')
   if (caret) intro.to(caret, { autoAlpha: 0, duration: 0.3 }, '-=0.2')
 
   return () => {
     intro.kill()
     split.revert()
     query.textContent = full
-    gsap.set([query, caret, citation, ...body].filter(Boolean), { clearProps: 'all' })
+    query.style.minHeight = ''
+    gsap.set([query, caret, citation].filter(Boolean), { clearProps: 'all' })
   }
 }
 

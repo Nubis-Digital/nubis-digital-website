@@ -10,7 +10,7 @@ import { StoryChapterTree } from './StoryChapterTree'
 import { StoryMasthead } from './StoryMasthead'
 import { StoryPlates } from './StoryPlates'
 import { StoryRail } from './StoryRail'
-import { ImmersiveStoryMotion } from './ImmersiveStoryMotion'
+import { LazyStoryMotion } from '../LazyMotion'
 
 interface ImmersiveStoryProps {
   enhanced?: boolean
@@ -20,7 +20,7 @@ interface ImmersiveStoryProps {
 export function ImmersiveStory({ enhanced = false, activeChapterIndex = 0 }: ImmersiveStoryProps = {}) {
   return (
     <div id="immersive-story" className="immersive-story" data-enhanced={enhanced ? 'true' : 'false'}>
-      <ImmersiveStoryMotion rootId="immersive-story" />
+      <LazyStoryMotion rootId="immersive-story" />
       <section className="story-invitation" aria-labelledby="story-title">
         <div>
           {/* The visitor's question to an assistant. The full sentence is always
