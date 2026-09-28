@@ -4,7 +4,7 @@ import { buildMailtoHref } from '@/components/ContactSection'
 import { createWebMcpTools } from '@/components/WebMcpTools'
 
 import { content } from './content'
-import { homeMarkdown, jsonLdScript, llmsTxt, siteJsonLd, umbracoMarkdown } from './machineReadable'
+import { homeMarkdown, jsonLdScript, llmsTxt, securityTxt, siteJsonLd, umbracoMarkdown } from './machineReadable'
 
 describe('machine-readable site', () => {
   it('llms.txt links every Markdown page and names every service', () => {
@@ -62,5 +62,14 @@ describe('AI-first discovery', () => {
     const urls = sitemap().map((entry) => entry.url)
     ;['/', '/umbraco', '/llms.txt', '/llms-full.txt', '/index.md', '/umbraco.md'].forEach((path) => expect(urls).toContain(`https://www.nubisdigital.com${path}`))
     sitemap().forEach((entry) => expect(entry.lastModified).toBeInstanceOf(Date))
+  })
+})
+
+describe('security.txt', () => {
+  it('is RFC 9116 valid: mailto contact and an Expires under a year out', () => {
+    const txt = securityTxt(new Date('2026-09-28T00:00:00Z'))
+    expect(txt).toContain('Contact: mailto:contact@nubisdigital.com')
+    expect(txt).toContain('Expires: 2027-03-27T00:00:00Z')
+    expect(txt).toContain('Canonical: https://www.nubisdigital.com/.well-known/security.txt')
   })
 })

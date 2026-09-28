@@ -7,6 +7,8 @@ import { content } from './content'
  */
 export const SITE_URL = 'https://www.nubisdigital.com'
 export const SITE_NAME = 'Nubis Digital'
+export const CONTACT_EMAIL = 'contact@nubisdigital.com'
+export const LOGO_URL = `${SITE_URL}/assets/icon-512.png`
 
 const { hero, whyAgentic, services, process, about, projects, contact, umbraco, footer } = content
 
@@ -42,6 +44,20 @@ export const SITE_URLS = [
   { path: '/index.md', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/umbraco.md', priority: 0.6, changeFrequency: 'monthly' },
 ] as const
+
+/**
+ * RFC 9116 security.txt. `Expires` is required and must be under a year out,
+ * so it is stamped from the build date: every deploy renews it.
+ */
+export function securityTxt(builtAt: Date): string {
+  const expires = new Date(builtAt)
+  expires.setUTCDate(expires.getUTCDate() + 180)
+  return `Contact: mailto:${CONTACT_EMAIL}
+Expires: ${expires.toISOString().replace(/\.\d{3}Z$/, 'Z')}
+Preferred-Languages: en
+Canonical: ${SITE_URL}/.well-known/security.txt
+`
+}
 
 export const MARKDOWN_PAGES = [
   { path: '/index.md', htmlPath: '/', title: `${SITE_NAME} — ${hero.headlinePart1} ${hero.headlineEmphasis}` },
@@ -155,6 +171,7 @@ ${services.packages.map((item) => `- ${item.title}: ${item.description}`).join('
 ## Contact
 
 - [Start a conversation](${SITE_URL}/#contact): ${contact.subheadline}
+- Email: ${CONTACT_EMAIL}
 
 ## Optional
 
@@ -177,7 +194,10 @@ export function siteJsonLd() {
         '@id': organizationId,
         name: SITE_NAME,
         url: `${SITE_URL}/`,
-        logo: `${SITE_URL}/icon.svg`,
+        logo: LOGO_URL,
+        image: LOGO_URL,
+        email: CONTACT_EMAIL,
+        contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: CONTACT_EMAIL, url: `${SITE_URL}/#contact`, availableLanguage: 'en' },
         slogan: footer.tagline,
         description: hero.bodyText,
         knowsAbout: ['AI search visibility', 'Generative engine optimization', 'Umbraco CMS', 'Structured content', 'AI agents'],
