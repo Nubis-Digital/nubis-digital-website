@@ -1,66 +1,45 @@
-# Publishing Nubis Digital with OpenAI Sites
+# Deploying nubisdigital.com
 
-The production path is OpenAI Sites. Validate with `npm test`, `npx tsc --noEmit`,
-and `npm run build`; publish the exact validated commit through the Sites connector.
-Runtime values are configured in Sites and are never committed. The Cloudflare Pages
-instructions below are retained only as a legacy/manual fallback.
+The site is a static Next.js export served by **GitHub Pages** at
+https://www.nubisdigital.com (custom domain set in the repo's Pages settings).
 
-## Runtime values
+## How a deploy happens
 
-Configure these values in OpenAI Sites. Never commit them:
+Every push to `main` runs `.github/workflows/static.yml`:
 
-| Var | Purpose |
-|-----|---------|
-| `RESEND_API_KEY` | Resend API key used by `/api/lead` |
-| `LEAD_TO_EMAIL` | Inbox that receives lead notifications |
-| `LEAD_FROM_EMAIL` | Verified Resend sender |
+1. `npm ci`
+2. `npx vitest run` — a failing test stops the deploy
+3. `npm run build` — `next build` (`output: 'export'` → `out/`), then
+   `scripts/defer-next-scripts.mjs` rewrites the exported HTML so Next's
+   JavaScript loads after first paint
+4. Upload `out/` and publish to Pages
 
-# Legacy/manual fallback: Cloudflare Pages
+Run it by hand from the Actions tab (**Deploy site to Pages → Run workflow**) or
+`gh workflow run static.yml`.
 
-Fresh Next.js 15 (App Router) site. **$0 fixed infra.** Lead capture runs as an
-edge route handler (Cloudflare Workers) through Resend.
+## Check locally before pushing
 
-## Why Cloudflare Pages (not Vercel Hobby)
-Vercel Hobby forbids commercial use — this is a company site. Cloudflare Pages allows
-commercial use on the free tier, with generous Workers/Functions limits. Build via the
-`@cloudflare/next-on-pages` adapter (supports App Router + edge route handlers).
-
-## Local dev
 ```bash
-npm install
-cp .env.example .env.local   # fill in real keys
-npm run dev                  # http://localhost:3000
+npm test
+npx tsc --noEmit
+npm run build && npx serve out   # http://localhost:3000
 ```
 
-## Environment variables / secrets
-Set these in **Cloudflare Pages → Settings → Environment variables**, or via CLI:
-```bash
-npx wrangler pages secret put RESEND_API_KEY
-```
-Non-secret config (`LEAD_TO_EMAIL`, `LEAD_FROM_EMAIL`) can be plain environment variables
-in the dashboard. **No secret is ever sent to the browser** — the key is read only inside
-`src/app/api/lead/route.ts` on the edge.
+## Build-time settings (repository variables)
 
-| Var | Purpose |
-|-----|---------|
-| `RESEND_API_KEY` | Resend API key (free 3k emails/mo) |
-| `LEAD_TO_EMAIL` | Inbox that receives leads |
-| `LEAD_FROM_EMAIL` | Verified Resend sender |
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_LEAD_ENDPOINT` | URL the contact form POSTs leads to (e.g. a SendGrid-backed edge function) |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | Fallback: the form opens a pre-filled email to this address when no endpoint is set |
 
-## Build & deploy
-```bash
-npm run pages:build          # @cloudflare/next-on-pages → .vercel/output/static
-npm run preview              # local Workers runtime preview
-npm run deploy               # wrangler pages deploy
-```
-Or connect the GitHub repo in the Cloudflare Pages dashboard with:
-- Build command: `npx @cloudflare/next-on-pages`
-- Output dir: `.vercel/output/static`
-- Compatibility flag: `nodejs_compat`
+With neither set, the form shows "being set up". Set with
+`gh variable set NAME --body "value"`, then re-run the workflow.
+`server/lead.ts` is the old Resend handler, kept as a starting point for an
+edge function — it is not part of the static build.
 
-## Cost
-| Piece | Service | Cost |
-|-------|---------|------|
-| Hosting + Functions | Cloudflare Pages (free, commercial OK) | $0 |
-| Lead email | Resend free tier | $0 |
-| Database | none | $0 |
+## Other hosts
+
+Vercel is connected to this repo but not used; `vercel.json` turns off its
+automatic Git deployments (they had failed on every push since 2025, and
+Vercel Hobby does not allow commercial sites). `wrangler.toml` and
+`.openai/hosting.json` are leftovers from earlier hosting plans.
