@@ -5,10 +5,12 @@ import Footer from '@/components/Footer';
 import MotionLayer from '@/components/MotionLayer';
 import CookieConsent from '@/components/CookieConsent';
 import { ImmersiveStory } from '@/components/story/ImmersiveStory';
+import { homeJsonLd, jsonLdScript } from '@/data/machineReadable';
 
 export default function HomePage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(homeJsonLd()) }} />
       <a href="#main" className="skip-link">Skip to content</a>
       <GlobalHeader />
       <main id="main">

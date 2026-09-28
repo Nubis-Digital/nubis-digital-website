@@ -28,7 +28,11 @@ describe('HomePage', () => {
 
     expect(container.querySelectorAll('main#main')).toHaveLength(1)
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
-    expect(container.querySelectorAll('[data-story-chapter]')).toHaveLength(6)
+    // Dual mount: two trees in the DOM, one voiced. `getAllByRole` skips the
+    // mount that is hidden from the accessibility tree.
+    expect(container.querySelectorAll('[data-story-mount]')).toHaveLength(2)
+    expect(container.querySelectorAll('[data-story-chapter]')).toHaveLength(12)
+    expect(screen.getAllByRole('article')).toHaveLength(6)
     expect(container.querySelectorAll('#contact')).toHaveLength(1)
     expect(container.querySelectorAll('footer.site-footer')).toHaveLength(1)
     expect(screen.getAllByRole('region', { name: 'Cookie consent' })).toHaveLength(1)
@@ -59,6 +63,10 @@ describe('HomePage', () => {
     const firstFooterControl = footerControls[0]
 
     expect(headerControls.length).toBeGreaterThan(0)
+    // The dual mount doubles the chapter markup and must still add zero tab
+    // stops: the only chapter-level control is the disabled approve button.
+    expect(story.querySelectorAll('[data-story-chapter]')).toHaveLength(12)
+    expect(story.querySelectorAll('button[disabled]')).toHaveLength(2)
     expect(storyControls).toEqual([storyCta])
     expect(storyCta).toHaveAttribute('href', content.services.foundation.ctaUrl)
     expect(document.getElementById(storyCta.hash.slice(1))).toBe(contact)

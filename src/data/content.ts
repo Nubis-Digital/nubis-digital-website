@@ -44,6 +44,10 @@ export const content = {
     cta: 'Get in touch',
   },
   hero: {
+    // "The Answer": the hero plays out as an AI assistant answering a visitor —
+    // the question types in, the headline arrives as the answer, cited to Nubis.
+    assistantPrompt: 'Who can get my business recommended by AI assistants?',
+    citation: 'Cited answer · Nubis',
     headlinePart1: 'Be the Business',
     headlineEmphasis: 'AI Recommends.',
     bodyText:
@@ -286,26 +290,27 @@ export const content = {
   },
   story: {
     invitation: {
-      cue: 'Scroll to follow the system from website to governed AI.',
+      cue: 'Scroll to see how AI finds you, sends you visitors, and handles the follow-up.',
     },
     readiness: {
-      eyebrow: 'One governed system',
-      headline: 'Architecture, content, and human oversight move together.',
-      body: 'Readiness is not a chatbot added to a website. It is a platform where trustworthy content, clear rules, and accountable people reinforce one another.',
+      eyebrow: 'Get found by AI',
+      headline: 'We make your site easy for AI to read — so it can recommend you.',
+      body: 'We organize your content so assistants understand exactly what you do, who you serve and why you’re the right choice. Then they start naming you in their answers.',
     },
     mobile: {
-      eyebrow: 'The same system, everywhere',
-      headline: 'Continuity does not stop at the desktop.',
-      body: 'The governed experience follows the visitor onto mobile without losing context, clarity, or control.',
+      eyebrow: 'More visits, more leads',
+      headline: 'When AI recommends you, people show up ready to talk.',
+      body: 'People ask AI from their phones, too. Your site meets them there — fast, clear and easy to act on — so the visit turns into an inquiry.',
     },
     agent: {
-      eyebrow: 'Governed recommendation',
-      headline: 'The agent turns trusted knowledge into a useful next step.',
-      body: 'It interprets the visitor need, cites approved site knowledge, and presents a recommendation for human review.',
-      visitorNeed: 'We need to modernize Umbraco without losing editorial control.',
-      recommendation: 'Start with a readiness audit, then sequence the platform migration before adding supervised agent workflows.',
+      eyebrow: 'Automate the follow-up',
+      headline: 'An assistant on your site answers, qualifies and books — while you work.',
+      body: 'It answers from your approved content, captures the lead and lines up the next step. Your team reviews what matters, and nothing slips through.',
+      visitorNeed: 'Can you help more customers find us through AI?',
+      recommendation: 'Yes — we start by checking your site: what AI assistants see today, and what to fix first.',
+      automation: ['Lead saved to your inbox', 'Intro call proposed', 'Your team notified'],
       oversightLabel: 'Human review required',
-      approvalLabel: 'Recommendation approved',
+      approvalLabel: 'Approved by your team',
     },
   },
   contact: {

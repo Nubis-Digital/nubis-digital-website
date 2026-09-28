@@ -3,7 +3,7 @@
 /**
  * Contact section — lead capture form, hardened for real-world input.
  *
- * Client-side validation mirrors the server caps in /api/lead; on failure the
+ * Client-side validation mirrors the server caps in server/lead.ts; on failure the
  * first invalid field is focused and its message is wired to the input via
  * aria-describedby. Submits are single-flight (button disabled) and bounded by
  * a request timeout so a hung network never strands the user in "Sending…".
@@ -13,6 +13,21 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { content } from '@/data/content';
 import { Icon } from '@/components/icons';
+
+/**
+ * The site ships as static files, so where a lead goes is set at build time:
+ * POST to NEXT_PUBLIC_LEAD_ENDPOINT (server/lead.ts deployed as an edge
+ * function), or — until one exists — open the visitor's email app with the
+ * message pre-filled to NEXT_PUBLIC_CONTACT_EMAIL.
+ */
+const LEAD_ENDPOINT = process.env.NEXT_PUBLIC_LEAD_ENDPOINT;
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
+export function buildMailtoHref(to: string, values: { name: string; email: string; company: string; message: string }): string {
+  const subject = `New inquiry from ${values.name.trim()}`;
+  const body = [values.message.trim(), '', `— ${values.name.trim()}`, values.email.trim(), values.company.trim()].filter((line, index) => index < 3 || line).join('\n');
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 interface FormValues {
   name: string;
@@ -102,13 +117,23 @@ export default function ContactSection() {
       return;
     }
 
+    if (!LEAD_ENDPOINT) {
+      if (!CONTACT_EMAIL) {
+        setSubmitError('Our contact form is being set up. Please try again shortly.');
+        return;
+      }
+      window.location.href = buildMailtoHref(CONTACT_EMAIL, values);
+      setSent(true);
+      return;
+    }
+
     setSubmitting(true);
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
-      const res = await fetch('/api/lead', {
+      const res = await fetch(LEAD_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,

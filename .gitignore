@@ -19,3 +19,14 @@
 next-env.d.ts
 .DS_Store
 .playwright-mcp/
+
+# design-sync
+.ds-sync/
+ds-bundle/
+dist/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+
+# code intelligence index
+.codegraph/

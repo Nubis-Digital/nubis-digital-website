@@ -1,10 +1,22 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+import { WebMcpTools } from '@/components/WebMcpTools';
+import { SITE_NAME, SITE_URL, jsonLdScript, siteJsonLd } from '@/data/machineReadable';
+
+const description =
+  'Be the business AI recommends. Nubis Digital rebuilds your website so ChatGPT and other AI assistants can find, understand and recommend you — bringing more visits, more leads, and follow-up that runs itself.';
+
 export const metadata: Metadata = {
-  title: 'Nubis Digital — Architectural Resilience for the Agentic Web',
-  description:
-    'We make your website work for AI agents. Umbraco specialists — upgraded, fast, and agent-ready with agent.txt endpoints and RAG-ready APIs.',
+  metadataBase: new URL(SITE_URL),
+  title: 'Nubis Digital — Be the Business AI Recommends',
+  description,
+  alternates: {
+    canonical: '/',
+    types: { 'text/markdown': '/index.md', 'text/plain': '/llms.txt' },
+  },
+  openGraph: { type: 'website', siteName: SITE_NAME, url: '/', title: 'Be the Business AI Recommends', description },
+  twitter: { card: 'summary', title: 'Be the Business AI Recommends', description },
 };
 
 export default function RootLayout({
@@ -23,7 +35,9 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd()) }} />
         {children}
+        <WebMcpTools />
       </body>
     </html>
   );

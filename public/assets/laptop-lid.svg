@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Laptop lid (bezel, screen cutout, camera) — split from laptop-portal.svg, identical 600×600 coordinates so the screen aperture vars still apply. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+<g id="objects">
+<linearGradient id="SVGID_00000055699464859776696650000006033473483852931230_" gradientUnits="userSpaceOnUse" x1="298.3894" y1="107.435" x2="298.3894" y2="388.3585">
+				<stop  offset="0" style="stop-color:#0E0E0E"/>
+				<stop  offset="0.0092" style="stop-color:#373737"/>
+				<stop  offset="0.0982" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.1202" style="stop-color:#949494"/>
+				<stop  offset="0.1722" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.2384" style="stop-color:#1F1F1F"/>
+				<stop  offset="0.4063" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.4336" style="stop-color:#808080"/>
+				<stop  offset="0.4621" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.5727" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.5998" style="stop-color:#646464"/>
+				<stop  offset="0.6294" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.6916" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.7908" style="stop-color:#0C0C0C"/>
+				<stop  offset="0.9015" style="stop-color:#3E3E3E"/>
+				<stop  offset="0.9334" style="stop-color:#8F8F8F"/>
+				<stop  offset="0.9577" style="stop-color:#3E3E3E"/>
+			</linearGradient>
+<path fill-rule="evenodd" style="fill:url(#SVGID_00000055699464859776696650000006033473483852931230_);" d="M513.447,396.567H83.332V117.106
+				c0-5.523,4.477-10,10-10h410.115c5.523,0,10,4.477,10,10V396.567z M95.563,127.49h405.654v252.769H95.563z"/>
+<path fill-rule="evenodd" d="M84.861,396.567V117.298c0-4.777,3.887-8.663,8.663-8.663h409.731c4.777,0,8.663,3.886,8.663,8.663v279.269H84.861z M95.563,127.49h405.654v252.769H95.563z"/>
+<line style="fill:none;stroke:#000000;stroke-width:0.5;stroke-miterlimit:10;" x1="511.918" y1="387.394" x2="84.861" y2="387.394"/>
+<circle style="fill:#232323;" cx="298.389" cy="118.317" r="3.058"/>
+</g>
+</svg>

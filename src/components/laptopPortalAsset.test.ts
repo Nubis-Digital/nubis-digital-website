@@ -60,4 +60,30 @@ describe('vector laptop portal shell', () => {
     expect(css).toContain('--story-laptop-w: 67.609%')
     expect(css).toContain('--story-laptop-h: 42.128167%')
   })
+
+  it('splits the drawing losslessly into a hinged lid and a base', () => {
+    const read = (name: string) => fs.readFileSync(path.join(projectRoot, 'public/assets', name), 'utf8')
+    const shapes = (svg: string) =>
+      [...new DOMParser().parseFromString(svg, 'image/svg+xml').querySelectorAll('path, rect, circle, line')].map((el) => el.outerHTML.replace(/\s+/g, ' '))
+    const parse = (svg: string) => new DOMParser().parseFromString(svg, 'image/svg+xml')
+
+    const lid = read('laptop-lid.svg')
+    const base = read('laptop-base.svg')
+    ;[lid, base].forEach((svg) => {
+      expect(parse(svg).querySelector('parsererror')).toBeNull()
+      expect(parse(svg).documentElement.getAttribute('viewBox')).toBe('0 0 600 600')
+    })
+
+    // Same shapes, same coordinates: the aperture vars stay exact for the lid.
+    expect([...shapes(lid), ...shapes(base)].sort()).toEqual(shapes(read('laptop-portal.svg')).sort())
+    // The screen cutout (and camera) ride on the lid; nothing of the base does.
+    expect(parse(lid).querySelectorAll('path[fill-rule="evenodd"]')).toHaveLength(2)
+    expect(parse(lid).querySelector('circle')).not.toBeNull()
+    expect(parse(base).querySelector('rect[y="396.567"]')).not.toBeNull()
+    // Every gradient a layer references is defined in that layer.
+    ;[lid, base].forEach((svg) => {
+      const doc = parse(svg)
+      ;[...svg.matchAll(/url\(#([^)]+)\)/g)].forEach(([, id]) => expect(doc.getElementById(id)).not.toBeNull())
+    })
+  })
 })

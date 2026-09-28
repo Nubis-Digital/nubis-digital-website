@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Laptop base (deck and lips) — split from laptop-portal.svg, identical 600×600 coordinates so the screen aperture vars still apply. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+<g id="objects">
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="298.3894" y1="406.7729" x2="298.3894" y2="414.0747">
+				<stop  offset="0.3564" style="stop-color:#808185"/>
+				<stop  offset="0.5045" style="stop-color:#78797D"/>
+				<stop  offset="0.5443" style="stop-color:#7A7B7F"/>
+				<stop  offset="1" style="stop-color:#0D0C11"/>
+			</linearGradient>
+<path style="fill:url(#SVGID_1_);" d="M563.389,406.76c0,0-16.308,7.135-40.769,7.135c-24.462,0-424,0-448.462,0
+				s-40.769-7.135-40.769-7.135l265-2.038L563.389,406.76z"/>
+<linearGradient id="SVGID_00000118373511080997964770000015688211147323796354_" gradientUnits="userSpaceOnUse" x1="33.3894" y1="401.6635" x2="563.3895" y2="401.6635">
+				<stop  offset="0" style="stop-color:#49484D"/>
+				<stop  offset="0.0121" style="stop-color:#D3D4D9"/>
+				<stop  offset="0.0282" style="stop-color:#D0D1D6"/>
+				<stop  offset="0.0804" style="stop-color:#8C8D92"/>
+				<stop  offset="0.0918" style="stop-color:#85868B"/>
+				<stop  offset="0.5113" style="stop-color:#CBCCD2"/>
+				<stop  offset="0.9264" style="stop-color:#85868B"/>
+				<stop  offset="0.937" style="stop-color:#8B8C91"/>
+				<stop  offset="0.979" style="stop-color:#D0D1D6"/>
+				<stop  offset="0.994" style="stop-color:#D3D4D9"/>
+				<stop  offset="1" style="stop-color:#454449"/>
+			</linearGradient>
+<rect x="33.389" y="396.567" style="fill:url(#SVGID_00000118373511080997964770000015688211147323796354_);" width="530" height="10.192"/>
+<linearGradient id="SVGID_00000016782637142012026270000002340609740512974259_" gradientUnits="userSpaceOnUse" x1="255.5818" y1="400.1346" x2="341.1971" y2="400.1346">
+				<stop  offset="0" style="stop-color:#161617"/>
+				<stop  offset="0.0581" style="stop-color:#84848A"/>
+				<stop  offset="0.3011" style="stop-color:#8F8F96"/>
+				<stop  offset="0.524" style="stop-color:#ADADB5"/>
+				<stop  offset="0.7161" style="stop-color:#8A8B91"/>
+				<stop  offset="0.9495" style="stop-color:#7B7C81"/>
+				<stop  offset="1" style="stop-color:#0D0C11"/>
+			</linearGradient>
+<path style="fill:url(#SVGID_00000016782637142012026270000002340609740512974259_);" d="M335.099,403.702H261.68
+				c-3.368,0-6.098-2.73-6.098-6.098v-1.037h85.615v1.037C341.197,400.972,338.467,403.702,335.099,403.702z"/>
+</g>
+</svg>

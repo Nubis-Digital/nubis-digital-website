@@ -1,3 +1,8 @@
+/**
+ * Lead endpoint (Resend). Not part of the static GitHub Pages build — deploy it
+ * as an edge function (e.g. a Cloudflare Worker) and point the form at it with
+ * NEXT_PUBLIC_LEAD_ENDPOINT.
+ */
 export const runtime = 'edge';
 
 const RESEND_URL = 'https://api.resend.com/emails';

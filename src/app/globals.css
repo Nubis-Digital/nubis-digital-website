@@ -41,6 +41,7 @@
   --paper-70: rgba(240, 238, 233, 0.70);
   --paper-60: rgba(240, 238, 233, 0.60);
   --paper-50: rgba(240, 238, 233, 0.50);
+  --paper-20: rgba(240, 238, 233, 0.20);
 
   /* Accent tints */
   --signal-40:  rgba(46, 125, 255, 0.40);
@@ -316,13 +317,37 @@ a { color: inherit; }
 .story-invitation p { max-width: 42rem; font: 400 clamp(1rem, 1.8vw, 1.25rem)/1.65 var(--font-sans); color: var(--paper-70); }
 .story-invitation__cta { display: inline-flex; width: fit-content; margin-top: 16px; background: var(--signal); color: var(--ink); }
 .story-invitation__cta:hover { background: var(--paper); color: var(--ink); }
+/* "The Answer": the visitor's question as an assistant prompt, and the cited
+   chip that marks the headline as the answer. */
+.story-invitation .story-query { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; margin: 0 0 clamp(20px, 2.6vw, 32px); padding: 12px 18px; border: 1px solid var(--paper-20); font: 500 clamp(0.85rem, 1.15vw, 1.05rem)/1.4 var(--font-mono); color: var(--paper-80); }
+.story-query__prompt { color: var(--signal); font-weight: 700; }
+.story-query__caret { display: inline-block; flex: none; width: 0.55em; height: 1.15em; margin-left: -8px; background: var(--signal); animation: story-caret 1s steps(1) infinite; }
+@keyframes story-caret { 50% { opacity: 0; } }
+.story-invitation .story-citation { display: inline-flex; align-items: center; gap: 10px; margin: clamp(18px, 2.2vw, 28px) 0 0; padding: 7px 14px; border: 1px solid var(--signal); font: 600 clamp(0.72rem, 0.9vw, 0.82rem)/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal); }
+.story-citation__tick { display: inline-grid; place-items: center; width: 18px; height: 18px; background: var(--signal); color: var(--ink); font-size: 0.7rem; }
 .story-invitation__cue { margin: 0; font: 600 0.75rem/1.4 var(--font-mono) !important; letter-spacing: 0.12em; text-transform: uppercase; }
+/* Layout-only, never painted: the enhanced hero measures this cell to dock the
+   laptop into it. Out of the fallback layout entirely so it adds no empty row. */
+[data-story-dock-slot] { display: none; }
 .story-stage { position: relative; min-height: auto; padding: clamp(64px, 8vw, 112px) clamp(24px, 7vw, 96px); }
-.story-device-rail { display: none; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 5vw, 72px); margin-bottom: clamp(56px, 8vw, 112px); pointer-events: none; }
-.story-device-rail > [data-story-device] { flex: 1 1 260px; display: grid; place-items: center; max-width: 600px; }
-.story-device-rail [data-story-continuity] { display: none; }
+/* The rail now carries the live chapter tree (inside the laptop shell), so it is
+   in flow for everyone. The hardware itself is enhancement-only decoration and
+   is hidden here, leaving the chapters as plain text without JS. */
+.story-device-rail { display: block; }
+.story-device-rail > [data-story-device="phone"],
+.story-masthead,
+.story-rail,
+.story-dimension-lines,
+.story-blueprint,
+.story-scan,
+.story-screen-progress,
+.story-plates { display: none; }
 .story-chapters { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
-.story-live-surface { min-width: 0; }
+/* Dual mount: the phone's copy of the chapters exists only for the enhanced
+   handoff. Hidden here — outside the enhanced media query — so a no-JS or
+   reduced-motion visitor gets exactly one tree in flow at every width. The
+   class is on the selector so it also outranks the fallback block below. */
+.story-chapters[data-story-mount="phone"] { display: none; }
 .story-chapters > li { min-width: 0; }
 .story-chapter { position: relative; opacity: 1; transform: none; }
 .story-chapters article { max-width: 72rem; margin: 0 auto; padding: clamp(32px, 5vw, 72px) 0; border-top: 1px solid var(--ink-20); }
@@ -339,6 +364,23 @@ a { color: inherit; }
 .story-agent dt { font-weight: 700; }
 .story-agent dd { margin: 4px 0 0; }
 .story-agent button { margin-top: 24px; }
+.story-agent__steps { display: grid; gap: 4px; margin: 16px 0; padding: 0; list-style: none; font: 600 0.75rem/1.4 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; }
+.story-agent__steps li::before { content: "✓ "; color: var(--signal); }
+.story-agent__oversight { display: flex; flex-wrap: wrap; gap: 8px; }
+.story-agent__review,
+.story-agent__approved { display: inline-block; padding: 4px 10px; border: 1px solid var(--peri-ink); font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--peri-ink); }
+.story-agent__approved { background: var(--peri-ink); color: var(--paper); }
+.story-agent__approved::before { content: "✓ "; }
+/* The machine read. Without the stage it is a static drafted panel after the
+   chapters: every row read, no dimension lines. */
+.story-ledger { position: relative; max-width: 72rem; margin: var(--space-10) auto 0; padding-top: 40px; border-top: 1px solid var(--ink-20); font-family: var(--font-mono); }
+.story-ledger__title { margin: 0 0 16px; font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal-ink); }
+.story-ledger__rows { margin: 0; border-bottom: 1px solid var(--ink-20); }
+.story-ledger__row { display: grid; grid-template-columns: 8.5em minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--ink-20); font-size: 0.8125rem; line-height: 1.45; }
+.story-ledger__row dt { font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-60); }
+.story-ledger__row dd { margin: 0; color: var(--ink); }
+.story-ledger__tick { font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--signal-ink); white-space: nowrap; }
+.story-ledger__row[data-read="pending"] .story-ledger__tick { color: var(--ink-60); }
 
 .story-device {
   position: relative;
@@ -349,30 +391,18 @@ a { color: inherit; }
   overflow: hidden;
   background: var(--paper);
 }
+/* The one and only aperture truth: these four values are the SVG's screen
+   rectangle (see laptopPortalAsset.test.ts). Nothing else may restate them. */
 .story-laptop {
   --story-laptop-x: 15.927167%;
   --story-laptop-y: 21.248333%;
   --story-laptop-w: 67.609%;
   --story-laptop-h: 42.128167%;
-  width: min(100%, 600px);
-  aspect-ratio: 1;
 }
-.story-laptop > img {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-.story-laptop__viewport {
-  position: absolute;
-  left: var(--story-laptop-x);
-  top: var(--story-laptop-y);
-  width: var(--story-laptop-w);
-  height: var(--story-laptop-h);
-}
+.story-laptop img { display: none; }
+/* Without the stage the lid wrapper is layout-transparent: the screen's chapter
+   tree stays in normal document flow. */
+.story-laptop__lid { display: contents; }
 .story-phone {
   width: min(100%, 270px);
   aspect-ratio: 9 / 19;
@@ -408,77 +438,223 @@ a { color: inherit; }
   border-radius: 2px;
 }
 
-@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+@media (max-width: 1023px), (prefers-reduced-motion: reduce) {
   .immersive-story { min-height: auto; overflow: clip; }
   .story-stage { position: relative; min-height: auto; }
   .story-chapters { display: grid; gap: var(--space-10); }
   .story-chapters article { position: relative; opacity: 1; transform: none; }
-  .story-device { position: relative; transform: none; pointer-events: none; }
+  .story-device { position: relative; transform: none; }
   .story-device__viewport { overflow: visible; }
-  .story-live-surface { position: relative; width: auto; height: auto; overflow: visible; background: transparent; }
   .scroll-cue { display: none; }
 }
 
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .immersive-story[data-enhanced="true"] { min-height: 700vh; }
-  .immersive-story[data-enhanced="true"] .story-stage { position: absolute; inset: 0; height: 100svh; min-height: 560px; padding: 0; overflow: clip; }
-  .immersive-story[data-enhanced="true"] .story-device-rail { position: absolute; inset: 0; display: flex; margin: 0; }
-  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); }
-  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="laptop"] { width: min(78vw, 600px); }
-  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] { width: min(22vw, 270px); opacity: 0; }
-  .immersive-story[data-enhanced="true"] .story-live-surface {
-    --story-laptop-size: min(78vw, 600px);
-    --story-phone-size: min(22vw, 270px);
+/* Fallback polish, JS-opt-in only (`data-reveal="on"`): no-JS and reduced
+   motion never get it, so they always see every chapter at full opacity. */
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .immersive-story[data-reveal="on"] .story-rail { position: sticky; z-index: 2; top: 73px; display: flex; gap: 12px; margin: 0 0 var(--space-6); padding: 10px 0; list-style: none; background: var(--paper); border-bottom: 1px solid var(--ink-20); font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.1em; color: var(--ink-50); }
+  .immersive-story[data-reveal="on"] .story-rail [data-current="true"] { color: var(--signal-ink); }
+  .immersive-story[data-reveal="on"] [data-story-chapter] > article { transition: opacity 480ms var(--ease), transform 480ms var(--ease); }
+  .immersive-story[data-reveal="on"] [data-story-chapter]:not([data-revealed]) > article { opacity: 0; transform: translateY(24px); }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  /* `position: relative` is load-bearing for the dock measurement: it makes the
+     root the containing block of the absolutely positioned stage, so the dock
+     slot and the device layer are measured against one origin whether the pin
+     is engaged or not. */
+  /* Ink ground throughout: the lit screen is the composition's light source.
+     One viewport tall: the pin spacer supplies the scroll distance (`end`), so
+     any extra height here scrolls past as blank ink after the pin releases. */
+  .immersive-story[data-enhanced="true"] { position: relative; height: 100svh; min-height: 560px; background: var(--ink); }
+  /* Promote the moving layers only while the timeline is driving them. */
+  .immersive-story[data-beat] .story-device-rail > [data-story-device],
+  .immersive-story[data-beat] [data-story-ledger],
+  .immersive-story[data-beat] .story-laptop { will-change: transform, opacity; }
+  /* One grid owns the hero's horizontal truth: copy in column 1, the laptop's
+     dock slot in column 2. Nothing here is positioned against the viewport, so
+     the headline cannot collide with the hardware at any width. */
+  .immersive-story[data-enhanced="true"] .story-invitation { display: grid; grid-template-columns: minmax(30ch, 42rem) minmax(0, 1fr); gap: clamp(32px, 4vw, 72px); align-items: center; }
+  .immersive-story[data-enhanced="true"] [data-story-dock-slot] { display: block; grid-column: 2; justify-self: center; width: min(100%, 600px); aspect-ratio: 1; }
+  .immersive-story[data-enhanced="true"] .story-stage { position: absolute; z-index: 3; inset: 0; height: 100svh; min-height: 560px; padding: 0; overflow: clip; pointer-events: none; }
+  /* The rail starts below the sticky header, so devices centre in the part of
+     the pinned screen a visitor can actually see. */
+  .immersive-story[data-enhanced="true"] .story-device-rail { position: absolute; inset: 73px 0 0; display: flex; margin: 0; }
+  /* Layout centres each device at its stage (largest) size; position is a
+     transform the timeline owns. No left:%, no translate(-50%, -50%). */
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 0; display: grid; place-items: center; }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="laptop"] .story-laptop { width: min(80vw, 88svh); max-width: none; aspect-ratio: 1; overflow: visible; }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] { display: grid; opacity: 0; }
+  /* The phone's ink bezel would vanish into the ink ground; a lifted bezel and a
+     paper hairline draw the hardware the way the laptop asset does. */
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] .story-phone { width: auto; height: 78svh; border-color: #262d33; box-shadow: 0 0 0 1px var(--paper-20); }
+  /* Hardware is enhancement-only decoration. */
+  .immersive-story[data-enhanced="true"] .story-laptop img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-laptop__base { z-index: 1; }
+  /* The lid hinges on the base: its origin is the hinge line (y 396.567 of 600). */
+  .immersive-story[data-enhanced="true"] .story-laptop__lid { position: absolute; z-index: 2; inset: 0; display: block; transform-origin: 50% 66.0945%; backface-visibility: hidden; }
+  .immersive-story[data-enhanced="true"] .story-laptop__lid > img { z-index: 2; }
+  /* The screen. Geometry comes from the shell's own aperture vars — there is no
+     second formula to drift, so nothing needs re-syncing on resize. */
+  .immersive-story[data-enhanced="true"] .story-laptop__viewport {
     position: absolute;
     z-index: 3;
-    left: calc(50% - (var(--story-laptop-size) * 0.34072833));
-    top: calc(50% - (var(--story-laptop-size) * 0.28751667));
-    width: calc(var(--story-laptop-size) * 0.67609);
-    height: calc(var(--story-laptop-size) * 0.42128167);
-    overflow: hidden;
-    background: var(--ink);
-    color: var(--paper);
-    transform: none;
-    transform-origin: center;
-    contain: layout paint;
-    transition: top 360ms var(--ease-out), width 360ms var(--ease-out), height 360ms var(--ease-out), border-radius 360ms var(--ease-out);
+    left: var(--story-laptop-x);
+    top: var(--story-laptop-y);
+    width: var(--story-laptop-w);
+    height: var(--story-laptop-h);
   }
-  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] {
-    left: calc(50% - (var(--story-phone-size) / 2) + 10px);
-    top: calc(50% - (var(--story-phone-size) * 1.05555556) + 10px);
-    width: calc(var(--story-phone-size) - 20px);
-    height: calc((var(--story-phone-size) * 2.11111111) - 20px);
-    border-radius: 1.3rem;
-  }
+  /* Each screen is a size container: chapter type is set in `cqw`, so it scales
+     with the screen it sits in — not the window, which the height-capped shell
+     stops tracking on short viewports. */
+  .immersive-story[data-enhanced="true"] .story-device__viewport { background: var(--ink); color: var(--paper); contain: layout paint; container-type: inline-size; }
+  /* Each mount *is* the surface now: it fills its own shell's screen. The
+     containing block is the viewport above (`contain: paint`), so the phone's
+     tree fills the phone and the laptop's fills the aperture. */
   .immersive-story[data-enhanced="true"] .story-chapters { position: absolute; inset: 0; display: block; }
-  .immersive-story[data-enhanced="true"] .story-chapters > li { position: absolute; inset: 0; display: grid; align-items: center; padding: clamp(16px, 2vw, 26px); pointer-events: none; }
-  .immersive-story[data-enhanced="true"] .story-chapters > li > article { width: 100%; max-height: 100%; margin: 0; padding: 0; border: 0; background: transparent; color: var(--paper); opacity: 0; transform: translateY(18px); pointer-events: none; transition: opacity 260ms var(--ease-out), transform 360ms var(--ease-out); overflow: hidden; }
+  .immersive-story[data-enhanced="true"] .story-chapters > li { position: absolute; inset: 0; display: grid; align-items: center; padding: clamp(10px, 4.5cqw, 26px); pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-chapters > li > article { width: 100%; max-height: 100%; margin: 0; padding: 0; border: 0; background: transparent; color: var(--paper); opacity: 0; transform: translateY(18px); pointer-events: none; overflow: hidden; }
   .immersive-story[data-enhanced="true"] .story-chapters > li[data-active="true"] > article { opacity: 1; transform: none; pointer-events: auto; }
   .immersive-story[data-enhanced="true"] .story-progress,
-  .immersive-story[data-enhanced="true"] .story-chapter__eyebrow { font-size: clamp(0.48rem, 0.7vw, 0.65rem); }
-  .immersive-story[data-enhanced="true"] .story-chapters h2 { margin: 4px 0 8px; max-width: 22ch; font-size: clamp(1.25rem, 2.15vw, 2.35rem); line-height: 1; }
-  .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]) { margin: 0; max-width: 58ch; font-size: clamp(0.68rem, 0.9vw, 0.95rem); line-height: 1.35; }
-  .immersive-story[data-enhanced="true"] .story-chapter__detail { margin-top: clamp(8px, 1vw, 14px); font-size: clamp(0.6rem, 0.78vw, 0.82rem); line-height: 1.25; }
+  .immersive-story[data-enhanced="true"] .story-chapter__eyebrow { font-size: clamp(0.66rem, 2.5cqw, 0.85rem); }
+  .immersive-story[data-enhanced="true"] .story-chapters h2 { margin: 6px 0 12px; max-width: 20ch; font-size: clamp(1.3rem, 7.2cqw, 3rem); line-height: 1.02; }
+  .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]) { margin: 0; max-width: 52ch; font-size: clamp(0.85rem, 3.3cqw, 1.2rem); line-height: 1.45; }
+  .immersive-story[data-enhanced="true"] .story-chapter__detail { margin-top: clamp(10px, 3.4cqw, 20px); font-size: clamp(0.78rem, 2.9cqw, 1.05rem); line-height: 1.3; }
+  /* The laptop screen holds the eyebrow, headline and body at a readable size;
+     the figure plate beside it carries the chapter's detail visually. The
+     detail stays in the document — visually hidden, not display:none — so
+     assistive tech still reads it, and the <1024 layout shows it in full. */
+  .immersive-story[data-enhanced="true"] .story-laptop .story-chapter__detail { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .immersive-story[data-enhanced="true"] .story-chapter__detail ul,
   .immersive-story[data-enhanced="true"] .story-chapter__detail ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
   .immersive-story[data-enhanced="true"] .story-chapter__detail li { margin: 0; }
-  .immersive-story[data-enhanced="true"] .story-proof { grid-template-columns: 1.5fr 1fr 1fr; gap: 12px; font-size: clamp(0.5rem, 0.66vw, 0.7rem); line-height: 1.25; }
-  .immersive-story[data-enhanced="true"] .story-proof h3 { margin: 0 0 4px; font-size: clamp(0.7rem, 0.9vw, 0.95rem); }
+  .immersive-story[data-enhanced="true"] .story-proof { grid-template-columns: repeat(3, 1fr); gap: 16px; line-height: 1.25; }
+  .immersive-story[data-enhanced="true"] .story-proof h3 { margin: 0; font-size: clamp(0.8rem, 3cqw, 1.1rem); line-height: 1.25; }
   .immersive-story[data-enhanced="true"] .story-proof p,
   .immersive-story[data-enhanced="true"] .story-proof blockquote { margin: 4px 0; }
   .immersive-story[data-enhanced="true"] .story-proof ul { display: none; }
   .immersive-story[data-enhanced="true"] .story-agent { padding: 12px; }
   .immersive-story[data-enhanced="true"] .story-agent dl { gap: 8px; }
   .immersive-story[data-enhanced="true"] .story-agent button { margin-top: 8px; }
-  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapters > li { padding: 24px 18px; }
-  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapters h2 { font-size: clamp(1.05rem, 1.6vw, 1.35rem); }
-  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapter__detail ul,
-  .immersive-story[data-enhanced="true"] .story-live-surface[data-surface-device="phone"] .story-chapter__detail ol { grid-template-columns: 1fr; }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapters h2 { font-size: clamp(1.05rem, 8.6cqw, 1.8rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-progress,
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__eyebrow { font-size: clamp(0.62rem, 3.9cqw, 0.8rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapters article > p:not([class]) { font-size: clamp(0.76rem, 5cqw, 1.05rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__detail { margin-top: clamp(8px, 3cqw, 16px); font-size: clamp(0.7rem, 4.6cqw, 0.98rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapters > li { padding: clamp(14px, 6cqw, 24px) clamp(12px, 5.5cqw, 18px); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-agent { padding: clamp(8px, 3.5cqw, 12px); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-agent dl { gap: clamp(4px, 2cqw, 8px); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__detail ul,
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__detail ol { grid-template-columns: 1fr; }
   .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]),
   .immersive-story[data-enhanced="true"] .story-chapter__detail li span { color: var(--paper-70); }
+
+  /* In the laptop the timeline owns chapter visibility (scan-wipe clips), so
+     both chapters are painted during a wipe; `data-active` still owns the
+     accessibility gate. The phone keeps the data-active crossfade. */
+  .immersive-story[data-enhanced="true"] .story-laptop .story-chapters > li > article { opacity: 1; transform: none; }
+
+  /* The drafting apparatus around the laptop. Percentages are of the 600×600
+     asset: lid 14.1–85.3% × 18.1–66.1%, base 5.6–93.9% ending at 69%. */
+  .immersive-story[data-enhanced="true"] .story-blueprint { position: absolute; z-index: 4; inset: 0; display: block; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__guide { position: absolute; background: var(--signal); opacity: 0.55; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__guide--h { left: -12%; width: 124%; height: 1px; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__guide--v { top: 4%; width: 1px; height: 78%; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark { position: absolute; width: 14px; height: 14px; border: 0 solid var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--tl { left: calc(14.1% - 10px); top: calc(18.1% - 10px); border-width: 1px 0 0 1px; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--tr { left: calc(85.3% - 4px); top: calc(18.1% - 10px); border-width: 1px 1px 0 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--bl { left: calc(5.6% - 10px); top: calc(69% - 4px); border-width: 0 0 1px 1px; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--br { left: calc(93.9% - 4px); top: calc(69% - 4px); border-width: 0 1px 1px 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim { position: absolute; left: 5.6%; top: 75%; width: 88.3%; height: 1px; background: var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::before,
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::after { content: ""; position: absolute; top: -4px; width: 1px; height: 9px; background: var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::before { left: 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::after { right: 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim-label { position: absolute; top: 8px; left: 50%; display: flex; gap: 10px; transform: translateX(-50%); padding: 0 8px; background: var(--ink); font: 600 clamp(0.66rem, 0.85vw, 0.8rem)/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim-label [data-story-scale-readout] { color: var(--signal); font-variant-numeric: tabular-nums; }
+
+  /* Screen instruments. The scan is a full-screen layer whose top edge is the
+     line, so the timeline moves it with `yPercent` alone. */
+  .immersive-story[data-enhanced="true"] .story-scan { position: absolute; z-index: 5; inset: 0; display: block; pointer-events: none; visibility: hidden; opacity: 0; }
+  /* The line plus a 7px end tick each side, drawn — no shadow. */
+  .immersive-story[data-enhanced="true"] .story-scan::before { content: ""; position: absolute; top: -3px; left: 0; right: 0; height: 7px; border-inline: 1px solid var(--signal); background: linear-gradient(var(--signal), var(--signal)) center / 100% 1px no-repeat; }
+  .immersive-story[data-enhanced="true"] .story-screen-progress { position: absolute; z-index: 5; top: 0; left: 0; right: 0; display: block; height: 2px; background: var(--signal); transform: scaleX(0); transform-origin: left center; pointer-events: none; }
+
+  /* Figure plates: the stage's right-hand drafting lane during the argument,
+     centred with auto margins (the timeline owns their opacity only). */
+  .immersive-story[data-enhanced="true"] .story-plates { position: absolute; z-index: 2; inset: 0 clamp(16px, 4vw, 72px) 0 auto; display: grid; width: min(24vw, 320px); height: fit-content; margin: auto 0; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-plate { grid-area: 1 / 1; margin: 0; visibility: hidden; opacity: 0; }
+  .immersive-story[data-enhanced="true"] .story-plate__caption { margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--paper-20); font: 600 clamp(0.7rem, 0.9vw, 0.84rem)/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-plate__art { display: block; width: 100%; height: auto; overflow: visible; }
+  .immersive-story[data-enhanced="true"] .story-plate__art :is(path, rect, circle) { fill: none; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-ink { stroke: var(--paper-70); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mute { stroke: var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-signal { stroke: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-peri { stroke: var(--peri); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-ink :is(path, rect, circle),
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-peri :is(path, rect, circle),
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-signal :is(path, rect, circle) { stroke: inherit; }
+  .immersive-story[data-enhanced="true"] .story-plate__art rect.plate-fill,
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-fill { fill: var(--ink); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-fill--signal { fill: rgba(46, 125, 255, 0.18); }
+  .immersive-story[data-enhanced="true"] .story-plate__art text { stroke: none; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono { font: 600 13px var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; fill: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--signal { fill: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--peri { fill: var(--peri); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--stamp { font-size: 15px; font-weight: 700; letter-spacing: 0.12em; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--tiny { font-size: 11px; letter-spacing: 0.06em; }
+  .immersive-story[data-enhanced="true"] .story-plate__art circle[data-plate-visitor] { fill: var(--signal); stroke: none; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-sans { font: 600 15px var(--font-sans); fill: var(--paper); }
+
+  /* Docked screen: a still brand frame on a hairline grid (client ruling). */
+  .immersive-story[data-enhanced="true"] .story-masthead { position: absolute; z-index: 1; inset: 0; display: grid; place-content: center; gap: 12px; text-align: center; pointer-events: none;
+    background-image: linear-gradient(var(--paper-20) 1px, transparent 1px), linear-gradient(90deg, var(--paper-20) 1px, transparent 1px); background-size: 12.5% 20%; background-position: center; }
+  .immersive-story[data-enhanced="true"] .story-masthead__mark { margin: 0; font: 700 clamp(1.5rem, 11cqw, 4rem)/1 var(--font-serif); letter-spacing: -0.03em; color: var(--paper); }
+  .immersive-story[data-enhanced="true"] .story-masthead__query { margin: 0; font: 500 clamp(0.62rem, 2.6cqw, 0.95rem)/1.4 var(--font-mono); color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-masthead__chip { justify-self: center; margin: 0; padding: 4px 10px; border: 1px solid var(--signal); font: 600 clamp(0.6rem, 2.4cqw, 0.9rem)/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--signal); }
+
+  /* Handoff load path: a hairline, not a glow. */
+
+  /* The machine read: a title-block ledger beside the phone. Centred with
+     auto margins, not a transform — the timeline owns this element's transform. */
+  .immersive-story[data-enhanced="true"] .story-ledger { position: absolute; z-index: 2; inset: 0 clamp(16px, 3vw, 72px) 0 auto; width: min(28vw, 470px); height: fit-content; margin: auto 0; padding: 0; border: 0; color: var(--paper); opacity: 0; }
+  .immersive-story[data-enhanced="true"] .story-ledger__title { position: absolute; bottom: 100%; left: 0; margin: 0 0 12px; color: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-ledger__rows { border-color: var(--paper-20); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row { grid-template-columns: 7.5em minmax(0, 1fr) auto; gap: 10px; padding: 9px 0; border-color: var(--paper-20); font-size: clamp(0.72rem, 0.92vw, 0.9rem); transition: none; }
+  .immersive-story[data-enhanced="true"] .story-ledger__row dt { color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row dd { overflow: hidden; color: var(--paper); text-overflow: ellipsis; white-space: nowrap; }
+  .immersive-story[data-enhanced="true"] .story-ledger__tick { color: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row[data-read="pending"] .story-ledger__tick { color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row[data-revealed="false"] { opacity: 0.2; }
+  .immersive-story[data-enhanced="true"] .story-ledger__row[data-revealed="false"] .story-ledger__tick { visibility: hidden; }
+  .immersive-story[data-enhanced="true"] .story-dimension-lines { position: absolute; top: 0; right: calc(100% + 8px); display: grid; width: clamp(16px, 3vw, 48px); height: 100%; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-dimension-lines__track { position: relative; align-self: center; height: 1px; container-type: inline-size; }
+  .immersive-story[data-enhanced="true"] .story-dimension-lines__track > [data-dimension-line] { position: absolute; inset: 0; background: var(--signal); transform-origin: left center; }
+  /* The fact riding its line from the phone into the row; rests on the row as
+     the line's terminator once read. */
+  .immersive-story[data-enhanced="true"] .story-dimension-lines__dot { position: absolute; top: -2px; left: -2.5px; width: 5px; height: 5px; border-radius: 50%; background: var(--signal);
+    transform: translateX(calc(var(--line-progress, 0) * 100cqw)); opacity: clamp(0, calc(var(--line-progress, 0) * 40), 1); }
+
+  /* The phone-side exchange, paced by data-phase. Every part stays in the DOM
+     and the reading order; only what the stage shows changes. */
+  .immersive-story[data-enhanced="true"] .story-agent { border-color: var(--paper-20); }
+  .immersive-story[data-enhanced="true"] .story-agent button { display: none; }
+  .immersive-story[data-enhanced="true"] .story-agent__oversight { display: grid; }
+  .immersive-story[data-enhanced="true"] .story-agent__review,
+  .immersive-story[data-enhanced="true"] .story-agent__approved { grid-area: 1 / 1; width: fit-content; border-color: var(--peri); color: var(--peri); }
+  .immersive-story[data-enhanced="true"] .story-agent__approved { background: var(--peri); color: var(--ink); }
+  .immersive-story[data-enhanced="true"] [data-phase="question"] :is(.story-agent__source, .story-agent__answer, .story-agent__oversight),
+  .immersive-story[data-enhanced="true"] [data-phase="answer"] .story-agent__approved,
+  .immersive-story[data-enhanced="true"] [data-phase="approved"] .story-agent__review { opacity: 0; }
+  /* The follow-up the agent runs on its own: each step ticks in once the answer lands. */
+  .immersive-story[data-enhanced="true"] .story-agent__steps li { transition: opacity 240ms var(--ease), transform 240ms var(--ease); }
+  .immersive-story[data-enhanced="true"] [data-phase="question"] .story-agent__steps li,
+  .immersive-story[data-enhanced="true"] [data-phase="answer"] .story-agent__steps li { opacity: 0; transform: translateX(-6px); }
+  .immersive-story[data-enhanced="true"] [data-phase="approved"] .story-agent__steps li:nth-child(2) { transition-delay: 160ms; }
+  .immersive-story[data-enhanced="true"] [data-phase="approved"] .story-agent__steps li:nth-child(3) { transition-delay: 320ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .story-query__caret { animation: none; }
   .immersive-story *, .immersive-story *::before, .immersive-story *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

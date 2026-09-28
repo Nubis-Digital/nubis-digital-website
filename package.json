@@ -2,6 +2,7 @@
   "name": "nubis-digital-website",
   "version": "1.0.0",
   "private": true,
+  "types": "dist/types/ds-entry.d.ts",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

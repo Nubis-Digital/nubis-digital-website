@@ -10,16 +10,19 @@ import UmbracoCTA from '@/components/umbraco/UmbracoCTA';
 import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
 import MotionLayer from '@/components/MotionLayer';
+import { jsonLdScript, umbracoJsonLd } from '@/data/machineReadable';
 
 export const metadata: Metadata = {
   title: 'Umbraco — the platform we build on | Nubis Digital',
   description:
     'Umbraco is the open, secure, no-lock-in platform we build your website on — in plain terms, who uses it, and why it’s a smart, safe choice.',
+  alternates: { canonical: '/umbraco', types: { 'text/markdown': '/umbraco.md' } },
 };
 
 export default function UmbracoPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(umbracoJsonLd()) }} />
       <a href="#main" className="skip-link">Skip to content</a>
       <GlobalHeader />
       <main id="main" className="umbraco-page">
