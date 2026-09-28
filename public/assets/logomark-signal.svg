@@ -1,0 +1,8 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Nubis Digital">
+  <title>Nubis Digital — Signal mark</title>
+  <g stroke="#101417" stroke-width="11" stroke-linecap="square" fill="none">
+    <line x1="34" y1="30" x2="34" y2="90"></line>
+    <line x1="86" y1="30" x2="86" y2="90"></line>
+  </g>
+  <path d="M86 90 L34 30 L24 18" fill="none" stroke="#2E7DFF" stroke-width="11" stroke-linecap="square" stroke-linejoin="miter"></path>
+</svg>

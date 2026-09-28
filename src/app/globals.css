@@ -1,0 +1,1298 @@
+/* ============================================================================
+   NUBIS DIGITAL — globals.css
+   Merged from the design bundle: colors_and_type.css (tokens + primitives)
+   + site.css (layout) + 3D Agent hero stage/chat styles.
+
+   "Architectural Resilience for the Agentic Web."
+   Palette: paper #F0EEE9 · ink #101417 · signal #2E7DFF (cobalt) · peri #7C6BFF (violet)
+   ============================================================================ */
+
+/* Fonts are loaded via <link> in app/layout.tsx (preconnect + non-blocking),
+   not an @import here — a CSS @import is render-blocking and serial. */
+
+:root {
+  /* === TYPE FAMILIES === */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* === CORE PALETTE === */
+  --paper:   #F0EEE9;
+  --ink:     #101417;
+  --signal:  #2E7DFF;
+  --peri:    #7C6BFF;
+  --white:   #FFFFFF;
+  /* AA-on-paper text variants of the accents (signal/peri at 0.50 alpha read 3.3:1 as small text).
+     Use these for accent-colored TEXT on the paper ground; keep the bright accents for fills,
+     dots, rings, borders, and large (>=24px) metrics. */
+  --signal-ink: #1E5FE0;  /* 4.81:1 on paper */
+  --peri-ink:   #5B4BD6;  /* 5.29:1 on paper */
+
+  /* Paper / ink tints */
+  --ink-90:  rgba(16, 20, 23, 0.90);
+  --ink-80:  rgba(16, 20, 23, 0.80);
+  --ink-70:  rgba(16, 20, 23, 0.70);
+  --ink-60:  rgba(16, 20, 23, 0.60);
+  --ink-50:  rgba(16, 20, 23, 0.50);
+  --ink-30:  rgba(16, 20, 23, 0.30);
+  --ink-20:  rgba(16, 20, 23, 0.20);
+  --ink-10:  rgba(16, 20, 23, 0.10);
+  --paper-80: rgba(240, 238, 233, 0.80);
+  --paper-70: rgba(240, 238, 233, 0.70);
+  --paper-60: rgba(240, 238, 233, 0.60);
+  --paper-50: rgba(240, 238, 233, 0.50);
+  --paper-20: rgba(240, 238, 233, 0.20);
+
+  /* Accent tints */
+  --signal-40:  rgba(46, 125, 255, 0.40);
+  --signal-20:  rgba(46, 125, 255, 0.20);
+  --signal-05:  rgba(46, 125, 255, 0.05);
+  --peri-40: rgba(124, 107, 255, 0.40);
+  --peri-30: rgba(124, 107, 255, 0.30);
+  --peri-05: rgba(124, 107, 255, 0.05);
+
+  /* === SEMANTIC === */
+  --accent-deep-ink:  var(--ink);
+  --accent-signal:    var(--signal);
+  --accent-peri:      var(--peri);
+  --warning:  #B23A0A;
+  --warning-bd: rgba(249, 115, 22, 0.30);
+  --warning-bg: rgba(249, 115, 22, 0.05);
+  --danger:   #dc2626;
+
+  /* === SPACING — 8-pt rhythm === */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-8: 48px; --space-10: 64px;
+  --space-12: 80px; --space-14: 112px;
+
+  /* === BORDERS === */
+  --hairline: 1px solid var(--ink);
+  --hairline-soft: 1px solid var(--ink-10);
+
+  /* === RADII === */
+  --radius-none: 0;
+  --radius-pill: 9999px;
+
+  /* === MOTION === */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms; --dur: 300ms; --dur-slow: 500ms; --dur-reveal: 700ms;
+
+  /* === GRID / SCAN === */
+  --grid-size: 40px;
+
+  color-scheme: light;
+}
+
+/* ----------------------------------------------------------------------------
+   BASE
+   ---------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; scroll-behavior: smooth; scroll-padding-top: 88px; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+img, svg { display: block; }
+a { color: inherit; }
+::selection { background: var(--signal); color: var(--white); }
+
+/* Keyboard focus — a visible cobalt "signal" ring (the brand's load-path color).
+   :focus-visible keeps it off for mouse clicks but on for keyboard/AT users. */
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+/* .field:focus sets outline:none for the border-shift; restore a ring for keyboard. */
+.field:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* Skip-to-content — first tab stop, slides in on focus, sits above the fixed header (z 50). */
+.skip-link {
+  position: fixed; top: 8px; left: 8px; z-index: 60;
+  transform: translateY(-150%);
+  background: var(--ink); color: var(--paper);
+  padding: 12px 20px; border-radius: var(--radius-none);
+  font: 600 0.8125rem/1 var(--font-sans); letter-spacing: 0.04em; text-decoration: none;
+  transition: transform var(--dur) var(--ease-out);
+}
+.skip-link:focus { transform: translateY(0); outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ----------------------------------------------------------------------------
+   TYPE SCALE
+   ---------------------------------------------------------------------------- */
+.t-display { font-family: var(--font-serif); font-weight: 700; font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1.1; color: var(--ink); margin: 0; }
+.t-h1 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; color: var(--ink); margin: 0; }
+.t-h2 { font-family: var(--font-serif); font-weight: 600; font-size: 2.25rem; line-height: 1.15; color: var(--ink); margin: 0; }
+.t-h3 { font-family: var(--font-serif); font-weight: 600; font-size: 1.5rem; line-height: 1.25; color: var(--ink); margin: 0; }
+.t-emph { font-style: italic; color: var(--ink-80); }
+.t-emph-50 { font-style: italic; color: var(--ink-60); }
+.t-body-lg { font-family: var(--font-sans); font-weight: 400; font-size: 1.25rem; line-height: 1.6; color: var(--ink-70); margin: 0; }
+.t-body { font-family: var(--font-sans); font-weight: 400; font-size: 1.0625rem; line-height: 1.65; color: var(--ink-80); margin: 0; }
+.t-small { font-family: var(--font-sans); font-weight: 400; font-size: 0.875rem; line-height: 1.55; color: var(--ink-60); margin: 0; }
+.t-label { font-family: var(--font-sans); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-60); }
+.t-label-tight { letter-spacing: 0.1em; }
+.t-mono { font-family: var(--font-mono); font-weight: 500; font-size: 0.8125rem; color: var(--ink); }
+.t-metric { font-family: var(--font-mono); font-weight: 700; font-size: clamp(2.5rem, 5vw, 3rem); color: var(--signal); line-height: 1; }
+
+/* ----------------------------------------------------------------------------
+   PRIMITIVES
+   ---------------------------------------------------------------------------- */
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 16px 32px; border: none; cursor: pointer;
+  background: var(--ink); color: var(--signal);
+  font: 600 0.875rem/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase;
+  border-radius: var(--radius-none); text-decoration: none;
+  transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease);
+}
+.btn-primary:hover { background: var(--signal); color: var(--ink); }
+.btn-primary svg { width: 16px; height: 16px; }
+
+.btn-lilac { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border:none; cursor:pointer;
+  background: var(--ink); color: var(--signal);
+  font: 600 0.8125rem/1 var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+  transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease); }
+.btn-lilac:hover { background: var(--peri); color: var(--ink); }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 12px; padding: 15px 31px; cursor: pointer;
+  background: transparent; color: var(--ink); border: 1px solid var(--ink); text-decoration: none;
+  font: 600 0.875rem/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase;
+  transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease);
+}
+.btn-outline:hover { background: var(--ink); color: var(--paper); }
+
+.card { border: 1px solid var(--ink); background: transparent; padding: 32px; }
+.card--invert { transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease); }
+.card--invert:hover { background: var(--ink); color: var(--paper); }
+.card-dark { border: 1px solid var(--ink); background: var(--ink); color: var(--paper); padding: 24px; }
+
+.tag-warning {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--warning-bd); background: var(--warning-bg); color: var(--warning);
+  font: 400 10px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 10px;
+}
+
+.field {
+  width: 100%; background: transparent; border: 1px solid var(--ink); color: var(--ink);
+  font: 400 0.875rem var(--font-sans); padding: 12px 16px; border-radius: var(--radius-none);
+  transition: border-color var(--dur) var(--ease);
+}
+.field::placeholder { color: var(--ink-70); }
+.field:focus { outline: none; border-color: var(--signal); }
+
+/* ----------------------------------------------------------------------------
+   BACKDROPS
+   ---------------------------------------------------------------------------- */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--ink) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ink) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  opacity: 0.03;
+}
+@keyframes nubis-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.tab-ink-fill { position: relative; overflow: hidden; }
+.tab-ink-fill__bg { position: absolute; inset: 0; background: var(--ink); clip-path: inset(0 100% 0 0); transition: clip-path 380ms var(--ease); pointer-events: none; }
+.tab-ink-fill--active .tab-ink-fill__bg { clip-path: inset(0 0% 0 0); }
+
+/* ============================================================================
+   SITE LAYOUT (from site.css)
+   ============================================================================ */
+
+/* ---- Header (fixed) ---- */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--paper-80);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--ink);
+  transition: box-shadow var(--dur-slow) var(--ease), background var(--dur-slow) var(--ease);
+}
+/* Scrolled state stays on-system: a crisp hairline lift, not a diffuse drop-shadow. */
+.site-header.scrolled { box-shadow: 0 1px 0 var(--ink-20); border-bottom-color: var(--ink); }
+.site-logo { font-family: var(--font-serif); font-weight: 700; font-size: 1.5rem; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
+.site-logo .dot { color: var(--signal); }
+/* integrated wordmark — the Signal mark sets as the capital N */
+.wm { display: inline-flex; align-items: baseline; line-height: 1; white-space: nowrap; }
+.wm .glyphN { display: block; height: 0.96em; width: auto; align-self: baseline; margin-right: 0.04em; transform: translateY(0.03em); color: inherit; }
+.wm .wm-rest { letter-spacing: -0.005em; }
+.site-nav { display: flex; gap: 48px; }
+.site-nav a { font: 500 0.875rem var(--font-sans); letter-spacing: 0.01em; text-decoration: none; color: var(--ink); position: relative; transition: color var(--dur) var(--ease); }
+.site-nav a::after { content: ""; position: absolute; left: 0; bottom: -4px; width: 100%; height: 1px; background: var(--signal); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--dur) var(--ease); }
+.site-nav a:hover { color: var(--signal-ink); }
+.nav-umb { display: inline-flex; align-items: center; gap: 7px; }
+.nav-umb-mark { color: #214BAF; flex: none; }
+.site-nav a:hover::after { transform: scaleX(1); }
+.header-right { display: flex; align-items: center; gap: 24px; min-width: 0; }
+.header-cta { padding: 12px 24px; font-size: 0.8125rem; white-space: nowrap; }
+.site-logo { flex: none; }
+/* Mobile nav toggle + slide-down panel: hidden on desktop, shown <=767px. */
+.nav-toggle { display: none; }
+.mobile-nav { display: none; }
+
+/* Fixed-header offset: clears the paper header so the hero starts beneath it. */
+#main { padding-top: 73px; }
+
+/* ---- Hero ---- */
+.hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 75vh; border-bottom: 1px solid var(--ink); }
+.hero-copy { position: relative; min-width: 0; padding: 64px; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--ink); }
+/* min-width:0 lets the grid column shrink below the headline's content width;
+   without it the 1fr columns overflow the viewport on mobile (clipped by overflow-x:hidden). */
+.hero-copy h1 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; color: var(--ink); margin: 0 0 32px; max-width: 100%; overflow-wrap: break-word; text-wrap: balance; }
+.hero-copy h1 .em { font-style: italic; font-weight: 600; color: var(--ink-80); }
+.hero-copy .body { font: 400 1.25rem/1.6 var(--font-sans); color: var(--ink-70); margin: 0 0 48px; max-width: 36rem; }
+.hero-prism { position: relative; min-width: 0; overflow: hidden; min-height: 50vh; }
+
+/* ============================================================================
+   HERO — "The Architect's Sheet": drenched ink, a drafted tied-arch structure.
+   ============================================================================ */
+.hero--sheet { background: var(--ink); color: var(--paper); border-bottom: 1px solid var(--paper-50); min-height: clamp(560px, 86vh, 920px); }
+
+/* drafting sheet frame + cobalt registration ticks */
+.hero-frame { position: absolute; inset: 18px; border: 1px solid var(--paper-20); pointer-events: none; z-index: 1; }
+.hero-frame .tick { position: absolute; width: 12px; height: 12px; }
+.hero-frame .tick::before, .hero-frame .tick::after { content: ""; position: absolute; background: var(--signal); }
+.hero-frame .tick::before { width: 12px; height: 1px; top: 0; left: 0; }
+.hero-frame .tick::after { width: 1px; height: 12px; top: 0; left: 0; }
+.hero-frame .tl { top: -1px; left: -1px; }
+.hero-frame .tr { top: -1px; right: -1px; }
+.hero-frame .tr::before { left: auto; right: 0; }
+.hero-frame .tr::after { left: auto; right: 0; }
+.hero-frame .bl { bottom: -1px; left: -1px; }
+.hero-frame .bl::before { top: auto; bottom: 0; }
+.hero-frame .bl::after { top: auto; bottom: 0; }
+.hero-frame .br { bottom: -1px; right: -1px; }
+.hero-frame .br::before { top: auto; bottom: 0; left: auto; right: 0; }
+.hero-frame .br::after { top: auto; bottom: 0; left: auto; right: 0; }
+
+/* margin title-block notes */
+.hero-note { position: absolute; z-index: 3; margin: 0; font: 600 0.625rem/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper-60); pointer-events: none; }
+.hero-note--tr { top: 30px; right: 34px; }
+.hero-note--br { bottom: 30px; right: 34px; }
+
+/* copy on ink */
+.hero--sheet .hero-copy { border-right: none; padding: 64px clamp(32px, 6vw, 88px); z-index: 2; }
+
+/* title block: an architect's vertical dimension measuring the headline.
+   Pure drafting furniture (cobalt end-ticks, hairline measure, mono label).
+   Default fully drawn (no-JS / reduced-motion safe); MotionLayer animates it in. */
+.hero-head-row { display: flex; align-items: stretch; gap: clamp(16px, 1.8vw, 26px); }
+.hero-head-row h1 { flex: 1; min-width: 0; }
+.hero-dim { position: relative; flex: none; width: 26px; display: flex; flex-direction: column; align-items: flex-end; }
+.hero-dim-bar { width: 1px; flex: 1; background: var(--paper-30); transform-origin: 50% 0; }
+.hero-dim-tick { width: 13px; height: 1px; background: var(--signal); flex: none; }
+.hero-dim-label {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%) rotate(180deg);
+  writing-mode: vertical-rl; margin: 0; white-space: nowrap;
+  font: 600 0.5625rem/1 var(--font-mono); letter-spacing: 0.24em; color: var(--paper-60);
+}
+@media (max-width: 600px) { .hero-dim { display: none; } }
+.hero--sheet .hero-copy h1 { color: var(--paper); font-size: clamp(2.5rem, 4.6vw, 4.25rem); }
+.hero--sheet .hero-copy h1 .em { color: var(--paper); font-style: italic; font-weight: 600; }
+.hero--sheet .body { color: var(--paper-70); }
+.hero--sheet .btn-primary { background: var(--signal); color: var(--ink); }
+.hero--sheet .btn-primary:hover { background: var(--paper); color: var(--ink); }
+.hero--sheet .scroll-cue { color: var(--paper-60); }
+.hero--sheet .scroll-cue .ln { background: var(--paper-20); }
+
+/* structure stage */
+.hero--sheet .hero-prism { background: transparent; border-left: 1px solid var(--paper-20); }
+.hero-stage { display: grid; place-items: center; padding: clamp(16px, 2.4vw, 36px); }
+.hs-depth { display: grid; place-items: center; width: 100%; }
+
+/* ---- Hero shot: the rebuilt-site + AI-recommendation image ---- */
+.hero-shot { display: block; width: 100%; max-width: 760px; height: auto; position: relative; z-index: 2; }
+
+/* Immersive story devices keep one live content tree inside decorative hardware. */
+.immersive-story { overflow: clip; background: var(--paper); }
+.story-invitation { min-height: calc(100svh - 73px); padding: clamp(64px, 10vw, 144px) clamp(24px, 7vw, 96px); display: grid; align-content: center; gap: 40px; background: var(--ink); color: var(--paper); }
+.story-invitation > div { max-width: 68rem; }
+.story-invitation h1 { margin: 0; max-width: 16ch; font: 700 clamp(2.75rem, 7vw, 6rem)/1 var(--font-serif); letter-spacing: -0.035em; text-wrap: balance; }
+.story-invitation h1 strong { color: var(--signal); font-weight: 600; }
+.story-invitation p { max-width: 42rem; font: 400 clamp(1rem, 1.8vw, 1.25rem)/1.65 var(--font-sans); color: var(--paper-70); }
+.story-invitation__cta { display: inline-flex; width: fit-content; margin-top: 16px; background: var(--signal); color: var(--ink); }
+.story-invitation__cta:hover { background: var(--paper); color: var(--ink); }
+/* "The Answer": the visitor's question as an assistant prompt, and the cited
+   chip that marks the headline as the answer. */
+.story-invitation .story-query { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; margin: 0 0 clamp(20px, 2.6vw, 32px); padding: 12px 18px; border: 1px solid var(--paper-20); font: 500 clamp(0.85rem, 1.15vw, 1.05rem)/1.4 var(--font-mono); color: var(--paper-80); }
+.story-query__prompt { color: var(--signal); font-weight: 700; }
+.story-query__caret { display: inline-block; flex: none; width: 0.55em; height: 1.15em; margin-left: -8px; background: var(--signal); animation: story-caret 1s steps(1) infinite; }
+@keyframes story-caret { 50% { opacity: 0; } }
+.story-invitation .story-citation { display: inline-flex; align-items: center; gap: 10px; margin: clamp(18px, 2.2vw, 28px) 0 0; padding: 7px 14px; border: 1px solid var(--signal); font: 600 clamp(0.72rem, 0.9vw, 0.82rem)/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal); }
+.story-citation__tick { display: inline-grid; place-items: center; width: 18px; height: 18px; background: var(--signal); color: var(--ink); font-size: 0.7rem; }
+.story-invitation__cue { margin: 0; font: 600 0.75rem/1.4 var(--font-mono) !important; letter-spacing: 0.12em; text-transform: uppercase; }
+/* Layout-only, never painted: the enhanced hero measures this cell to dock the
+   laptop into it. Out of the fallback layout entirely so it adds no empty row. */
+[data-story-dock-slot] { display: none; }
+.story-stage { position: relative; min-height: auto; padding: clamp(64px, 8vw, 112px) clamp(24px, 7vw, 96px); }
+/* The rail now carries the live chapter tree (inside the laptop shell), so it is
+   in flow for everyone. The hardware itself is enhancement-only decoration and
+   is hidden here, leaving the chapters as plain text without JS. */
+.story-device-rail { display: block; }
+.story-device-rail > [data-story-device="phone"],
+.story-masthead,
+.story-rail,
+.story-dimension-lines,
+.story-blueprint,
+.story-scan,
+.story-screen-progress,
+.story-plates { display: none; }
+.story-chapters { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
+/* Dual mount: the phone's copy of the chapters exists only for the enhanced
+   handoff. Hidden here — outside the enhanced media query — so a no-JS or
+   reduced-motion visitor gets exactly one tree in flow at every width. The
+   class is on the selector so it also outranks the fallback block below. */
+.story-chapters[data-story-mount="phone"] { display: none; }
+.story-chapters > li { min-width: 0; }
+.story-chapter { position: relative; opacity: 1; transform: none; }
+.story-chapters article { max-width: 72rem; margin: 0 auto; padding: clamp(32px, 5vw, 72px) 0; border-top: 1px solid var(--ink-20); }
+.story-chapters h2 { max-width: 20ch; margin: 12px 0 24px; font: 700 clamp(2rem, 5vw, 4.5rem)/1.05 var(--font-serif); letter-spacing: -0.03em; overflow-wrap: anywhere; text-wrap: balance; }
+.story-chapters article > p:not([class]) { max-width: 65ch; font: 400 clamp(1rem, 1.5vw, 1.2rem)/1.7 var(--font-sans); color: var(--ink-70); }
+.story-progress, .story-chapter__eyebrow { font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.story-chapter__eyebrow { color: var(--signal-ink); }
+.story-chapter__detail { max-width: 70ch; margin-top: 32px; }
+.story-chapter__detail li { margin-block: 12px; }
+.story-chapter__detail li span { display: block; margin-top: 4px; color: var(--ink-70); }
+.story-proof { display: grid; gap: 48px; }
+.story-agent { padding: clamp(24px, 4vw, 48px); border: 1px solid var(--ink); }
+.story-agent dl { display: grid; gap: 24px; }
+.story-agent dt { font-weight: 700; }
+.story-agent dd { margin: 4px 0 0; }
+.story-agent button { margin-top: 24px; }
+.story-agent__steps { display: grid; gap: 4px; margin: 16px 0; padding: 0; list-style: none; font: 600 0.75rem/1.4 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; }
+.story-agent__steps li::before { content: "✓ "; color: var(--signal); }
+.story-agent__oversight { display: flex; flex-wrap: wrap; gap: 8px; }
+.story-agent__review,
+.story-agent__approved { display: inline-block; padding: 4px 10px; border: 1px solid var(--peri-ink); font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--peri-ink); }
+.story-agent__approved { background: var(--peri-ink); color: var(--paper); }
+.story-agent__approved::before { content: "✓ "; }
+/* The machine read. Without the stage it is a static drafted panel after the
+   chapters: every row read, no dimension lines. */
+.story-ledger { position: relative; max-width: 72rem; margin: var(--space-10) auto 0; padding-top: 40px; border-top: 1px solid var(--ink-20); font-family: var(--font-mono); }
+.story-ledger__title { margin: 0 0 16px; font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal-ink); }
+.story-ledger__rows { margin: 0; border-bottom: 1px solid var(--ink-20); }
+.story-ledger__row { display: grid; grid-template-columns: 8.5em minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--ink-20); font-size: 0.8125rem; line-height: 1.45; }
+.story-ledger__row dt { font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-60); }
+.story-ledger__row dd { margin: 0; color: var(--ink); }
+.story-ledger__tick { font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--signal-ink); white-space: nowrap; }
+.story-ledger__row[data-read="pending"] .story-ledger__tick { color: var(--ink-60); }
+
+.story-device {
+  position: relative;
+  display: block;
+  max-width: 100%;
+}
+.story-device__viewport {
+  overflow: hidden;
+  background: var(--paper);
+}
+/* The one and only aperture truth: these four values are the SVG's screen
+   rectangle (see laptopPortalAsset.test.ts). Nothing else may restate them. */
+.story-laptop {
+  --story-laptop-x: 15.927167%;
+  --story-laptop-y: 21.248333%;
+  --story-laptop-w: 67.609%;
+  --story-laptop-h: 42.128167%;
+}
+.story-laptop img { display: none; }
+/* Without the stage the lid wrapper is layout-transparent: the screen's chapter
+   tree stays in normal document flow. */
+.story-laptop__lid { display: contents; }
+.story-phone {
+  width: min(100%, 270px);
+  aspect-ratio: 9 / 19;
+  overflow: hidden;
+  border: 10px solid var(--ink);
+  border-radius: 2rem;
+  background: var(--ink);
+}
+.story-phone__viewport {
+  width: 100%;
+  height: 100%;
+}
+.story-phone__speaker,
+.story-phone__home {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  display: block;
+  background: var(--ink);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.story-phone__speaker {
+  top: 8px;
+  width: 22%;
+  height: 4px;
+  border-radius: 2px;
+}
+.story-phone__home {
+  bottom: 8px;
+  width: 18%;
+  height: 4px;
+  border-radius: 2px;
+}
+
+@media (max-width: 1023px), (prefers-reduced-motion: reduce) {
+  .immersive-story { min-height: auto; overflow: clip; }
+  .story-stage { position: relative; min-height: auto; }
+  .story-chapters { display: grid; gap: var(--space-10); }
+  .story-chapters article { position: relative; opacity: 1; transform: none; }
+  .story-device { position: relative; transform: none; }
+  .story-device__viewport { overflow: visible; }
+  .scroll-cue { display: none; }
+}
+
+/* Fallback polish, JS-opt-in only (`data-reveal="on"`): no-JS and reduced
+   motion never get it, so they always see every chapter at full opacity. */
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .immersive-story[data-reveal="on"] .story-rail { position: sticky; z-index: 2; top: 73px; display: flex; gap: 12px; margin: 0 0 var(--space-6); padding: 10px 0; list-style: none; background: var(--paper); border-bottom: 1px solid var(--ink-20); font: 600 0.6875rem/1.4 var(--font-mono); letter-spacing: 0.1em; color: var(--ink-50); }
+  .immersive-story[data-reveal="on"] .story-rail [data-current="true"] { color: var(--signal-ink); }
+  .immersive-story[data-reveal="on"] [data-story-chapter] > article { transition: opacity 480ms var(--ease), transform 480ms var(--ease); }
+  .immersive-story[data-reveal="on"] [data-story-chapter]:not([data-revealed]) > article { opacity: 0; transform: translateY(24px); }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  /* `position: relative` is load-bearing for the dock measurement: it makes the
+     root the containing block of the absolutely positioned stage, so the dock
+     slot and the device layer are measured against one origin whether the pin
+     is engaged or not. */
+  /* Ink ground throughout: the lit screen is the composition's light source.
+     One viewport tall: the pin spacer supplies the scroll distance (`end`), so
+     any extra height here scrolls past as blank ink after the pin releases. */
+  .immersive-story[data-enhanced="true"] { position: relative; height: 100svh; min-height: 560px; background: var(--ink); }
+  /* Promote the moving layers only while the timeline is driving them. */
+  .immersive-story[data-beat] .story-device-rail > [data-story-device],
+  .immersive-story[data-beat] [data-story-ledger],
+  .immersive-story[data-beat] .story-laptop { will-change: transform, opacity; }
+  /* One grid owns the hero's horizontal truth: copy in column 1, the laptop's
+     dock slot in column 2. Nothing here is positioned against the viewport, so
+     the headline cannot collide with the hardware at any width. */
+  .immersive-story[data-enhanced="true"] .story-invitation { display: grid; grid-template-columns: minmax(30ch, 42rem) minmax(0, 1fr); gap: clamp(32px, 4vw, 72px); align-items: center; }
+  .immersive-story[data-enhanced="true"] [data-story-dock-slot] { display: block; grid-column: 2; justify-self: center; width: min(100%, 600px); aspect-ratio: 1; }
+  .immersive-story[data-enhanced="true"] .story-stage { position: absolute; z-index: 3; inset: 0; height: 100svh; min-height: 560px; padding: 0; overflow: clip; pointer-events: none; }
+  /* The rail starts below the sticky header, so devices centre in the part of
+     the pinned screen a visitor can actually see. */
+  .immersive-story[data-enhanced="true"] .story-device-rail { position: absolute; inset: 73px 0 0; display: flex; margin: 0; }
+  /* Layout centres each device at its stage (largest) size; position is a
+     transform the timeline owns. No left:%, no translate(-50%, -50%). */
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device] { position: absolute; inset: 0; display: grid; place-items: center; }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="laptop"] .story-laptop { width: min(80vw, 88svh); max-width: none; aspect-ratio: 1; overflow: visible; }
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] { display: grid; opacity: 0; }
+  /* The phone's ink bezel would vanish into the ink ground; a lifted bezel and a
+     paper hairline draw the hardware the way the laptop asset does. */
+  .immersive-story[data-enhanced="true"] .story-device-rail > [data-story-device="phone"] .story-phone { width: auto; height: 78svh; border-color: #262d33; box-shadow: 0 0 0 1px var(--paper-20); }
+  /* Hardware is enhancement-only decoration. */
+  .immersive-story[data-enhanced="true"] .story-laptop img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-laptop__base { z-index: 1; }
+  /* The lid hinges on the base: its origin is the hinge line (y 396.567 of 600). */
+  .immersive-story[data-enhanced="true"] .story-laptop__lid { position: absolute; z-index: 2; inset: 0; display: block; transform-origin: 50% 66.0945%; backface-visibility: hidden; }
+  .immersive-story[data-enhanced="true"] .story-laptop__lid > img { z-index: 2; }
+  /* The screen. Geometry comes from the shell's own aperture vars — there is no
+     second formula to drift, so nothing needs re-syncing on resize. */
+  .immersive-story[data-enhanced="true"] .story-laptop__viewport {
+    position: absolute;
+    z-index: 3;
+    left: var(--story-laptop-x);
+    top: var(--story-laptop-y);
+    width: var(--story-laptop-w);
+    height: var(--story-laptop-h);
+  }
+  /* Each screen is a size container: chapter type is set in `cqw`, so it scales
+     with the screen it sits in — not the window, which the height-capped shell
+     stops tracking on short viewports. */
+  .immersive-story[data-enhanced="true"] .story-device__viewport { background: var(--ink); color: var(--paper); contain: layout paint; container-type: inline-size; }
+  /* Each mount *is* the surface now: it fills its own shell's screen. The
+     containing block is the viewport above (`contain: paint`), so the phone's
+     tree fills the phone and the laptop's fills the aperture. */
+  .immersive-story[data-enhanced="true"] .story-chapters { position: absolute; inset: 0; display: block; }
+  .immersive-story[data-enhanced="true"] .story-chapters > li { position: absolute; inset: 0; display: grid; align-items: center; padding: clamp(10px, 4.5cqw, 26px); pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-chapters > li > article { width: 100%; max-height: 100%; margin: 0; padding: 0; border: 0; background: transparent; color: var(--paper); opacity: 0; transform: translateY(18px); pointer-events: none; overflow: hidden; }
+  .immersive-story[data-enhanced="true"] .story-chapters > li[data-active="true"] > article { opacity: 1; transform: none; pointer-events: auto; }
+  .immersive-story[data-enhanced="true"] .story-progress,
+  .immersive-story[data-enhanced="true"] .story-chapter__eyebrow { font-size: clamp(0.66rem, 2.5cqw, 0.85rem); }
+  .immersive-story[data-enhanced="true"] .story-chapters h2 { margin: 6px 0 12px; max-width: 20ch; font-size: clamp(1.3rem, 7.2cqw, 3rem); line-height: 1.02; }
+  .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]) { margin: 0; max-width: 52ch; font-size: clamp(0.85rem, 3.3cqw, 1.2rem); line-height: 1.45; }
+  .immersive-story[data-enhanced="true"] .story-chapter__detail { margin-top: clamp(10px, 3.4cqw, 20px); font-size: clamp(0.78rem, 2.9cqw, 1.05rem); line-height: 1.3; }
+  /* The laptop screen holds the eyebrow, headline and body at a readable size;
+     the figure plate beside it carries the chapter's detail visually. The
+     detail stays in the document — visually hidden, not display:none — so
+     assistive tech still reads it, and the <1024 layout shows it in full. */
+  .immersive-story[data-enhanced="true"] .story-laptop .story-chapter__detail { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .immersive-story[data-enhanced="true"] .story-chapter__detail ul,
+  .immersive-story[data-enhanced="true"] .story-chapter__detail ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .immersive-story[data-enhanced="true"] .story-chapter__detail li { margin: 0; }
+  .immersive-story[data-enhanced="true"] .story-proof { grid-template-columns: repeat(3, 1fr); gap: 16px; line-height: 1.25; }
+  .immersive-story[data-enhanced="true"] .story-proof h3 { margin: 0; font-size: clamp(0.8rem, 3cqw, 1.1rem); line-height: 1.25; }
+  .immersive-story[data-enhanced="true"] .story-proof p,
+  .immersive-story[data-enhanced="true"] .story-proof blockquote { margin: 4px 0; }
+  .immersive-story[data-enhanced="true"] .story-proof ul { display: none; }
+  .immersive-story[data-enhanced="true"] .story-agent { padding: 12px; }
+  .immersive-story[data-enhanced="true"] .story-agent dl { gap: 8px; }
+  .immersive-story[data-enhanced="true"] .story-agent button { margin-top: 8px; }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapters h2 { font-size: clamp(1.05rem, 8.6cqw, 1.8rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-progress,
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__eyebrow { font-size: clamp(0.62rem, 3.9cqw, 0.8rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapters article > p:not([class]) { font-size: clamp(0.76rem, 5cqw, 1.05rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__detail { margin-top: clamp(8px, 3cqw, 16px); font-size: clamp(0.7rem, 4.6cqw, 0.98rem); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapters > li { padding: clamp(14px, 6cqw, 24px) clamp(12px, 5.5cqw, 18px); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-agent { padding: clamp(8px, 3.5cqw, 12px); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-agent dl { gap: clamp(4px, 2cqw, 8px); }
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__detail ul,
+  .immersive-story[data-enhanced="true"] .story-phone .story-chapter__detail ol { grid-template-columns: 1fr; }
+  .immersive-story[data-enhanced="true"] .story-chapters article > p:not([class]),
+  .immersive-story[data-enhanced="true"] .story-chapter__detail li span { color: var(--paper-70); }
+
+  /* In the laptop the timeline owns chapter visibility (scan-wipe clips), so
+     both chapters are painted during a wipe; `data-active` still owns the
+     accessibility gate. The phone keeps the data-active crossfade. */
+  .immersive-story[data-enhanced="true"] .story-laptop .story-chapters > li > article { opacity: 1; transform: none; }
+
+  /* The drafting apparatus around the laptop. Percentages are of the 600×600
+     asset: lid 14.1–85.3% × 18.1–66.1%, base 5.6–93.9% ending at 69%. */
+  .immersive-story[data-enhanced="true"] .story-blueprint { position: absolute; z-index: 4; inset: 0; display: block; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__guide { position: absolute; background: var(--signal); opacity: 0.55; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__guide--h { left: -12%; width: 124%; height: 1px; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__guide--v { top: 4%; width: 1px; height: 78%; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark { position: absolute; width: 14px; height: 14px; border: 0 solid var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--tl { left: calc(14.1% - 10px); top: calc(18.1% - 10px); border-width: 1px 0 0 1px; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--tr { left: calc(85.3% - 4px); top: calc(18.1% - 10px); border-width: 1px 1px 0 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--bl { left: calc(5.6% - 10px); top: calc(69% - 4px); border-width: 0 0 1px 1px; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__mark--br { left: calc(93.9% - 4px); top: calc(69% - 4px); border-width: 0 1px 1px 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim { position: absolute; left: 5.6%; top: 75%; width: 88.3%; height: 1px; background: var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::before,
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::after { content: ""; position: absolute; top: -4px; width: 1px; height: 9px; background: var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::before { left: 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim::after { right: 0; }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim-label { position: absolute; top: 8px; left: 50%; display: flex; gap: 10px; transform: translateX(-50%); padding: 0 8px; background: var(--ink); font: 600 clamp(0.66rem, 0.85vw, 0.8rem)/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-blueprint__dim-label [data-story-scale-readout] { color: var(--signal); font-variant-numeric: tabular-nums; }
+
+  /* Screen instruments. The scan is a full-screen layer whose top edge is the
+     line, so the timeline moves it with `yPercent` alone. */
+  .immersive-story[data-enhanced="true"] .story-scan { position: absolute; z-index: 5; inset: 0; display: block; pointer-events: none; visibility: hidden; opacity: 0; }
+  /* The line plus a 7px end tick each side, drawn — no shadow. */
+  .immersive-story[data-enhanced="true"] .story-scan::before { content: ""; position: absolute; top: -3px; left: 0; right: 0; height: 7px; border-inline: 1px solid var(--signal); background: linear-gradient(var(--signal), var(--signal)) center / 100% 1px no-repeat; }
+  .immersive-story[data-enhanced="true"] .story-screen-progress { position: absolute; z-index: 5; top: 0; left: 0; right: 0; display: block; height: 2px; background: var(--signal); transform: scaleX(0); transform-origin: left center; pointer-events: none; }
+
+  /* Figure plates: the stage's right-hand drafting lane during the argument,
+     centred with auto margins (the timeline owns their opacity only). */
+  .immersive-story[data-enhanced="true"] .story-plates { position: absolute; z-index: 2; inset: 0 clamp(16px, 4vw, 72px) 0 auto; display: grid; width: min(24vw, 320px); height: fit-content; margin: auto 0; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-plate { grid-area: 1 / 1; margin: 0; visibility: hidden; opacity: 0; }
+  .immersive-story[data-enhanced="true"] .story-plate__caption { margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--paper-20); font: 600 clamp(0.7rem, 0.9vw, 0.84rem)/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-plate__art { display: block; width: 100%; height: auto; overflow: visible; }
+  .immersive-story[data-enhanced="true"] .story-plate__art :is(path, rect, circle) { fill: none; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-ink { stroke: var(--paper-70); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mute { stroke: var(--paper-50); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-signal { stroke: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-peri { stroke: var(--peri); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-ink :is(path, rect, circle),
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-peri :is(path, rect, circle),
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-signal :is(path, rect, circle) { stroke: inherit; }
+  .immersive-story[data-enhanced="true"] .story-plate__art rect.plate-fill,
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-fill { fill: var(--ink); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-fill--signal { fill: rgba(46, 125, 255, 0.18); }
+  .immersive-story[data-enhanced="true"] .story-plate__art text { stroke: none; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono { font: 600 13px var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; fill: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--signal { fill: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--peri { fill: var(--peri); }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--stamp { font-size: 15px; font-weight: 700; letter-spacing: 0.12em; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-mono--tiny { font-size: 11px; letter-spacing: 0.06em; }
+  .immersive-story[data-enhanced="true"] .story-plate__art circle[data-plate-visitor] { fill: var(--signal); stroke: none; }
+  .immersive-story[data-enhanced="true"] .story-plate__art .plate-sans { font: 600 15px var(--font-sans); fill: var(--paper); }
+
+  /* Docked screen: a still brand frame on a hairline grid (client ruling). */
+  .immersive-story[data-enhanced="true"] .story-masthead { position: absolute; z-index: 1; inset: 0; display: grid; place-content: center; gap: 12px; text-align: center; pointer-events: none;
+    background-image: linear-gradient(var(--paper-20) 1px, transparent 1px), linear-gradient(90deg, var(--paper-20) 1px, transparent 1px); background-size: 12.5% 20%; background-position: center; }
+  .immersive-story[data-enhanced="true"] .story-masthead__mark { margin: 0; font: 700 clamp(1.5rem, 11cqw, 4rem)/1 var(--font-serif); letter-spacing: -0.03em; color: var(--paper); }
+  .immersive-story[data-enhanced="true"] .story-masthead__query { margin: 0; font: 500 clamp(0.62rem, 2.6cqw, 0.95rem)/1.4 var(--font-mono); color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-masthead__chip { justify-self: center; margin: 0; padding: 4px 10px; border: 1px solid var(--signal); font: 600 clamp(0.6rem, 2.4cqw, 0.9rem)/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--signal); }
+
+  /* Handoff load path: a hairline, not a glow. */
+
+  /* The machine read: a title-block ledger beside the phone. Centred with
+     auto margins, not a transform — the timeline owns this element's transform. */
+  .immersive-story[data-enhanced="true"] .story-ledger { position: absolute; z-index: 2; inset: 0 clamp(16px, 3vw, 72px) 0 auto; width: min(28vw, 470px); height: fit-content; margin: auto 0; padding: 0; border: 0; color: var(--paper); opacity: 0; }
+  .immersive-story[data-enhanced="true"] .story-ledger__title { position: absolute; bottom: 100%; left: 0; margin: 0 0 12px; color: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-ledger__rows { border-color: var(--paper-20); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row { grid-template-columns: 7.5em minmax(0, 1fr) auto; gap: 10px; padding: 9px 0; border-color: var(--paper-20); font-size: clamp(0.72rem, 0.92vw, 0.9rem); transition: none; }
+  .immersive-story[data-enhanced="true"] .story-ledger__row dt { color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row dd { overflow: hidden; color: var(--paper); text-overflow: ellipsis; white-space: nowrap; }
+  .immersive-story[data-enhanced="true"] .story-ledger__tick { color: var(--signal); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row[data-read="pending"] .story-ledger__tick { color: var(--paper-60); }
+  .immersive-story[data-enhanced="true"] .story-ledger__row[data-revealed="false"] { opacity: 0.2; }
+  .immersive-story[data-enhanced="true"] .story-ledger__row[data-revealed="false"] .story-ledger__tick { visibility: hidden; }
+  .immersive-story[data-enhanced="true"] .story-dimension-lines { position: absolute; top: 0; right: calc(100% + 8px); display: grid; width: clamp(16px, 3vw, 48px); height: 100%; pointer-events: none; }
+  .immersive-story[data-enhanced="true"] .story-dimension-lines__track { position: relative; align-self: center; height: 1px; container-type: inline-size; }
+  .immersive-story[data-enhanced="true"] .story-dimension-lines__track > [data-dimension-line] { position: absolute; inset: 0; background: var(--signal); transform-origin: left center; }
+  /* The fact riding its line from the phone into the row; rests on the row as
+     the line's terminator once read. */
+  .immersive-story[data-enhanced="true"] .story-dimension-lines__dot { position: absolute; top: -2px; left: -2.5px; width: 5px; height: 5px; border-radius: 50%; background: var(--signal);
+    transform: translateX(calc(var(--line-progress, 0) * 100cqw)); opacity: clamp(0, calc(var(--line-progress, 0) * 40), 1); }
+
+  /* The phone-side exchange, paced by data-phase. Every part stays in the DOM
+     and the reading order; only what the stage shows changes. */
+  .immersive-story[data-enhanced="true"] .story-agent { border-color: var(--paper-20); }
+  .immersive-story[data-enhanced="true"] .story-agent button { display: none; }
+  .immersive-story[data-enhanced="true"] .story-agent__oversight { display: grid; }
+  .immersive-story[data-enhanced="true"] .story-agent__review,
+  .immersive-story[data-enhanced="true"] .story-agent__approved { grid-area: 1 / 1; width: fit-content; border-color: var(--peri); color: var(--peri); }
+  .immersive-story[data-enhanced="true"] .story-agent__approved { background: var(--peri); color: var(--ink); }
+  .immersive-story[data-enhanced="true"] [data-phase="question"] :is(.story-agent__source, .story-agent__answer, .story-agent__oversight),
+  .immersive-story[data-enhanced="true"] [data-phase="answer"] .story-agent__approved,
+  .immersive-story[data-enhanced="true"] [data-phase="approved"] .story-agent__review { opacity: 0; }
+  /* The follow-up the agent runs on its own: each step ticks in once the answer lands. */
+  .immersive-story[data-enhanced="true"] .story-agent__steps li { transition: opacity 240ms var(--ease), transform 240ms var(--ease); }
+  .immersive-story[data-enhanced="true"] [data-phase="question"] .story-agent__steps li,
+  .immersive-story[data-enhanced="true"] [data-phase="answer"] .story-agent__steps li { opacity: 0; transform: translateX(-6px); }
+  .immersive-story[data-enhanced="true"] [data-phase="approved"] .story-agent__steps li:nth-child(2) { transition-delay: 160ms; }
+  .immersive-story[data-enhanced="true"] [data-phase="approved"] .story-agent__steps li:nth-child(3) { transition-delay: 320ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-query__caret { animation: none; }
+  .immersive-story *, .immersive-story *::before, .immersive-story *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-note { display: none; }
+  .hero--sheet .hero-copy { border-bottom: 1px solid var(--paper-20); }
+  .hero--sheet .hero-prism { border-left: none; border-top: 1px solid var(--paper-20); }
+}
+
+@media (max-width: 360px) {
+  .story-device {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+
+.stage-wrap { position: relative; height: 70vh; min-height: 460px; }
+.stage { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s var(--ease); }
+.stage.ready { opacity: 1; }
+.stage canvas { display: block; }
+.stage-fallback { position: absolute; inset: 0; display: none; place-items: center; }
+.stage-fallback.show { display: grid; }
+.stage-fallback .figure { width: 70%; max-width: 360px; color: var(--ink); }
+.stage-fallback .note { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center;
+  font-family: var(--font-mono); font-size: 11px; color: var(--ink-60); letter-spacing: 0.04em; }
+
+/* ---- Section scaffold ---- */
+.section { padding: 80px 32px; border-bottom: 1px solid var(--ink); position: relative; }
+@media (min-width: 768px) { .section { padding: 112px 64px; } }
+.section .inner { max-width: 1100px; margin: 0 auto; }
+.section-head .em { display: block; font-family: var(--font-serif); font-style: italic; font-weight: 500; color: var(--ink-60); }
+.section-head h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; color: var(--ink); margin: 16px 0 0; }
+.lede { font: 400 1.0625rem/1.65 var(--font-sans); color: var(--ink-70); max-width: 40rem; margin: 20px 0 0; }
+
+/* ---- Why Agentic (dark) ---- */
+/* Why It Matters — light ground (breaks the dark hero→why→services run;
+   dark is reserved for deliberate accents: cover, blueprint, stance, footer). */
+.why { background: var(--paper); color: var(--ink); border-bottom: 1px solid var(--ink); }
+.why .lede { color: var(--ink-70); }
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 64px; border: 1px solid var(--ink); }
+.why-card { padding: 36px; border-right: 1px solid var(--ink-10); }
+.why-card:last-child { border-right: none; }
+.why-mark { display: block; width: 10px; height: 10px; background: var(--signal); margin-bottom: 24px; }
+.why-card h3 { font: 600 1.125rem var(--font-sans); color: var(--ink); margin: 0 0 12px; }
+.why-card p { font: 400 0.9375rem/1.6 var(--font-sans); color: var(--ink-70); margin: 0; }
+/* Connective CTA — pulls the reader from the stakes into how we deliver. Cobalt on ink. */
+.why-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 56px; padding: 13px 22px; border: 1px solid var(--ink); color: var(--ink); font: 600 0.75rem/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease); }
+.why-cta:hover { background: var(--ink); color: var(--paper); }
+.why-cta svg { transition: transform var(--dur) var(--ease-out); }
+.why-cta:hover svg { transform: translateX(4px); }
+
+/* ============================================================================
+   SERVICES — "The Blueprint" (Umbraco flagship, drenched ink panel)
+   A drawn architect's schematic of the agent-ready stack on the drafting-table
+   ground. Paper hairline structure + cobalt signal data-paths.
+   ============================================================================ */
+.services-bp { position: relative; background: var(--ink); color: var(--paper); border-bottom: 1px solid var(--ink); padding: 80px 24px; overflow: hidden; }
+@media (min-width: 768px) { .services-bp { padding: 112px 64px; } }
+.services-bp-inner { max-width: 1180px; margin: 0 auto; }
+
+/* header */
+.bp-head h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; color: var(--paper); margin: 0; max-width: 18ch; text-wrap: balance; }
+.bp-head h2 .em { font-style: italic; color: var(--signal); }
+.bp-intro { font: 400 1.0625rem/1.7 var(--font-sans); color: var(--paper-70); max-width: 44rem; margin: 20px 0 0; }
+
+/* figure / schematic */
+.bp-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; padding: 13px 22px; border: 1px solid var(--signal); color: var(--signal); font: 600 0.75rem/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease); }
+.bp-cta:hover { background: var(--signal); color: var(--ink); }
+.bp-cta svg { transition: transform var(--dur) var(--ease-out); }
+.bp-cta:hover svg { transform: translateX(4px); }
+
+/* outcome packages — three plain wins on the ink ground, hairline-divided */
+.bp-packages { list-style: none; padding: 0; margin-top: 48px; display: grid; grid-template-columns: 1fr; gap: 0; border: 1px solid var(--paper-50); counter-reset: bp; }
+@media (min-width: 768px) { .bp-packages { grid-template-columns: repeat(3, 1fr); } }
+.bp-package { padding: 32px; border-right: 1px solid rgba(240, 238, 233, 0.2); }
+.bp-package:last-child { border-right: none; }
+@media (max-width: 767px) {
+  .bp-package { border-right: none; border-bottom: 1px solid rgba(240, 238, 233, 0.2); }
+  .bp-package:last-child { border-bottom: none; }
+}
+.bp-package-num { display: block; font: 700 1.625rem/1 var(--font-mono); color: var(--paper-50); letter-spacing: 0.01em; margin-bottom: 18px; }
+.bp-package-num::after { content: ""; display: block; width: 22px; height: 1px; background: var(--signal); margin-top: 12px; }
+.bp-package h3 { font: 600 1.125rem var(--font-sans); color: var(--paper); margin: 0 0 10px; }
+.bp-package p { font: 400 0.9375rem/1.6 var(--font-sans); color: var(--paper-60); margin: 0; }
+
+/* foundation — the quiet "how" under the packages */
+.bp-foundation { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--paper-50); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 40px; }
+.bp-foundation h3 { font-family: var(--font-serif); font-weight: 600; font-size: 1.375rem; color: var(--paper); margin: 0 0 10px; }
+.bp-foundation p { font: 400 0.9375rem/1.7 var(--font-sans); color: var(--paper-70); margin: 0; max-width: 42rem; }
+.bp-foundation .bp-cta { margin-top: 0; flex: none; }
+
+/* roadmap — upcoming products, on the ink ground. Status tags neutral (paper), never peri. */
+.bp-roadmap { margin-top: 56px; border-top: 1px solid var(--paper-50); padding-top: 28px; }
+.bp-roadmap-label { font: 600 0.6875rem/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper-60); margin: 0 0 4px; }
+.bp-roadmap ul { list-style: none; margin: 8px 0 0; padding: 0; }
+.bp-roadmap li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(240,238,233,0.12); }
+.bp-roadmap-name { font: 500 1rem var(--font-sans); color: var(--paper); }
+.bp-roadmap-status { flex: none; font: 500 0.625rem/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper-70); border: 1px solid var(--paper-50); padding: 5px 8px; white-space: nowrap; }
+/* ---- Accessibility utility ---- */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ============================================================================
+   COMPARISON — "Why Umbraco" honest matrix (paper, hairline, cobalt-led column)
+   ============================================================================ */
+.comparison { background: var(--paper); }
+.cmp-head h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; color: var(--ink); margin: 0; max-width: 18ch; text-wrap: balance; }
+.cmp-head h2 .em { font-style: italic; color: var(--ink-60); }
+.cmp-head .lede { font: 400 1.0625rem/1.7 var(--font-sans); color: var(--ink-70); max-width: 44rem; margin: 20px 0 0; }
+
+.cmp-wrap { margin-top: 48px; }
+.cmp { width: 100%; border-collapse: collapse; border: 1px solid var(--ink); table-layout: fixed; }
+.cmp th, .cmp td { text-align: left; vertical-align: top; padding: 18px 20px; }
+.cmp thead th { vertical-align: bottom; border-bottom: 1px solid var(--ink); }
+.cmp tbody th, .cmp tbody td { border-bottom: 1px solid var(--ink-10); }
+.cmp tbody tr:last-child th, .cmp tbody tr:last-child td { border-bottom: none; }
+.cmp-corner { border-bottom: 1px solid var(--ink); width: 24%; }
+.cmp tbody th[scope="row"] { width: 24%; font: 600 0.9375rem/1.4 var(--font-sans); color: var(--ink); }
+
+.cmp-col-name { display: block; font-family: var(--font-serif); font-weight: 600; font-size: 1.125rem; color: var(--ink); }
+.cmp-col-note { display: block; margin-top: 4px; font: 500 0.625rem/1.2 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-60); }
+
+/* Umbraco column — the cobalt "signal" lead */
+.cmp th.cmp-col-umbraco { background: var(--ink); }
+.cmp th.cmp-col-umbraco .cmp-col-name { color: var(--paper); }
+.cmp th.cmp-col-umbraco .cmp-col-note { color: var(--signal); }
+.cmp td.cmp-col-umbraco { background: var(--signal-05); }
+
+/* cells: shape-coded tone mark + candid phrase */
+.cmp-val { font: 400 0.9375rem/1.45 var(--font-sans); color: var(--ink-80); }
+.cmp-mark { display: inline-block; width: 9px; height: 9px; margin-right: 9px; vertical-align: 1px; }
+.cmp-mark--strong { background: var(--signal); }
+.cmp-mark--ok { background: var(--ink-30); }
+.cmp-mark--weak { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-30); }
+
+.cmp-takeaway { display: flex; align-items: baseline; gap: 12px; margin: 32px 0 0; max-width: 50rem; font: 500 1.125rem/1.5 var(--font-sans); color: var(--ink); }
+.cmp-takeaway-mark { flex: none; width: 10px; height: 10px; background: var(--signal); transform: translateY(2px); }
+
+/* Progressive disclosure — the takeaway is the summary; the full matrix opens on demand. */
+.cmp-details { margin-top: 20px; border-top: 1px solid var(--ink-10); }
+.cmp-toggle { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; padding: 18px 0; font: 600 0.75rem/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); transition: color var(--dur) var(--ease); }
+.cmp-toggle::-webkit-details-marker { display: none; }
+.cmp-toggle:hover { color: var(--signal-ink); }
+.cmp-toggle svg { color: var(--signal-ink); transition: transform var(--dur) var(--ease); }
+.cmp-details[open] .cmp-toggle svg { transform: rotate(90deg); }
+.cmp-toggle:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+.cmp-details .cmp-wrap { margin-top: 4px; padding-bottom: 8px; }
+
+/* mobile: reflow the matrix into one card per criterion */
+@media (max-width: 720px) {
+  .cmp, .cmp tbody, .cmp tr, .cmp th, .cmp td { display: block; }
+  .cmp { border: none; }
+  .cmp thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .cmp tbody tr { border: 1px solid var(--ink); margin-bottom: 16px; }
+  .cmp tbody th[scope="row"] { width: auto; font-size: 1.0625rem; padding: 16px 20px 10px; border-bottom: 1px solid var(--ink-10); }
+  .cmp tbody td { display: flex; align-items: baseline; gap: 10px; padding: 11px 20px; border-bottom: 1px solid var(--ink-10); }
+  .cmp tbody tr td:last-child { border-bottom: none; }
+  .cmp td::before { content: attr(data-label); flex: none; width: 7.5rem; font: 600 0.6875rem/1.4 var(--font-sans); letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-60); }
+  .cmp td.cmp-col-umbraco::before { color: var(--signal-ink); }
+}
+
+/* ---- Process ---- */
+/* Process reads as a ruled numbered timeline (it IS a sequence), not a 4th card grid:
+   a continuous top hairline, big cobalt numerals, icon inline with the title. */
+.process-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 0; }
+@media (min-width: 640px) { .process-grid { grid-template-columns: 1fr 1fr; column-gap: 32px; } }
+@media (min-width: 1000px) { .process-grid { grid-template-columns: repeat(4, 1fr); column-gap: 40px; } }
+.process-step { position: relative; padding: 28px 0 32px; border-top: 1px solid var(--ink); }
+.process-step .num { display: block; font: 700 clamp(2rem, 4vw, 2.75rem)/1 var(--font-mono); color: var(--signal); margin-bottom: 20px; }
+.process-step h3 { display: flex; align-items: center; gap: 8px; font: 600 1.0625rem var(--font-sans); color: var(--ink); margin: 0 0 10px; }
+.process-step h3 svg { color: var(--signal); flex: none; }
+.process-step p { font: 400 0.875rem/1.6 var(--font-sans); color: var(--ink-70); margin: 0; max-width: 22rem; }
+.process-cta { margin-top: 56px; }
+.process-cta svg { transition: transform var(--dur) var(--ease-out); }
+.process-cta .btn-primary:hover svg { transform: translateX(4px); }
+
+/* ---- Projects — "Selected Work" as a drafted catalogue of linked rows ---- */
+.work-list { list-style: none; margin: 56px 0 0; padding: 0; }
+.work-row { border-top: 1px solid var(--ink); }
+.work-row:last-child { border-bottom: 1px solid var(--ink); }
+.work-link { display: grid; grid-template-columns: 1fr; gap: 18px; padding: 28px 12px; text-decoration: none; color: inherit; transition: background var(--dur-slow) var(--ease); }
+@media (min-width: 860px) { .work-link { grid-template-columns: 200px 1fr 140px; gap: 36px; align-items: start; } }
+.work-link:hover { background: var(--signal-05); }
+.work-link:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
+
+/* thumbnail — real image, or a drafted "empty frame" (architect's X-in-a-box) */
+.work-thumb { position: relative; aspect-ratio: 4 / 3; max-width: 300px; border: 1px solid var(--ink); overflow: hidden; background: var(--paper); }
+.work-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--dur-slow) var(--ease-out); }
+.work-link:hover .work-thumb img { transform: scale(1.04); }
+.work-thumb-ph { position: absolute; inset: 0; display: grid; place-items: center;
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 0.5px), var(--ink-10) 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--ink-10) 50%, transparent calc(50% + 0.5px)); }
+.work-thumb-label { position: relative; font: 600 0.625rem/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-50); background: var(--paper); padding: 4px 8px; }
+
+.work-meta-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin-bottom: 12px; }
+.work-num { font: 700 1rem/1 var(--font-mono); letter-spacing: 0.04em; color: var(--signal-ink); }
+.work-meta { font: 600 0.6875rem/1.3 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.work-title { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-serif); font-weight: 600; font-size: 1.5rem; line-height: 1.2; color: var(--ink); margin: 0 0 10px; transition: color var(--dur) var(--ease); }
+.work-arrow { flex: none; color: var(--ink-30); transition: color var(--dur) var(--ease), transform var(--dur) var(--ease-out); }
+.work-link:hover .work-title { color: var(--signal-ink); }
+.work-link:hover .work-arrow { color: var(--signal); transform: translate(3px, -3px); }
+.work-desc { font: 400 1rem/1.6 var(--font-sans); color: var(--ink-70); margin: 0 0 16px; max-width: 46ch; }
+.work-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; }
+.work-tags li { font: 500 0.6875rem/1.3 var(--font-mono); letter-spacing: 0.02em; color: var(--ink-70); border: 1px solid var(--ink-20); padding: 6px 10px; }
+.work-result { display: flex; flex-direction: column; gap: 4px; }
+@media (min-width: 860px) { .work-result { align-items: flex-end; text-align: right; } }
+.work-stat { font: 700 clamp(1.75rem, 3vw, 2.25rem)/1 var(--font-mono); color: var(--signal); }
+.work-stat-label { font: 600 0.625rem/1.3 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+/* Honest empty state — a framed, candid panel, never a fake card row. */
+.work-empty { margin: 56px 0 0; max-width: 62ch; padding: clamp(28px, 4vw, 44px); border: 1px solid var(--ink); }
+.work-empty-title { margin: 0 0 14px; font: 600 0.6875rem/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-60); }
+.work-empty-body { margin: 0 0 28px; font: 400 1.0625rem/1.65 var(--font-sans); color: var(--ink-80); }
+.work-empty-cta { display: inline-flex; align-items: center; gap: 8px; font: 600 0.75rem/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); text-decoration: none; padding-bottom: 4px; border-bottom: 1px solid var(--signal); transition: gap var(--dur) var(--ease-out), color var(--dur) var(--ease); }
+.work-empty-cta:hover { gap: 13px; color: var(--signal-ink); }
+
+/* ---- Testimonials — client voices on the ink ground (featured pull-quote) ---- */
+.testimonials { background: var(--ink); color: var(--paper); border-bottom: 1px solid var(--ink); padding: 80px 24px; position: relative; overflow: hidden; }
+@media (min-width: 768px) { .testimonials { padding: 112px 64px; } }
+.tm-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+.tm-head h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; color: var(--paper); margin: 0; }
+.tm-head h2 .em { font-style: italic; color: var(--signal); }
+.tm-feature { position: relative; margin: 48px 0 0; padding: 44px 0 0; border-top: 1px solid var(--paper-50); }
+.tm-feature::before { content: "\201C"; position: absolute; top: 6px; left: -6px; font-family: var(--font-serif); font-size: 5rem; line-height: 1; color: var(--signal); opacity: 0.5; pointer-events: none; }
+.tm-quote { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.5rem, 3.2vw, 2.5rem); line-height: 1.28; color: var(--paper); margin: 0; max-width: 26ch; text-wrap: balance; }
+.tm-by { display: flex; flex-direction: column; gap: 5px; margin: 28px 0 0; }
+.tm-name { font: 600 0.9375rem var(--font-sans); color: var(--paper); }
+.tm-role { font: 500 0.75rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--signal); }
+.tm-more { list-style: none; display: grid; grid-template-columns: 1fr; gap: 0; margin: 48px 0 0; padding: 0; border-top: 1px solid var(--paper-50); }
+@media (min-width: 768px) { .tm-more { grid-template-columns: 1fr 1fr; } }
+.tm-item { padding: 36px 0; }
+@media (min-width: 768px) {
+  .tm-item { padding: 40px 40px 0 0; }
+  .tm-item + .tm-item { padding: 40px 0 0 40px; border-left: 1px solid rgba(240, 238, 233, 0.18); }
+}
+.tm-item blockquote { font: 400 1.0625rem/1.6 var(--font-sans); color: var(--paper-80); margin: 0 0 18px; }
+.tm-item figcaption { display: flex; flex-direction: column; gap: 4px; }
+/* Honest empty state on the ink ground — serif weight so it reads as voice, not a broken section. */
+.tm-empty { margin: 48px 0 0; padding: 44px 0 0; border-top: 1px solid var(--paper-50); max-width: 60ch; }
+.tm-empty-body { margin: 0 0 30px; font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.25rem, 2.4vw, 1.75rem); line-height: 1.34; color: var(--paper); text-wrap: balance; }
+.tm-empty-cta { display: inline-flex; align-items: center; gap: 8px; font: 600 0.75rem/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--signal); text-decoration: none; padding-bottom: 4px; border-bottom: 1px solid var(--signal); transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+.tm-empty-cta:hover { color: var(--paper); border-bottom-color: var(--paper); }
+
+/* ---- About ---- */
+.about-section { position: relative; border-bottom: 1px solid var(--ink); }
+/* body — story + principles on paper, beneath the ink stance */
+.about-body { padding: 80px 32px; }
+@media (min-width: 768px) { .about-body { padding: 112px 64px; } }
+.about-body .inner { max-width: 1100px; margin: 0 auto; }
+.about-lead h2 {
+  font-family: var(--font-serif); font-weight: 600;
+  font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; color: var(--ink);
+  margin: 0; max-width: 20ch; text-wrap: balance;
+}
+.about-lead h2 .em { display: block; font-style: italic; font-weight: 500; color: var(--ink-60); }
+.about-lead .lede { color: var(--ink-70); }
+.about-story { margin: 28px 0 0; font: 400 1.0625rem/1.75 var(--font-sans); color: var(--ink-80); max-width: 62ch; }
+.about-note { margin: 16px 0 0; font: 400 0.8125rem/1.6 var(--font-sans); color: var(--ink-70); max-width: 44rem; }
+
+.about-grid { margin-top: 56px; display: grid; grid-template-columns: 1fr; gap: 0; border: 1px solid var(--ink); }
+@media (min-width: 768px) { .about-grid { grid-template-columns: repeat(2, 1fr); } }
+.about-card { padding: 32px; border-right: 1px solid var(--ink-10); }
+.about-card:last-child { border-right: none; }
+@media (max-width: 767px) {
+  .about-card { border-right: none; border-bottom: 1px solid var(--ink-10); }
+  .about-card:last-child { border-bottom: none; }
+}
+.about-mark { display: block; width: 10px; height: 10px; background: var(--signal); margin-bottom: 18px; }
+.about-card h3 { font: 600 1.0625rem var(--font-sans); color: var(--ink); margin: 0 0 10px; }
+.about-card p { font: 400 0.9375rem/1.65 var(--font-sans); color: var(--ink-70); margin: 0; }
+
+/* ---- Contact ---- */
+.contact-inner { max-width: 48rem; margin: 0 auto; }
+.contact h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.875rem,4vw,3rem); line-height: 1.12; color: var(--ink); margin: 12px 0 12px; }
+.contact .sub { font-family: var(--font-serif); font-style: italic; font-size: 1.25rem; color: var(--ink-60); margin: 0 0 28px; }
+/* Human-presence reassurance — the adult-in-the-room note at the high-stakes moment. */
+.contact-reassure { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 40px; max-width: 46ch; font: 400 0.9375rem/1.6 var(--font-sans); color: var(--ink-70); }
+.contact-reassure-dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--signal); margin-top: 7px; }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 700px) { .form-grid.two { grid-template-columns: 1fr 1fr; } }
+.field-label { display: block; font: 600 0.6875rem var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-60); margin-bottom: 8px; }
+.contact textarea.field { resize: none; min-height: 130px; }
+/* Honeypot — kept in the DOM for bots, removed from everyone else's reality. */
+.honeypot { position: absolute !important; left: -9999px !important; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+.contact-success { border: 1px solid var(--signal); background: var(--signal-05); padding: 32px; text-align: center; }
+.contact-success:focus { outline: none; }
+.contact-success:focus-visible { outline: 2px solid var(--signal); outline-offset: 4px; }
+.contact-success .d { width: 12px; height: 12px; border-radius: 50%; background: var(--signal); margin: 0 auto 16px; }
+.contact-success h3 { font: 600 1.125rem var(--font-sans); color: var(--ink); margin: 0 0 8px; }
+.contact-success p { font: 400 0.875rem var(--font-sans); color: var(--ink-70); margin: 0; }
+.field-error { color: var(--danger); font: 400 0.75rem var(--font-sans); margin-top: 6px; }
+
+/* ---- Footer ---- */
+.site-footer { background: var(--ink); color: var(--paper); padding: 48px 32px; display: flex; flex-direction: column; gap: 24px; justify-content: space-between; align-items: flex-start; border-top: 4px solid var(--signal); }
+@media (min-width: 768px) { .site-footer { flex-direction: row; align-items: center; padding: 48px; } }
+.site-footer .f-logo { font-family: var(--font-serif); font-weight: 700; font-size: 1.875rem; letter-spacing: -0.01em; margin-bottom: 8px; }
+.site-footer .f-logo .dot { color: var(--signal); }
+.site-footer .f-tag { font: 400 0.75rem var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper-50); }
+.f-links { display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 768px) { .f-links { flex-direction: row; gap: 24px; } }
+.f-links a { font: 400 0.875rem var(--font-sans); color: var(--paper-70); text-decoration: none; transition: color var(--dur) var(--ease); }
+.f-links a:hover { color: var(--signal); }
+
+/* ---- Oversight badge (positioned) ---- */
+.ob-wrap { position: absolute; z-index: 20; transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease); }
+.ob-wrap.tr { top: 8px; right: 8px; } .ob-wrap.br { bottom: 8px; right: 8px; }
+.ob-wrap.hide { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+
+/* ---- Reveal & entrance: content is ALWAYS visible; motion is optional ---- */
+.reveal { }
+.hero-anim { }
+
+/* ---- Responsive ---- */
+@media (max-width: 767px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-copy { border-right: none; border-bottom: 1px solid var(--ink); padding: 40px 24px; }
+  .hero-prism { min-height: 50vh; }
+  .why-grid { grid-template-columns: 1fr; }
+  .why-card { border-right: none; border-bottom: 1px solid var(--ink-10); }
+  .site-nav { display: none; }
+  /* Compact header so the logo + CTA fit a phone without clipping. */
+  .site-header { padding: 14px 16px; gap: 12px; }
+  .header-right { gap: 10px; }
+  /* Primary CTA moves into the menu on phones so the top bar can't overflow. */
+  .header-cta { display: none; }
+
+  /* ---- Mobile nav toggle (hamburger -> X) ---- */
+  .nav-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex: none; width: 44px; height: 44px; padding: 0;
+    background: transparent; border: 1px solid var(--ink); cursor: pointer;
+    color: var(--ink); transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .nav-toggle:hover { background: var(--ink); color: var(--paper); }
+  .nav-toggle-bars { position: relative; display: block; width: 18px; height: 12px; }
+  .nav-toggle-bars span {
+    position: absolute; left: 0; width: 100%; height: 1.5px; background: currentColor;
+    transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+  }
+  .nav-toggle-bars span:nth-child(1) { top: 0; }
+  .nav-toggle-bars span:nth-child(2) { top: 5px; }
+  .nav-toggle-bars span:nth-child(3) { top: 10px; }
+  .nav-toggle-bars[data-open="true"] span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+  .nav-toggle-bars[data-open="true"] span:nth-child(2) { opacity: 0; }
+  .nav-toggle-bars[data-open="true"] span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+
+  /* ---- Mobile nav panel: drops from the fixed header, hairline-divided rows ---- */
+  .mobile-nav {
+    display: block; position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--paper); border-bottom: 1px solid var(--ink);
+    max-height: 0; overflow: hidden; opacity: 0; pointer-events: none;
+    transition: max-height var(--dur-slow) var(--ease-out), opacity var(--dur) var(--ease);
+  }
+  .mobile-nav[data-open="true"] { max-height: 80vh; overflow-y: auto; opacity: 1; pointer-events: auto; }
+  .mobile-nav a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 18px 20px; font: 500 1rem var(--font-sans); color: var(--ink);
+    text-decoration: none; border-top: 1px solid var(--ink-10);
+    transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .mobile-nav a:first-child { border-top: none; }
+  .mobile-nav a:hover, .mobile-nav a:active { background: var(--ink); color: var(--paper); }
+  /* Primary action, relocated from the top bar — full-bleed ink/signal button. */
+  .mobile-cta {
+    display: block; width: 100%; padding: 18px 20px;
+    background: var(--ink); color: var(--signal); border: none; cursor: pointer;
+    font: 600 0.75rem var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase;
+    text-align: left; border-top: 1px solid var(--ink);
+    transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .mobile-cta:hover, .mobile-cta:active { background: var(--signal); color: var(--ink); }
+}
+
+/* ============================================================================
+   EDITORIAL LAYER — magazine rhythm + scroll choreography.
+   Additive: every element ships fully visible. MotionLayer (GSAP) sets the
+   FROM state and animates to the visible end; with no JS / reduced motion the
+   defaults below are the final design. No layout property is animated in CSS.
+   ============================================================================ */
+
+/* --- Reading progress: a cobalt "load path" hairline at the top edge.
+   The compact stand-in for the spine on narrow viewports (< 1300px). --- */
+.read-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 55;
+  background: var(--signal); transform: scaleX(0); transform-origin: 0 50%;
+  pointer-events: none; will-change: transform;
+}
+@media (min-width: 1300px) { .read-progress { display: none; } }
+
+/* --- Load-path spine: the cobalt signal traced down the page by scroll.
+   A left-margin drafting rule that fills as you scroll, with a node per section
+   that ignites when reached, and a vertical mono label naming the current one.
+   Gated to wide viewports so it never collides with section content; neutrals
+   flip paper↔ink over dark sections (.on-dark) while cobalt stays cobalt. --- */
+.spine { display: none; }
+@media (min-width: 1300px) {
+  .spine { position: fixed; left: 24px; top: 108px; bottom: 32px; width: 40px; z-index: 40; pointer-events: none; display: block; }
+}
+.spine-rule { position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--ink-20); }
+.spine-fill { position: absolute; left: 0; top: 0; width: 1px; height: 0; background: var(--signal); }
+.spine-node {
+  position: absolute; left: -3px; top: 0; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--paper); border: 1px solid var(--ink-30); transform: translateY(-50%);
+  transition: background var(--dur-slow) var(--ease-out), border-color var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow) var(--ease-out);
+}
+.spine-node.reached { background: var(--signal); border-color: var(--signal); }
+.spine-node.active { transform: translateY(-50%) scale(1.5); box-shadow: 0 0 0 3px var(--signal-20); }
+.spine-label {
+  position: absolute; left: 14px; top: 0; writing-mode: vertical-rl; text-orientation: mixed;
+  font: 600 0.5625rem/1 var(--font-mono); letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-60); white-space: nowrap; transform: translateY(-50%);
+  transition: top var(--dur-reveal) var(--ease-out), color var(--dur-slow) var(--ease);
+}
+.spine.on-dark .spine-rule { background: var(--paper-20); }
+.spine.on-dark .spine-node { background: var(--ink); border-color: var(--paper-30); }
+.spine.on-dark .spine-node.reached { background: var(--signal); border-color: var(--signal); }
+.spine.on-dark .spine-label { color: var(--paper-60); }
+
+/* --- Hero scroll cue: a drafted tick with a cobalt run, "keep going" --- */
+.hero { position: relative; }
+.scroll-cue {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+  display: inline-flex; flex-direction: column; align-items: center; gap: 7px;
+  font: 600 0.5625rem/1 var(--font-mono); letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--ink-50); z-index: 6; pointer-events: none;
+}
+.scroll-cue .ln { width: 1px; height: 34px; background: var(--ink-20); position: relative; overflow: hidden; }
+.scroll-cue .ln::after {
+  content: ""; position: absolute; inset: 0 auto auto 0; width: 1px; height: 45%;
+  background: var(--signal); animation: cue-run 1.9s var(--ease-out) infinite;
+}
+@keyframes cue-run { 0% { transform: translateY(-100%); } 100% { transform: translateY(322%); } }
+@media (max-width: 767px) { .scroll-cue { display: none; } }
+
+/* --- Editorial section head: asymmetric two-column masthead (heading | lede),
+   bottom-aligned like a magazine spread. --- */
+@media (min-width: 900px) {
+  .section-head--editorial {
+    display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    column-gap: 64px; align-items: end;
+  }
+  .section-head--editorial h2 { margin: 0; font-size: clamp(2.25rem, 4.6vw, 3.5rem); }
+  .section-head--editorial .lede { margin: 0 0 6px; align-self: end; }
+}
+
+/* --- Centered section head: the variety beat (used on Process) --- */
+.section-head--center { text-align: center; }
+.section-head--center .lede { margin-left: auto; margin-right: auto; }
+
+/* --- About stance: the folded pull-moment. A drenched ink spread; one drafted
+   statement that opens the About section. Pinned + scrubbed on desktop
+   (MotionLayer); fully legible everywhere else. --- */
+.about-stance { position: relative; background: var(--ink); color: var(--paper); border-bottom: 1px solid var(--ink); overflow: hidden; }
+.about-stance .grid-overlay { position: absolute; inset: 0; opacity: 0.05; }
+/* paper drafting grid over the ink ground (the ink-line bg-grid is invisible here) */
+.about-stance .grid-overlay.bg-grid {
+  background-image:
+    linear-gradient(rgba(240, 238, 233, 1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 238, 233, 1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.about-stance-inner { position: relative; max-width: 1100px; margin: 0 auto; padding: 104px 32px; }
+@media (min-width: 768px) { .about-stance-inner { padding: 152px 64px; } }
+/* Pinned set-piece: fill the viewport and centre so the held reveal sits mid-screen. */
+@media (min-width: 1000px) {
+  .about-stance { min-height: 100vh; display: flex; align-items: center; }
+  .about-stance-inner { padding-top: 0; padding-bottom: 0; }
+}
+.about-stance .stmt {
+  font-family: var(--font-serif); font-weight: 600;
+  font-size: clamp(2.25rem, 6vw, 5rem); line-height: 1.07; letter-spacing: -0.02em;
+  color: var(--paper); margin: 0; max-width: 16ch; text-wrap: balance;
+}
+.about-stance .stmt .em { font-style: italic; color: var(--signal); }
+.about-stance .by { margin: 40px 0 0; font: 400 1.0625rem/1.65 var(--font-sans); color: var(--paper-60); max-width: 40rem; }
+.about-stance .rule { height: 1px; background: var(--signal); margin: 48px 0 0; transform-origin: 0 50%; }
+
+/* --- Process: a continuous drafted measure drawn across the four steps.
+   The wrapper carries the 56px top gap; the cobalt rule overlays the steps'
+   shared top border and is drawn left-to-right on scroll. --- */
+.process-grid-wrap { position: relative; margin-top: 56px; }
+.process-rule {
+  position: absolute; left: 0; top: 0; height: 1px; width: 100%;
+  background: var(--signal); transform: scaleX(0); transform-origin: 0 50%;
+  pointer-events: none; z-index: 1;
+}
+@media (max-width: 639px) { .process-rule { display: none; } }
+
+/* ---- Cookie consent: a drafting note pinned bottom-right ---- */
+.cookie { position: fixed; right: clamp(16px, 3vw, 32px); bottom: clamp(16px, 3vw, 32px); z-index: 60; max-width: 380px; background: var(--paper); border: 1px solid var(--ink); color: var(--ink); box-shadow: 0 1px 0 var(--ink); animation: cookie-in 0.45s var(--ease-out) both; }
+.cookie-inner { padding: 22px 22px 20px; }
+.cookie-kicker { margin: 0 0 10px; display: inline-flex; align-items: center; gap: 10px; font: 600 0.625rem/1 var(--font-mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--signal-ink); }
+.cookie-kicker::before { content: ""; width: 24px; height: 1px; background: var(--signal); }
+.cookie-msg { margin: 0 0 18px; font: 400 0.875rem/1.55 var(--font-sans); color: var(--ink-80); }
+.cookie-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.cookie-btn { font: 600 0.75rem/1 var(--font-sans); letter-spacing: 0.04em; padding: 11px 16px; border: 1px solid var(--ink); cursor: pointer; transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+.cookie-btn--primary { background: var(--ink); color: var(--paper); }
+.cookie-btn--primary:hover { background: var(--signal); color: var(--ink); border-color: var(--signal); }
+.cookie-btn--ghost { background: transparent; color: var(--ink); }
+.cookie-btn--ghost:hover { background: var(--ink); color: var(--paper); }
+.cookie-btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+@keyframes cookie-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (max-width: 480px) { .cookie { left: 12px; right: 12px; bottom: 12px; max-width: none; } }
+
+/* ============================================================================
+   UMBRACO PAGE — the one surface that flies Umbraco's own colours. Tokens are
+   scoped here so they never leak into the house ink/paper/cobalt system.
+   Umbraco blue #214BAF (official); navy + teal derived for drenched bands.
+   ============================================================================ */
+.umbraco-page {
+  --umb-blue: #214BAF;
+  --umb-blue-bright: #5A82EE;
+  --umb-navy: #0E1840;
+  --umb-navy-deep: #0A1230;
+  --umb-teal: #33BBD0;
+}
+
+/* shared drenched-band grid + heads */
+.umb-grid {
+  position: absolute; inset: -12% 0; pointer-events: none; opacity: 0.06; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  will-change: transform;
+}
+.umb-hero-inner, .umb-why .inner, .umb-cta-inner { position: relative; z-index: 1; }
+.umb-hero-figure { overflow: hidden; }
+.umb-eyebrow { display: inline-flex; align-items: center; gap: 12px; margin: 0 0 16px; font: 600 0.6875rem/1 var(--font-mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--umb-blue); }
+.umb-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--umb-blue); }
+.umb-eyebrow--teal { color: var(--umb-teal); }
+.umb-eyebrow--teal::before { background: var(--umb-teal); }
+.umb-head h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; color: var(--ink); margin: 0; max-width: 20ch; text-wrap: balance; }
+.umb-head--on-dark h2 { color: var(--paper); }
+/* the name "Umbraco" wears the brand blue in every heading */
+.umb-word { color: var(--umb-blue); font-style: normal; }
+.umb-head--on-dark .umb-word, .umb-cta .umb-word { color: var(--umb-blue-bright); }
+.umb-lead { margin: 18px 0 0; max-width: 46rem; font: 400 1.0625rem/1.7 var(--font-sans); color: var(--ink-70); }
+
+/* button (Umbraco blue) */
+.umb-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--umb-blue); color: #fff; border: 1px solid var(--umb-blue); padding: 15px 26px; font: 600 0.8125rem/1 var(--font-sans); letter-spacing: 0.04em; text-decoration: none; transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+.umb-btn:hover { background: #fff; color: var(--umb-navy); border-color: #fff; }
+.umb-btn svg { transition: transform var(--dur) var(--ease-out); }
+.umb-btn:hover svg { transform: translateX(4px); }
+.umb-btn--lg { padding: 17px 30px; font-size: 0.875rem; }
+
+/* hero — drenched Umbraco navy */
+.umb-hero { position: relative; overflow: hidden; background: var(--umb-navy); color: var(--paper); border-bottom: 1px solid var(--umb-navy-deep); padding: clamp(72px, 12vh, 132px) clamp(24px, 6vw, 88px) clamp(64px, 9vh, 104px); }
+.umb-hero-inner { position: relative; max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: clamp(40px, 5vw, 72px); align-items: center; }
+@media (min-width: 900px) { .umb-hero-inner { grid-template-columns: 1.02fr 0.98fr; } }
+.umb-hero-copy { min-width: 0; }
+.umb-logo-mark { display: block; color: var(--umb-blue-bright); margin: 0 0 24px; }
+
+/* framed editor screenshot */
+.umb-hero-figure { margin: 0; min-width: 0; }
+.umb-shot { display: block; width: 100%; height: auto; border: 1px solid rgba(255, 255, 255, 0.18); }
+.umb-shot-cap { margin: 14px 0 0; font: 400 0.75rem/1.5 var(--font-mono); letter-spacing: 0.04em; color: rgba(255, 255, 255, 0.55); }
+.umb-hero-h1 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(2.5rem, 5.5vw, 4.5rem); line-height: 1.08; letter-spacing: -0.02em; margin: 0; max-width: 18ch; text-wrap: balance; color: var(--paper); }
+.umb-brand { color: var(--umb-blue-bright); }
+.umb-dot { color: var(--umb-teal); }
+.umb-hero-sub { margin: 28px 0 0; max-width: 46rem; font: 400 1.125rem/1.65 var(--font-sans); color: rgba(255, 255, 255, 0.78); }
+.umb-hero-row { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px; margin-top: 40px; }
+.umb-stat { margin: 0; display: flex; flex-direction: column; gap: 3px; }
+.umb-stat-n { font: 700 1.5rem/1 var(--font-mono); color: var(--umb-teal); }
+.umb-stat-l { font: 400 0.8125rem var(--font-sans); color: rgba(255, 255, 255, 0.6); }
+
+/* what — plain explainer, hairline-divided points */
+.umb-points { margin-top: 56px; display: grid; grid-template-columns: 1fr; gap: 0; border: 1px solid var(--ink); }
+@media (min-width: 768px) { .umb-points { grid-template-columns: repeat(3, 1fr); } }
+.umb-point { padding: 32px; border-right: 1px solid var(--ink-10); }
+.umb-point:last-child { border-right: none; }
+@media (max-width: 767px) { .umb-point { border-right: none; border-bottom: 1px solid var(--ink-10); } .umb-point:last-child { border-bottom: none; } }
+.umb-mark { display: block; width: 10px; height: 10px; background: var(--umb-blue); margin-bottom: 18px; }
+.umb-mark--teal { background: var(--umb-teal); }
+.umb-point h3 { font: 600 1.0625rem var(--font-sans); color: var(--ink); margin: 0 0 10px; }
+.umb-point p { font: 400 0.9375rem/1.65 var(--font-sans); color: var(--ink-70); margin: 0; }
+
+/* users — real case-study brands as wordmarks, Umbraco blue */
+.umb-logos { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--ink-10); border: 1px solid var(--ink-10); }
+@media (min-width: 560px) { .umb-logos { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 900px) { .umb-logos { grid-template-columns: repeat(5, 1fr); } }
+.umb-logo { background: var(--paper); display: flex; align-items: center; justify-content: center; text-align: center; padding: 28px 16px; min-height: 92px; }
+.umb-logo-img { max-height: 38px; max-width: 80%; width: auto; height: auto; object-fit: contain; filter: grayscale(1); opacity: 0.7; transition: filter var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease); }
+.umb-logo:hover .umb-logo-img { filter: grayscale(0); opacity: 1; }
+.umb-logo-name { font: 600 1.0625rem/1.2 var(--font-serif); letter-spacing: -0.01em; color: var(--umb-blue); }
+.umb-source { margin: 18px 0 0; font: 400 0.75rem/1.5 var(--font-sans); color: var(--ink-70); }
+
+/* why — drenched navy, hairline grid */
+.umb-why { position: relative; overflow: hidden; background: var(--umb-navy); color: var(--paper); padding: clamp(72px, 10vh, 112px) clamp(24px, 6vw, 64px); border-top: 1px solid var(--umb-navy-deep); border-bottom: 1px solid var(--umb-navy-deep); }
+.umb-why .inner { position: relative; max-width: 1100px; margin: 0 auto; }
+.umb-why-grid { margin-top: 48px; display: grid; grid-template-columns: 1fr; gap: 1px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.12); }
+@media (min-width: 600px) { .umb-why-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .umb-why-grid { grid-template-columns: repeat(3, 1fr); } }
+.umb-why-item { background: var(--umb-navy); padding: 30px; }
+.umb-why-item h3 { font: 600 1.0625rem var(--font-sans); color: var(--paper); margin: 0 0 10px; }
+.umb-why-item p { font: 400 0.9375rem/1.6 var(--font-sans); color: rgba(255, 255, 255, 0.7); margin: 0; }
+
+/* migration — a real numbered sequence */
+.umb-steps { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--ink-10); }
+@media (min-width: 768px) { .umb-steps { grid-template-columns: repeat(3, 1fr); border-top: none; } }
+.umb-step { padding: 28px 0; border-bottom: 1px solid var(--ink-10); }
+@media (min-width: 768px) { .umb-step { border-bottom: none; border-right: 1px solid var(--ink-10); padding: 8px 32px 0 0; } .umb-step:last-child { border-right: none; } }
+.umb-step-n { display: block; font: 700 clamp(1.75rem, 3vw, 2.25rem)/1 var(--font-mono); color: var(--umb-blue); margin-bottom: 16px; }
+.umb-step h3 { font: 600 1.0625rem var(--font-sans); color: var(--ink); margin: 0 0 8px; }
+.umb-step p { font: 400 0.9375rem/1.6 var(--font-sans); color: var(--ink-70); margin: 0; }
+
+/* cta — closing drenched band */
+.umb-cta { position: relative; overflow: hidden; background: var(--umb-navy-deep); color: var(--paper); padding: clamp(72px, 11vh, 120px) clamp(24px, 6vw, 64px); text-align: center; }
+.umb-cta-inner { position: relative; max-width: 760px; margin: 0 auto; }
+.umb-cta-h2 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(2rem, 4.4vw, 3.25rem); line-height: 1.1; color: var(--paper); margin: 0; text-wrap: balance; }
+.umb-cta-text { margin: 18px auto 32px; max-width: 42rem; font: 400 1.0625rem/1.65 var(--font-sans); color: rgba(255, 255, 255, 0.75); }
+.umb-cta .umb-btn--lg { background: var(--umb-blue-bright); border-color: var(--umb-blue-bright); }
+.umb-cta .umb-btn--lg:hover { background: #fff; color: var(--umb-navy); border-color: #fff; }
+
+/* comparison → umbraco page link (homepage + umbraco) */
+.cmp-more { display: inline-flex; align-items: center; gap: 8px; margin-top: 32px; font: 600 0.8125rem/1 var(--font-sans); letter-spacing: 0.04em; color: var(--signal-ink); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color var(--dur) var(--ease); }
+.cmp-more:hover { border-color: var(--signal-ink); }
+.cmp-more svg { transition: transform var(--dur) var(--ease-out); }
+.cmp-more:hover svg { transform: translateX(4px); }
+
+/* ---- Parallax depth: a faint drafting grid behind the ink bands. Overscanned
+   vertically so its scroll-drift never exposes an edge; sits behind content. ---- */
+.depth-grid {
+  position: absolute; inset: -12% 0; pointer-events: none; z-index: 0; opacity: 0.05;
+  background-image:
+    linear-gradient(rgba(240, 238, 233, 1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 238, 233, 1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  will-change: transform;
+}
+.services-bp-inner, .tm-inner { position: relative; z-index: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+}

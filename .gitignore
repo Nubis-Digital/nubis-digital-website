@@ -1,0 +1,32 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# cloudflare / vercel build output
+/.vercel
+/.wrangler
+
+# env — NEVER commit secrets
+.env
+.env.local
+.env*.local
+
+# misc
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+.playwright-mcp/
+
+# design-sync
+.ds-sync/
+ds-bundle/
+dist/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+
+# code intelligence index
+.codegraph/
