@@ -38,6 +38,8 @@ jobs:
           # Where contact-form leads go. Set these as repository variables.
           NEXT_PUBLIC_LEAD_ENDPOINT: ${{ vars.NEXT_PUBLIC_LEAD_ENDPOINT }}
           NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
+          # Cloudflare Web Analytics site token (cookieless). Unset = no analytics.
+          NEXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ vars.NEXT_PUBLIC_CF_ANALYTICS_TOKEN }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
@@ -55,3 +57,18 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      # IndexNow: tell Bing (and Yandex, Seznam, Naver…) every published URL
+      # changed, so they recrawl now instead of whenever. The key is public by
+      # design — it must be served at /1d67c71b3cd90ef372a51a2cc9558e1f.txt (public/).
+      - name: Ping IndexNow
+        continue-on-error: true
+        env:
+          INDEXNOW_KEY: 1d67c71b3cd90ef372a51a2cc9558e1f
+        run: |
+          sleep 30
+          urls=$(curl -fsS https://www.nubisdigital.com/sitemap.xml | grep -oE '<loc>[^<]+</loc>' | sed -E 's#</?loc>##g' | jq -R . | jq -sc .)
+          echo "Submitting: $urls"
+          curl -fsS -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"www.nubisdigital.com\",\"key\":\"$INDEXNOW_KEY\",\"keyLocation\":\"https://www.nubisdigital.com/$INDEXNOW_KEY.txt\",\"urlList\":$urls}" \
+            -w 'IndexNow HTTP %{http_code}\n'
