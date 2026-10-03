@@ -40,6 +40,7 @@ export const content = {
       { label: 'Work', href: '/#projects' },
       { label: 'About', href: '/#about' },
       { label: 'Umbraco', href: '/umbraco' },
+      { label: 'Free AI check', href: '/ai-visibility-check' },
     ],
     cta: 'Get in touch',
   },
@@ -257,8 +258,8 @@ export const content = {
           'We put your new site live, then keep an eye on how AI assistants and customers use it — and keep improving it over time.',
       },
     ] as ProcessStep[],
-    cta: 'Start with a site check',
-    ctaUrl: '#contact',
+    cta: 'Start with a free site check',
+    ctaUrl: '/ai-visibility-check',
   },
   about: {
     label: 'About Nubis',
@@ -326,7 +327,10 @@ export const content = {
     logoText: 'Nubis',
     logoAccent: '.',
     tagline: 'Helping businesses win with AI',
-    pageLinks: [{ label: 'Umbraco', href: '/umbraco' }],
+    pageLinks: [
+      { label: 'Free AI check', href: '/ai-visibility-check' },
+      { label: 'Umbraco', href: '/umbraco' },
+    ],
     // Built for AI first: the machine-readable versions of this site, in plain view.
     aiLabel: 'For AI assistants',
     aiLinks: [
@@ -334,6 +338,52 @@ export const content = {
       { label: 'Markdown', href: '/index.md' },
       { label: 'Sitemap', href: '/sitemap.xml' },
     ],
+  },
+  aiCheck: {
+    hero: {
+      kicker: 'Free AI visibility check',
+      headline: 'Does ChatGPT recommend your business?',
+      sub: 'Most businesses have no idea what AI assistants say about them — or whether they get mentioned at all. We check for you, free, and tell you in plain English what to fix first.',
+      cta: 'Request your free check',
+      ctaUrl: '/#contact',
+      note: 'No cost, no obligation. A real person does the check.',
+    },
+    checks: {
+      headline: 'What we check',
+      lead: 'We look at your business the way an AI assistant does — from the outside, using the same questions your customers ask.',
+      items: [
+        { title: 'What AI says about you', text: 'We ask ChatGPT, Perplexity, Google’s AI answers and Copilot the questions your customers ask, and note whether you come up — and what they get wrong.' },
+        { title: 'Who gets recommended instead', text: 'When it isn’t you, we note which competitors get named, so you can see what they have that you don’t.' },
+        { title: 'Whether AI can read your site', text: 'Some sites block AI tools without knowing it, or hide their content where assistants can’t see it. We check both.' },
+        { title: 'How clearly you describe yourself', text: 'What you do, who you serve and where — AI only recommends what it can understand. Vague pages get skipped.' },
+        { title: 'Where else you show up', text: 'Assistants trust what other sites say about you: listings, reviews, directories. We check the ones that matter for your field.' },
+        { title: 'Speed and basics', text: 'Slow, broken or insecure pages lose both visitors and AI trust. We flag anything that needs fixing.' },
+      ],
+    },
+    steps: {
+      headline: 'How it works',
+      lead: 'Three steps, and the first one takes you about a minute.',
+      items: [
+        { n: '01', title: 'Tell us your website', text: 'Send your site address and the kind of customers you want — through the form, or by email.' },
+        { n: '02', title: 'We run the check', text: 'We test what AI assistants say about you and review your site by hand. No automated scan dressed up as a report.' },
+        { n: '03', title: 'You get a short, plain report', text: 'What we found, and the few fixes that will matter most — ranked, in plain English. Yours to keep, whether or not you work with us.' },
+      ],
+    },
+    faq: {
+      headline: 'Questions people ask',
+      items: [
+        { q: 'Is the check really free?', a: 'Yes. It costs nothing and you don’t have to buy anything afterwards. It’s how we start every relationship: by showing you something useful first.' },
+        { q: 'What do I need to send?', a: 'Just your website address and a sentence about who your customers are. No logins, no access to your site.' },
+        { q: 'Why does it matter what ChatGPT says?', a: 'More and more people ask an AI assistant which business to use instead of scrolling search results. If the assistant doesn’t know you, you’re not on the shortlist.' },
+        { q: 'Can I fix things myself afterwards?', a: 'Often, yes. The report is written so you or your current web team can act on it. If you’d rather we do it, we can talk about that.' },
+      ],
+    },
+    cta: {
+      headline: 'Find out what AI says about you.',
+      text: 'Tell us your website and who you want to reach. We’ll do the rest and get back to you within 24 hours.',
+      button: 'Request your free check',
+      buttonUrl: '/#contact',
+    },
   },
   umbraco: {
     hero: {

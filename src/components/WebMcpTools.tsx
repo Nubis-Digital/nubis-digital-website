@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 
 import { content } from '@/data/content'
-import { homeMarkdown, llmsTxt, umbracoMarkdown } from '@/data/machineReadable'
+import { aiCheckMarkdown, homeMarkdown, llmsTxt, umbracoMarkdown } from '@/data/machineReadable'
 
 /**
  * WebMCP: exposes the site to an in-browser AI agent as callable tools
@@ -59,10 +59,10 @@ export function createWebMcpTools(): WebMcpTool[] {
     },
     {
       name: 'get_page_content',
-      description: 'The full text of a Nubis Digital page as Markdown: "home" (services, process, about) or "umbraco" (the platform Nubis builds on).',
-      inputSchema: { type: 'object', properties: { page: { type: 'string', enum: ['home', 'umbraco'] } }, required: ['page'] },
+      description: 'The full text of a Nubis Digital page as Markdown: "home" (services, process, about), "ai-visibility-check" (the free check of what AI assistants say about a business) or "umbraco" (the platform Nubis builds on).',
+      inputSchema: { type: 'object', properties: { page: { type: 'string', enum: ['home', 'ai-visibility-check', 'umbraco'] } }, required: ['page'] },
       annotations: { readOnlyHint: true },
-      execute: async ({ page }) => text(page === 'umbraco' ? umbracoMarkdown() : homeMarkdown()),
+      execute: async ({ page }) => text(page === 'umbraco' ? umbracoMarkdown() : page === 'ai-visibility-check' ? aiCheckMarkdown() : homeMarkdown()),
     },
     {
       name: 'list_services',

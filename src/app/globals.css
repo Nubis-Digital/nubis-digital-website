@@ -1298,3 +1298,49 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
 }
+
+/* ---- Free AI visibility check (/ai-visibility-check) — house ink/paper/signal ---- */
+.chk-hero { background: var(--ink); color: var(--paper); border-bottom: 1px solid var(--ink); padding: clamp(112px, 16vh, 168px) clamp(16px, 6vw, 88px) clamp(64px, 9vh, 104px); }
+.chk-hero-inner { max-width: 1100px; margin: 0 auto; }
+.chk-kicker { margin: 0 0 20px; font: 600 0.75rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--signal); }
+.chk-hero-h1 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(2.5rem, 6vw, 4.75rem); line-height: 1.06; letter-spacing: -0.02em; margin: 0; max-width: 16ch; text-wrap: balance; color: var(--paper); }
+.chk-hero-sub { margin: 24px 0 36px; max-width: 40rem; font: 400 1.125rem/1.65 var(--font-sans); color: var(--paper-80); }
+.chk-hero .btn-primary { background: var(--signal); color: var(--ink); }
+.chk-hero .btn-primary:hover { background: var(--paper); color: var(--ink); }
+.chk-btn svg { transition: transform var(--dur) var(--ease-out); }
+.chk-btn:hover svg { transform: translateX(4px); }
+.chk-note { margin: 18px 0 0; font: 400 0.875rem/1.5 var(--font-sans); color: var(--paper-70); }
+
+.chk-head h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12; color: var(--ink); margin: 0; max-width: 20ch; text-wrap: balance; }
+.chk-lead { margin: 18px 0 0; max-width: 46rem; font: 400 1.0625rem/1.7 var(--font-sans); color: var(--ink-70); }
+
+.chk-grid { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: 1fr; border: 1px solid var(--ink); }
+@media (min-width: 768px) { .chk-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .chk-grid { grid-template-columns: repeat(3, 1fr); } }
+.chk-item { padding: 32px; border-bottom: 1px solid var(--ink-10); }
+@media (min-width: 768px) { .chk-item { border-right: 1px solid var(--ink-10); } }
+.chk-mark { display: block; width: 10px; height: 10px; background: var(--signal); margin-bottom: 18px; }
+.chk-item h3 { font: 600 1.0625rem var(--font-sans); color: var(--ink); margin: 0 0 10px; }
+.chk-item p { font: 400 0.9375rem/1.65 var(--font-sans); color: var(--ink-70); margin: 0; }
+
+.chk-steps { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--ink-10); }
+@media (min-width: 768px) { .chk-steps { grid-template-columns: repeat(3, 1fr); border-top: none; } }
+.chk-step { padding: 28px 0; border-bottom: 1px solid var(--ink-10); }
+@media (min-width: 768px) { .chk-step { border-bottom: none; border-right: 1px solid var(--ink-10); padding: 8px 32px 0 0; } .chk-step:not(:first-child) { padding-left: 32px; } .chk-step:last-child { border-right: none; } }
+.chk-step-n { display: block; font: 700 clamp(1.75rem, 3vw, 2.25rem)/1 var(--font-mono); color: var(--signal-ink); margin-bottom: 16px; }
+.chk-step h3 { font: 600 1.0625rem var(--font-sans); color: var(--ink); margin: 0 0 8px; }
+.chk-step p { font: 400 0.9375rem/1.6 var(--font-sans); color: var(--ink-70); margin: 0; }
+
+.chk-faq-list { margin: 48px 0 0; border-top: 1px solid var(--ink); }
+.chk-faq-item { padding: 28px 0; border-bottom: 1px solid var(--ink-10); display: grid; gap: 10px; }
+@media (min-width: 768px) { .chk-faq-item { grid-template-columns: 2fr 3fr; gap: 48px; } }
+.chk-faq-item dt { font: 600 1.0625rem/1.4 var(--font-sans); color: var(--ink); }
+.chk-faq-item dd { margin: 0; font: 400 1rem/1.65 var(--font-sans); color: var(--ink-70); }
+
+.chk-cta { background: var(--ink); color: var(--paper); padding: clamp(72px, 11vh, 120px) clamp(16px, 6vw, 64px); text-align: center; }
+.chk-cta-inner { max-width: 760px; margin: 0 auto; }
+.chk-cta-h2 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(2rem, 4.4vw, 3.25rem); line-height: 1.1; color: var(--paper); margin: 0; text-wrap: balance; }
+.chk-cta-text { margin: 18px auto 32px; max-width: 42rem; font: 400 1.0625rem/1.65 var(--font-sans); color: var(--paper-80); }
+.chk-cta .btn-primary { background: var(--signal); color: var(--ink); }
+.chk-cta .btn-primary:hover { background: var(--paper); color: var(--ink); }
+
