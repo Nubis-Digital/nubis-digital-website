@@ -31,6 +31,7 @@ npm run build && npx serve out   # http://localhost:3000
 |----------|---------|
 | `NEXT_PUBLIC_LEAD_ENDPOINT` | URL the contact form POSTs leads to (e.g. a SendGrid-backed edge function) |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Fallback: the form opens a pre-filled email to this address when no endpoint is set |
+| `NEXT_PUBLIC_CF_ANALYTICS_TOKEN` | Cloudflare Web Analytics site token (cookieless visit counts). Unset = no analytics |
 
 With neither set, the form shows "being set up". Set with
 `gh variable set NAME --body "value"`, then re-run the workflow.

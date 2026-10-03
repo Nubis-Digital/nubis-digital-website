@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 
+import { Analytics } from '@/components/Analytics';
 import { WebMcpTools } from '@/components/WebMcpTools';
 import { SITE_NAME, SITE_URL, jsonLdScript, siteJsonLd } from '@/data/machineReadable';
 
@@ -46,6 +47,7 @@ export default function RootLayout({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd()) }} />
         {children}
         <WebMcpTools />
+        <Analytics />
       </body>
     </html>
   );
