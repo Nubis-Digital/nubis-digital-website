@@ -4,7 +4,7 @@ import { buildMailtoHref } from '@/components/ContactSection'
 import { createWebMcpTools } from '@/components/WebMcpTools'
 
 import { content } from './content'
-import { homeMarkdown, jsonLdScript, llmsTxt, securityTxt, siteJsonLd, umbracoMarkdown } from './machineReadable'
+import { aiCheckJsonLd, aiCheckMarkdown, homeMarkdown, jsonLdScript, llmsTxt, securityTxt, siteJsonLd, umbracoMarkdown } from './machineReadable'
 
 describe('machine-readable site', () => {
   it('llms.txt links every Markdown page and names every service', () => {
@@ -12,6 +12,7 @@ describe('machine-readable site', () => {
     expect(txt.startsWith('# Nubis Digital\n\n> ')).toBe(true)
     expect(txt).toContain('/index.md')
     expect(txt).toContain('/umbraco.md')
+    expect(txt).toContain('/ai-visibility-check.md')
     content.services.packages.forEach((item) => expect(txt).toContain(item.title))
   })
 
@@ -19,12 +20,20 @@ describe('machine-readable site', () => {
     expect(homeMarkdown()).toContain(content.hero.bodyText)
     content.process.steps.forEach((step) => expect(homeMarkdown()).toContain(step.title))
     expect(umbracoMarkdown()).toContain(content.umbraco.hero.sub)
+    expect(aiCheckMarkdown()).toContain(content.aiCheck.hero.headline)
+    content.aiCheck.faq.items.forEach((item) => expect(aiCheckMarkdown()).toContain(item.a))
   })
 
   it('JSON-LD lists the services and cannot break out of its script tag', () => {
     const graph = siteJsonLd()['@graph'][0] as { hasOfferCatalog: { itemListElement: unknown[] } }
     expect(graph.hasOfferCatalog.itemListElement).toHaveLength(content.services.packages.length)
     expect(jsonLdScript({ x: '</script><script>alert(1)</script>' })).not.toContain('</script>')
+  })
+
+  it('the free check page publishes its FAQ as FAQPage JSON-LD, word for word', () => {
+    const faq = aiCheckJsonLd()['@graph'].find((node) => node['@type'] === 'FAQPage') as { mainEntity: { name: string; acceptedAnswer: { text: string } }[] }
+    expect(faq.mainEntity.map((q) => q.name)).toEqual(content.aiCheck.faq.items.map((item) => item.q))
+    expect(faq.mainEntity.map((q) => q.acceptedAnswer.text)).toEqual(content.aiCheck.faq.items.map((item) => item.a))
   })
 })
 
@@ -60,7 +69,7 @@ describe('AI-first discovery', () => {
   it('the sitemap lists the machine-readable twins next to the HTML', async () => {
     const { default: sitemap } = await import('@/app/sitemap')
     const urls = sitemap().map((entry) => entry.url)
-    ;['/', '/umbraco', '/llms.txt', '/llms-full.txt', '/index.md', '/umbraco.md'].forEach((path) => expect(urls).toContain(`https://www.nubisdigital.com${path}`))
+    ;['/', '/ai-visibility-check', '/umbraco', '/llms.txt', '/llms-full.txt', '/index.md', '/ai-visibility-check.md', '/umbraco.md'].forEach((path) => expect(urls).toContain(`https://www.nubisdigital.com${path}`))
     sitemap().forEach((entry) => expect(entry.lastModified).toBeInstanceOf(Date))
   })
 })

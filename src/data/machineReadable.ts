@@ -10,7 +10,7 @@ export const SITE_NAME = 'Nubis Digital'
 export const CONTACT_EMAIL = 'contact@nubisdigital.com'
 export const LOGO_URL = `${SITE_URL}/assets/icon-512.png`
 
-const { hero, whyAgentic, services, process, about, projects, contact, umbraco, footer } = content
+const { hero, whyAgentic, services, process, about, projects, contact, umbraco, aiCheck, footer } = content
 
 const bullets = (items: readonly { title: string; description?: string; text?: string }[]) =>
   items.map((item) => `- **${item.title}** — ${item.description ?? item.text ?? ''}`).join('\n')
@@ -38,10 +38,12 @@ export const AI_CRAWLERS = [
 /** Every URL the site publishes, human and machine-readable, in sitemap order. */
 export const SITE_URLS = [
   { path: '/', priority: 1, changeFrequency: 'weekly' },
+  { path: '/ai-visibility-check', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/umbraco', priority: 0.8, changeFrequency: 'monthly' },
   { path: '/llms.txt', priority: 0.9, changeFrequency: 'weekly' },
   { path: '/llms-full.txt', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/index.md', priority: 0.7, changeFrequency: 'weekly' },
+  { path: '/ai-visibility-check.md', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/umbraco.md', priority: 0.6, changeFrequency: 'monthly' },
 ] as const
 
@@ -61,6 +63,7 @@ Canonical: ${SITE_URL}/.well-known/security.txt
 
 export const MARKDOWN_PAGES = [
   { path: '/index.md', htmlPath: '/', title: `${SITE_NAME} — ${hero.headlinePart1} ${hero.headlineEmphasis}` },
+  { path: '/ai-visibility-check.md', htmlPath: '/ai-visibility-check', title: `${aiCheck.hero.kicker} | ${SITE_NAME}` },
   { path: '/umbraco.md', htmlPath: '/umbraco', title: `Umbraco — the platform we build on | ${SITE_NAME}` },
 ] as const
 
@@ -152,6 +155,35 @@ ${umbraco.cta.text} ${SITE_URL}/#contact
 `
 }
 
+export function aiCheckMarkdown(): string {
+  return `# ${aiCheck.hero.kicker}: ${aiCheck.hero.headline}
+
+> ${aiCheck.hero.sub}
+
+Canonical page: ${SITE_URL}/ai-visibility-check
+
+${aiCheck.hero.note}
+
+## ${aiCheck.checks.headline}
+
+${aiCheck.checks.lead}
+
+${bullets(aiCheck.checks.items)}
+
+## ${aiCheck.steps.headline}
+
+${aiCheck.steps.items.map((step) => `${Number(step.n)}. **${step.title}** — ${step.text}`).join('\n')}
+
+## ${aiCheck.faq.headline}
+
+${aiCheck.faq.items.map((item) => `### ${item.q}\n\n${item.a}`).join('\n\n')}
+
+## ${aiCheck.cta.headline}
+
+${aiCheck.cta.text} ${SITE_URL}/#contact
+`
+}
+
 export function llmsTxt(): string {
   return `# ${SITE_NAME}
 
@@ -162,6 +194,7 @@ ${SITE_NAME} rebuilds business websites so AI assistants can find, understand an
 ## Pages
 
 - [Home](${SITE_URL}/index.md): what we do, how it works, and how to start
+- [Free AI visibility check](${SITE_URL}/ai-visibility-check.md): what AI assistants say about a business, checked free by hand
 - [Umbraco](${SITE_URL}/umbraco.md): the open, secure platform we build on, in plain terms
 
 ## Services
@@ -180,7 +213,7 @@ ${services.packages.map((item) => `- ${item.title}: ${item.description}`).join('
 }
 
 export function llmsFullTxt(): string {
-  return `${homeMarkdown()}\n---\n\n${umbracoMarkdown()}`
+  return `${homeMarkdown()}\n---\n\n${aiCheckMarkdown()}\n---\n\n${umbracoMarkdown()}`
 }
 
 const organizationId = `${SITE_URL}/#organization`
@@ -228,6 +261,36 @@ export function homeJsonLd() {
     '@type': 'HowTo',
     name: `${process.headline} — ${process.headlineEmphasis}`,
     step: process.steps.map((step, index) => ({ '@type': 'HowToStep', position: index + 1, name: step.title, text: step.description })),
+  }
+}
+
+export function aiCheckJsonLd() {
+  const url = `${SITE_URL}/ai-visibility-check`
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Service',
+        '@id': `${url}#service`,
+        name: aiCheck.hero.kicker,
+        description: aiCheck.hero.sub,
+        url,
+        serviceType: 'AI search visibility audit',
+        provider: { '@id': organizationId },
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', url },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        url,
+        isPartOf: { '@id': `${SITE_URL}/#website` },
+        mainEntity: aiCheck.faq.items.map((item) => ({
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: { '@type': 'Answer', text: item.a },
+        })),
+      },
+    ],
   }
 }
 
